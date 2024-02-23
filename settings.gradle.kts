@@ -3,3 +3,4 @@ plugins {
 }
 rootProject.name = "tga-pipeline"
 
+// versions

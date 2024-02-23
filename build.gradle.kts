@@ -13,6 +13,7 @@ val serializationVersion = "1.6.3"
 
 val slf4jVersion = "2.0.12"
 val logbackVersion = "1.5.0"
+val commonsCliVersion = "1.5.0"
 
 repositories {
     mavenCentral()
@@ -26,6 +27,7 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("commons-cli:commons-cli:$commonsCliVersion")
 }
 
 tasks.test {
