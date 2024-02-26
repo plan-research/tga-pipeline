@@ -8,5 +8,5 @@ interface TestGenerationTool {
         classPath: List<Path>,
     )
 
-    fun run(): Collection<Path>
+    fun run(): TestSuite
 }
