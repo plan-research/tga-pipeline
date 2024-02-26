@@ -8,7 +8,7 @@ group = "org.plan.research"
 version = "0.0.1"
 
 // versions
-val ktHelperVersion = "0.1.13"
+val ktHelperVersion = "0.1.14"
 val serializationVersion = "1.6.3"
 
 val slf4jVersion = "2.0.12"
