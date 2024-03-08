@@ -9,6 +9,7 @@ version = "0.0.1"
 
 // versions
 val ktHelperVersion = "0.1.14"
+val kfgVersion = "0.4.14"
 val serializationVersion = "1.6.3"
 
 val slf4jVersion = "2.0.12"
@@ -24,6 +25,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.vorpal.research:kt-helper:$ktHelperVersion")
+    implementation("org.vorpal.research:kfg:$kfgVersion")
 
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
