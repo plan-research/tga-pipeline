@@ -7,18 +7,12 @@ import subprocess
 
 from cut_info import cut_map
 
-# if len(sys.argv) < 2:
-# 	print("Expectin path to Git_Bug data directory")
-# 	sys.exit(1)
+if len(sys.argv) < 3:
+	print("Usage: `./gutbug_setup.py *path to GitBug root* *path to output dir*`")
+	sys.exit(1)
 
-# gitbug_data_dir = sys.argv[1]
-
-clean_everything = False
-
-gitbug_data_dir = '/home/abdullin/workspace/gitbug-java/data/bugs/'
-
-
-output_dir = '/home/abdullin/workspace/tga-pipeline/projects'
+gitbug_data_dir = os.path.resolve(sys.argv[1], 'bugs/')
+output_dir = sys.argv[2]
 
 def clone(project_Json) -> str:
 	if not os.path.exists(output_dir):
