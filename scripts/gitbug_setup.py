@@ -91,9 +91,6 @@ def build(project_json, project_dir):
 			shutil.rmtree(project_dir)
 			return None
 
-
-		build_file_path = ''
-		build_file_patch = ''
 		if build_system == 'gradle-kotlin':
 			build_file_path = os.path.join(project_dir, 'build.gradle.kts')
 			build_file_patch = """
