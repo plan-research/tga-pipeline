@@ -1,64 +1,60 @@
 #!/bin/python
 
 import json
+import logging
 import os
 import shutil
 import subprocess
+import sys
 
 from cut_info import cut_map
 
-if len(sys.argv) < 3:
-	print("Usage: `./gutbug_setup.py *path to GitBug root* *path to output dir*`")
-	sys.exit(1)
 
-gitbug_data_dir = os.path.resolve(sys.argv[1], 'bugs/')
-output_dir = sys.argv[2]
-
-def clone(project_Json) -> str:
+def clone(output_dir, project_json) -> str:
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 	os.chdir(output_dir)
-	project_name = project_Json['repository'].split('/')[1]
-	commit_id = project_Json['commit_hash']
+	project_name = project_json['repository'].split('/')[1]
+	commit_id = project_json['commit_hash']
 	project_dir_name = "{}-{}".format(project_name, commit_id[0:10])
 	project_dir = os.path.join(output_dir, project_dir_name)
 
 	if os.path.exists(project_dir):
 		return project_dir
-	if not os.path.exists(project_dir):
-		return None
 
+	logging.info("Cloning project '{}' from URL '{}'".format(project_dir_name, project_json['clone_url']))
 
 	if not os.path.exists(project_dir):
-		url = project_Json['clone_url']
+		url = project_json['clone_url']
 		process = subprocess.Popen(['git', 'clone', url, project_dir_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		cloneOutput, cloneErr = process.communicate()
 		if process.returncode != 0:
-			print("Failed to clone url {}".format(url))
-			print("Command error output: {}".format(cloneErr))
-			shutil.rmtree(project_dir)
+			logging.error("Failed to clone url {}".format(url))
+			logging.error("Executed command: {}".format(process.args))
+			logging.error("Command error output: {}".format(cloneErr.decode("utf-8")))
+			if os.path.exists(project_dir):
+				shutil.rmtree(project_dir)
 			return None
 
 	os.chdir(project_dir)
 	process = subprocess.Popen(['git', 'checkout', commit_id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	checkoutOutput, checkoutErr = process.communicate()
 	if process.returncode != 0:
-		print("Failed to clone checkout commit {}".format(commit_id))
-		print("Command error output: {}".format(checkoutErr))
+		logging.error("Failed to clone checkout commit {}".format(commit_id))
+		logging.error("Command error output: {}".format(checkoutErr.decode("utf-8")))
 		shutil.rmtree(project_dir)
 		return None
 
 	return project_dir
 
 def build(project_json, project_dir):
-	if os.path.exists(project_dir):
-		return project_dir
+	if not os.path.exists(project_dir):
+		return None
 
-	print(project_dir)
+	logging.info("Building the project '{}'".format(project_dir))
 	os.chdir(project_dir)
 
 	build_system = ''
-	java_version = ''
 	for file in os.listdir(project_dir):
 		if file == 'pom.xml':
 			build_system = 'maven'
@@ -66,28 +62,34 @@ def build(project_json, project_dir):
 			build_system = 'gradle-kotlin'
 		elif file == 'build.gradle':
 			build_system = 'gradle-groovy'
-	print(build_system)
+	logging.info("Detected build system: {}".format(build_system))
 
 	if build_system == 'maven':
 		process = subprocess.Popen(['mvn', 'clean', 'package', '-Dmaven.test.skip=true'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output, err = process.communicate()
 		if process.returncode != 0:
-			print("Failed to build maven project {}".format(project_dir))
+			logging.error("Failed to build maven project {}".format(project_dir))
+			logging.error("Build command: {}".format(process.args))
+			logging.error("Build error output: {}".format(err.decode("utf-8")))
 			shutil.rmtree(project_dir)
-			return
+			return None
 
 		process = subprocess.Popen(['mvn', 'dependency:copy-dependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output, err = process.communicate()
 		if process.returncode != 0:
-			print("Failed to copy maven dependencies {}".format(project_dir))
+			logging.error("Failed to copy maven dependencies {}".format(project_dir))
+			shutil.rmtree(project_dir)
+			return None
 
 	elif build_system == 'gradle-kotlin' or build_system == 'gradle-groovy':
 		process = subprocess.Popen(['./gradlew', 'build', '-x', 'test'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output, err = process.communicate()
 		if process.returncode != 0:
-			print("Failed to build kotlin gradle project {}".format(project_dir))
+			logging.error("Failed to build kotlin gradle project {}".format(project_dir))
+			logging.error("Build command: {}".format(process.args))
+			logging.error("Build error output: {}".format(err.decode("utf-8")))
 			shutil.rmtree(project_dir)
-			return
+			return None
 
 
 		build_file_path = ''
@@ -118,100 +120,136 @@ task copyDependencies(type: Copy) {
 			process = subprocess.Popen(['./gradlew', 'copyDependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			output, err = process.communicate()
 			if process.returncode != 0:
-				print("Failed to copy gradle dependencies {}".format(project_dir))
+				logging.error("Failed to copy gradle dependencies {}".format(project_dir))
+				logging.error("Build command: {}".format(process.args))
+				logging.error("Build error output: {}".format(err.decode("utf-8")))
+				shutil.rmtree(project_dir)
+				return None
+
+	return project_dir
 
 
-downloaded_projects = []
+def download_projects(gitbug_data_dir, output_dir):
+	downloaded_projects = []
+	for file in os.listdir(gitbug_data_dir):
+		project_json = os.path.join(gitbug_data_dir, file)
+		for json_Str in open(project_json).read().removesuffix('\n').split('\n'):
+			json_Str = json_Str.translate(str.maketrans({"\n": r"\\n"}))
+			project_data = json.loads(json_Str)
 
-for file in os.listdir(gitbug_data_dir):
-	project_Json = os.path.join(gitbug_data_dir, file)
-	for json_Str in open(project_Json).read().removesuffix('\n').split('\n'):
-		json_Str = json_Str.translate(str.maketrans({"\n": r"\\n"}))
-		project_data = json.loads(json_Str)
+			project_dir = clone(output_dir, project_data)
+			if project_dir == None:
+				continue
 
-		project_dir = clone(project_data)
-		if project_dir == None:
-			continue
+			project_dir = build(project_data, project_dir)
+			if project_dir == None:
+				continue
 
-		build(project_data, project_dir)
-		downloaded_projects.append([project_data, project_dir])
+			downloaded_projects.append([project_data, project_dir])
+	return downloaded_projects
 
-benchmarks = []
 
-for project_json, project_dir in downloaded_projects:
-	benchmark = {}
-	benchmark['name'] = project_json['repository'].split('/')[1]
-	benchmark['root'] = project_dir
-	benchmark['build_id'] = project_dir.split('/')[-1]
+def produce_benchmarks(downloaded_projects):
+	benchmarks = []
+	for project_json, project_dir in downloaded_projects:
+		benchmark = {}
+		benchmark['name'] = project_json['repository'].split('/')[1]
+		benchmark['root'] = project_dir
+		benchmark['build_id'] = project_dir.split('/')[-1]
 
-	class_path = []
-	if os.path.exists(os.path.join(project_dir, 'target')):
-		target_dir_path = os.path.join(project_dir, 'target')
+		class_path = []
+		if os.path.exists(os.path.join(project_dir, 'target')):
+			target_dir_path = os.path.join(project_dir, 'target')
 
-		classes_dir_path = os.path.join(target_dir_path, 'classes')
-		if os.path.exists(classes_dir_path):
+			classes_dir_path = os.path.join(target_dir_path, 'classes')
+			if os.path.exists(classes_dir_path):
+				class_path.append(classes_dir_path)
+
+			dependency_dir = ''
+			if os.path.exists(os.path.join(target_dir_path, 'dependency')):
+				dependency_dir = os.path.join(target_dir_path, 'dependency')
+			elif os.path.exists(os.path.join(target_dir_path, 'dependencies')):
+				dependency_dir = os.path.join(target_dir_path, 'dependencies')
+			elif os.path.exists(os.path.join(target_dir_path, 'lib')):
+				dependency_dir = os.path.join(target_dir_path, 'lib')
+
+			if os.path.exists(dependency_dir):
+				for file in os.listdir(dependency_dir):
+					class_path.append(os.path.join(dependency_dir, file))
+		if os.path.exists(os.path.join(project_dir, 'build')):
+			build_dir_path = os.path.join(project_dir, 'build')
+			classes_dir_path = os.path.join(build_dir_path, 'classes')
+			if os.path.exists(os.path.join(classes_dir_path, 'java')):
+				classes_dir_path = os.path.join(classes_dir_path, 'java')
+			if os.path.exists(os.path.join(classes_dir_path, 'kotlin')):
+				classes_dir_path = os.path.join(classes_dir_path, 'kotlin')
+			if os.path.exists(os.path.join(classes_dir_path, 'main')):
+				classes_dir_path = os.path.join(classes_dir_path, 'main')
+
 			class_path.append(classes_dir_path)
 
-		dependency_dir = ''
-		if os.path.exists(os.path.join(target_dir_path, 'dependency')):
-			dependency_dir = os.path.join(target_dir_path, 'dependency')
-		elif os.path.exists(os.path.join(target_dir_path, 'dependencies')):
-			dependency_dir = os.path.join(target_dir_path, 'dependencies')
-		elif os.path.exists(os.path.join(target_dir_path, 'lib')):
-			dependency_dir = os.path.join(target_dir_path, 'lib')
+			dependency_dir = ''
+			if os.path.exists(os.path.join(project_dir, 'dependencies')):
+				dependency_dir = os.path.join(project_dir, 'dependencies')
 
-		if os.path.exists(dependency_dir):
-			for file in os.listdir(dependency_dir):
-				class_path.append(os.path.join(dependency_dir, file))
-	if os.path.exists(os.path.join(project_dir, 'build')):
-		build_dir_path = os.path.join(project_dir, 'build')
-		classes_dir_path = os.path.join(target_dir_path, 'classes')
-		if os.path.exists(os.path.join(classes_dir_path, 'java')):
-			classes_dir_path = os.path.join(classes_dir_path, 'java')
-		if os.path.exists(os.path.join(classes_dir_path, 'kotlin')):
-			classes_dir_path = os.path.join(classes_dir_path, 'kotlin')
-		if os.path.exists(os.path.join(classes_dir_path, 'main')):
-			classes_dir_path = os.path.join(classes_dir_path, 'main')
+			if os.path.exists(dependency_dir):
+				for file in os.listdir(dependency_dir):
+					class_path.append(os.path.join(dependency_dir, file))
 
-		class_path.append(classes_dir_path)
+		benchmark['classPath'] = class_path
 
-		dependency_dir = ''
-		if os.path.exists(os.path.join(project_dir, 'dependencies')):
-			dependency_dir = os.path.join(project_dir, 'dependencies')
+		# failed_tests = set({})
+		# for l in project_json['actions_runs']:
+		# 	tests = []
+		# 	if l is None:
+		# 		continue
+		# 	if type(l) is list:
+		# 		tests = l[0]['tests']
+		# 	else:
+		# 		tests = l['tests']
+		#
+		# 	for test in tests:
+		# 		if test['results'][0]['result'] == 'Failure':
+		# 			failed_tests.add(test['classname'].removesuffix('Test').removesuffix('Tests'))
+		benchmark['klass'] = cut_map[benchmark['build_id']]
 
-		if os.path.exists(dependency_dir):
-			for file in os.listdir(dependency_dir):
-				class_path.append(os.path.join(dependency_dir, file))
+		# patched_class_name = project_json['bug_patch'].split('\n')[0].split(' ')[2].removeprefix('a/').removeprefix('src/').removeprefix('main/').removeprefix('java/').replace('/', '.').removesuffix('.java')
 
-	benchmark['classPath'] = class_path
+		# logging.error(project_dir)
+		# if len(failed_tests) == 1 and patched_class_name in failed_tests:
+		# 	logging.error("{} -> {}".format(benchmark['build_id'], patched_class_name))
+		# logging.error(patched_class_name)
+		# logging.error(failed_tests)
+		# logging.error()
 
-	failed_tests = set({})
-	for l in project_json['actions_runs']:
-		tests = []
-		if l is None:
-			continue
-		if type(l) is list:
-			tests = l[0]['tests']
-		else:
-			tests = l['tests']
+		benchmarks.append(benchmark)
+	return benchmarks
 
-		for test in tests:
-			if test['results'][0]['result'] == 'Failure':
-				failed_tests.add(test['classname'].removesuffix('Test').removesuffix('Tests'))
-	benchmark['klass'] = cut_map[benchmark['build_id']]
+def main():
+	logging.basicConfig(
+		handlers=[
+			logging.FileHandler("gitbug_setup.log"),
+			logging.StreamHandler()
+		],
+		format='[%(asctime)s][%(levelname)s] %(message)s',
+		level=logging.INFO
+	)
 
-	# patched_class_name = project_json['bug_patch'].split('\n')[0].split(' ')[2].removeprefix('a/').removeprefix('src/').removeprefix('main/').removeprefix('java/').replace('/', '.').removesuffix('.java')
+	if len(sys.argv) < 3:
+		logging.error("Usage: `./gutbug_setup.py *path to GitBug root* *path to output dir*`")
+		sys.exit(1)
 
-	# print(project_dir)
-	# if len(failed_tests) == 1 and patched_class_name in failed_tests:
-	# 	print("{} -> {}".format(benchmark['build_id'], patched_class_name))
-	# print(patched_class_name)
-	# print(failed_tests)
-	# print()
+	gitbug_data_dir = os.path.join(sys.argv[1], 'data/bugs/')
+	output_dir = sys.argv[2]
 
-	benchmarks.append(benchmark)
+	downloaded_projects = download_projects(gitbug_data_dir, output_dir)
+	benchmarks = produce_benchmarks(downloaded_projects)
 
-output_file_path = os.path.join(output_dir, 'benchmarks.json')
-output_file = open(output_file_path, "w")
-output_file.write(json.dumps(benchmarks, indent = 2))
-output_file.close()
+	output_file_path = os.path.join(output_dir, 'benchmarks.json')
+	output_file = open(output_file_path, "w")
+	output_file.write(json.dumps(benchmarks, indent = 2))
+	output_file.close()
+
+
+if __name__ == '__main__':
+	main()
