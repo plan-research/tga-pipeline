@@ -44,4 +44,4 @@ bin/
 
 *.log
 
-!**/__pycache__/**
+benchmarks/
