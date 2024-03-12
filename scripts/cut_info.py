@@ -179,6 +179,5 @@ cut_map = {
 	"event-ruler-68481127e0": "software.amazon.event.ruler.JsonRuleCompiler",
 	"rcv-688920f277": "network.brightspots.rcv.Logger",
 	"rcv-c80e6272c8": "network.brightspots.rcv.ResultsWriter",
-	"rcv-cd6ca49d8e": "network.brightspots.rcv.Tabulator",
-	""
+	"rcv-cd6ca49d8e": "network.brightspots.rcv.Tabulator"
 }
