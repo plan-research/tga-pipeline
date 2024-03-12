@@ -176,5 +176,9 @@ cut_map = {
 	"solarpositioning-79c0044373": "net.e175.klaus.solarpositioning.Grena3",
 	"solarpositioning-4d35aecb48": "net.e175.klaus.solarpositioning.DeltaT",
 	"ari-proxy-610e9b6725": "io.retel.ariproxy.boundary.commandsandresponses.AriCommandResponseProcessing",
-	"event-ruler-68481127e0": "software.amazon.event.ruler.JsonRuleCompiler"
+	"event-ruler-68481127e0": "software.amazon.event.ruler.JsonRuleCompiler",
+	"rcv-688920f277": "network.brightspots.rcv.Logger",
+	"rcv-c80e6272c8": "network.brightspots.rcv.ResultsWriter",
+	"rcv-cd6ca49d8e": "network.brightspots.rcv.Tabulator",
+	""
 }
