@@ -12,6 +12,11 @@ fun main(args: Array<String>) {
     val benchmarksConfig = config.getCmdValue("config")!!
     val provider = JsonBenchmarkProvider(Paths.get(benchmarksConfig))
     for (benchmark in provider.benchmarks()) {
-        log.debug(benchmark)
+//        log.debug(benchmark)
+        for (dependency in benchmark.classPath) {
+            if ("junit" in dependency.toString()) {
+                log.debug(dependency)
+            }
+        }
     }
 }

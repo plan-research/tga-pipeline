@@ -8,13 +8,15 @@ group = "org.plan.research"
 version = "0.0.1"
 
 // versions
-val ktHelperVersion = "0.1.14"
+val ktHelperVersion = "0.1.15"
 val kfgVersion = "0.4.14"
 val serializationVersion = "1.6.3"
 
 val slf4jVersion = "2.0.12"
 val logbackVersion = "1.5.0"
 val commonsCliVersion = "1.5.0"
+
+val jacocoVersion = "0.8.11"
 
 repositories {
     mavenCentral()
@@ -30,6 +32,8 @@ dependencies {
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("commons-cli:commons-cli:$commonsCliVersion")
+
+    implementation("org.jacoco:org.jacoco.core:$jacocoVersion")
 }
 
 tasks.test {

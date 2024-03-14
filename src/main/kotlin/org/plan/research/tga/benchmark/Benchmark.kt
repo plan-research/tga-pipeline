@@ -7,9 +7,10 @@ import java.nio.file.Path
 
 @Serializable
 data class Benchmark(
-    val projectName: String,
+    val name: String,
     @Serializable(with = PathAsStringSerializer::class)
-    val src: Path,
+    val root: Path,
+    val build_id: String,
     @Serializable(with = ListOfPathSerializer::class)
     val classPath: List<Path>,
     val klass: String,
