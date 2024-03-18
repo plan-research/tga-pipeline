@@ -4,3 +4,6 @@ plugins {
 rootProject.name = "tga-pipeline"
 
 // versions
+include("tga-core")
+include("tga-tool")
+include("tga-runner")

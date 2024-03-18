@@ -45,3 +45,4 @@ bin/
 *.log
 
 benchmarks/
+/.idea/
