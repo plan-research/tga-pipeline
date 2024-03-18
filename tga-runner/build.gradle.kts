@@ -1,6 +1,7 @@
 plugins {
-    id("org.plan.research.tga-pipeline-base")
     application
+    id("org.plan.research.tga-pipeline-base")
+    kotlin("plugin.serialization") version "1.9.20"
 }
 
 dependencies {

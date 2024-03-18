@@ -11,19 +11,21 @@ import org.jacoco.core.runtime.IExecutionDataAccessorGenerator
 import org.jacoco.core.runtime.LoggerRuntime
 import org.jacoco.core.runtime.RuntimeData
 import org.plan.research.tga.core.benchmark.Benchmark
-import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
+import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.CoverageInfo
 import org.plan.research.tga.core.coverage.CoverageProvider
 import org.plan.research.tga.core.coverage.InstructionId
 import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodCoverageInfo
+import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.tool.TestSuite
+import org.plan.research.tga.runner.compiler.SystemJavaCompiler
+import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
-import org.vorpal.research.kfg.Package
 import java.io.File
 import java.lang.reflect.Array
 import java.nio.file.Files
@@ -85,6 +87,7 @@ class JacocoCoverageProvider : CoverageProvider {
             log.debug("Running test {}", testClassName)
 
             val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
+
             @Suppress("DEPRECATION")
             val jc = jcClass.newInstance()
             val computerClass = classLoader.loadClass("org.junit.runner.Computer")
@@ -151,8 +154,7 @@ class JacocoCoverageProvider : CoverageProvider {
                 }
 
                 MethodCoverageInfo(
-                    method.name,
-                    method.desc,
+                    MethodId(method.name, method.desc),
                     CoverageInfo(instructions),
                     CoverageInfo(lines),
                     CoverageInfo(branches)
@@ -160,7 +162,7 @@ class JacocoCoverageProvider : CoverageProvider {
             }
         }.first()
 
-        return ClassCoverageInfo(benchmark.klass, methods)
+        return ClassCoverageInfo(ClassId(benchmark.klass), methods)
     }
 
     class InstrumentingPathClassLoader(
