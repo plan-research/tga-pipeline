@@ -6,7 +6,6 @@ plugins {
 dependencies {
     api(project(":tga-core"))
     implementation("org.jacoco:org.jacoco.core:$jacocoVersion")
-    implementation("commons-cli:commons-cli:$commonsCliVersion")
 }
 
 

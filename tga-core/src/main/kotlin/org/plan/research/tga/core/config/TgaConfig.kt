@@ -1,38 +1,22 @@
-package org.plan.research.tga.runner.config
+package org.plan.research.tga.core.config
 
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.vorpal.research.kthelper.assert.exit
 import java.io.PrintWriter
 import java.io.StringWriter
 
-private fun buildOptions(builderAction: Options.() -> Unit): Options {
+fun buildOptions(builderAction: Options.() -> Unit): Options {
     val options = Options()
     options.builderAction()
     return options
 }
 
-class TgaConfig(args: Array<String>) {
+abstract class TgaConfig(val options: Options, args: Array<String>) {
     private val cmd: CommandLine
-
-    companion object {
-        private val options = buildOptions {
-            addOption(
-                Option("h", "help", false, "print this help and quit").also {
-                    it.isRequired = false
-                }
-            )
-
-            addOption(
-                Option("c", "config", true, "configuration file")
-                    .also { it.isRequired = true }
-            )
-        }
-    }
 
     init {
         val parser = DefaultParser()
@@ -69,3 +53,4 @@ class TgaConfig(args: Array<String>) {
             return sw.toString()
         }
 }
+

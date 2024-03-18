@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.vorpal.research:kt-helper:$ktHelperVersion")
     implementation("org.vorpal.research:kfg:$kfgVersion")
 }
