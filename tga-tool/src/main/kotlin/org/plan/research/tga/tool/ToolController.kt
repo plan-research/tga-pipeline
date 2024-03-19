@@ -5,6 +5,7 @@ import org.plan.research.tga.core.tool.protocol.GenerationResult
 import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
+import org.vorpal.research.kthelper.logging.log
 import kotlin.concurrent.thread
 
 
@@ -14,7 +15,12 @@ class ToolController(
 ) {
     fun run() = connection.use {
         while (true) {
-            val request = connection.receive()
+            val request = try {
+                connection.receive()
+            } catch (e: Throwable) {
+                log.error("Failed to receive a request from the server: ", e)
+                break
+            }
             val tool = toolCreator()
 
             tool.init(request.benchmark.root, request.benchmark.classPath)
@@ -36,7 +42,12 @@ class ToolController(
                 result = UnsuccessfulGenerationResult(e.stackTraceToString())
             }
 
-            connection.send(result)
+            try {
+                connection.send(result)
+            } catch (e: Throwable) {
+                log.error("Failed to send a response to the server: ", e)
+                break
+            }
         }
     }
 }
