@@ -9,7 +9,7 @@ import kotlin.concurrent.thread
 
 
 class ToolController(
-    val connection: Tool2TgaConnection,
+    private val connection: Tool2TgaConnection,
     val toolCreator: () -> TestGenerationTool,
 ) {
     fun run() = connection.use {

@@ -60,7 +60,7 @@ fun ExecutionDataStore.deepCopy(): ExecutionDataStore {
 }
 
 class JacocoCoverageProvider : CoverageProvider {
-    private val tgaTempDir = Files.createTempDirectory("org/plan/research/tga/runner").also {
+    private val tgaTempDir = Files.createTempDirectory("tga-runner").also {
         deleteOnExit(it)
     }
     private val compiledDir: Path = Files.createTempDirectory(tgaTempDir, "compiled").also {
@@ -68,7 +68,10 @@ class JacocoCoverageProvider : CoverageProvider {
     }
 
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
-        val allTests = Files.walk(testSuite.testSrcPath).filter { it.isClass }.toList()
+        val allTests = when {
+            testSuite.testSrcPath.exists() -> Files.walk(testSuite.testSrcPath).filter { it.isClass }.toList()
+            else -> emptyList()
+        }
         val classPath = benchmark.classPath + testSuite.dependencies
         val compiler = SystemJavaCompiler(classPath)
         compiler.compile(allTests, compiledDir)
@@ -160,7 +163,7 @@ class JacocoCoverageProvider : CoverageProvider {
                     CoverageInfo(branches)
                 )
             }
-        }.first()
+        }.firstOrNull() ?: return ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
 
         return ClassCoverageInfo(ClassId(benchmark.klass), methods)
     }

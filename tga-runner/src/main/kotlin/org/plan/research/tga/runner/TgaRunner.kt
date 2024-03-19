@@ -1,5 +1,6 @@
 package org.plan.research.tga.runner
 
+import kotlinx.serialization.Serializable
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
@@ -8,7 +9,7 @@ import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
 import org.plan.research.tga.runner.coverage.jacoco.JacocoCoverageProvider
 import org.plan.research.tga.runner.metrics.ClassMetrics
-import org.plan.research.tga.runner.metrics.computeMetrics
+import org.plan.research.tga.runner.metrics.MetricsProvider
 import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.log
@@ -16,6 +17,7 @@ import java.nio.file.Path
 import kotlin.time.Duration
 
 
+@Serializable
 data class ToolResults(
     val benchmark: Benchmark,
     val coverage: ClassCoverageInfo,
@@ -30,7 +32,8 @@ class TgaRunner(
 ) {
     fun run(): Set<ToolResults> = buildSet {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
-        val coverageBuilder = JacocoCoverageProvider()
+        val coverageProvider = JacocoCoverageProvider()
+        val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 
         val server = TcpTgaServer(serverPort)
         log.debug("Started server, awaiting for tool connection")
@@ -54,11 +57,13 @@ class TgaRunner(
             val testSuite = (result as SuccessfulGenerationResult).testSuite
 
             log.debug("Computing metrics")
-            val coverage = coverageBuilder.computeCoverage(benchmark, testSuite)
-            val metrics = computeMetrics(benchmark)
+            val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
+            val metrics = metricsProvider.getMetrics(benchmark)
             log.debug(coverage)
 
             add(ToolResults(benchmark, coverage, metrics))
         }
+
+        metricsProvider.save()
     }
 }

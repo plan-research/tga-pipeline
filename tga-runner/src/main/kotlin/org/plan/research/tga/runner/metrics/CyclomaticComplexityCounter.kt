@@ -1,5 +1,7 @@
 package org.plan.research.tga.runner.metrics
 
+import org.plan.research.tga.core.coverage.ClassId
+import org.plan.research.tga.core.coverage.MethodId
 import org.vorpal.research.kfg.ClassManager
 import org.vorpal.research.kfg.ir.Method
 import org.vorpal.research.kfg.visitor.MethodVisitor
@@ -9,9 +11,9 @@ class CyclomaticComplexityCounter(
     override val cm: ClassManager
 ) : MethodVisitor {
     companion object {
-        private val complexity = mutableMapOf<Method, UInt>()
+        private val complexity = mutableMapOf<Pair<ClassId, MethodId>, UInt>()
 
-        fun getComplexity(method: Method) = complexity.getOrDefault(method, UInt.MAX_VALUE)
+        fun getComplexity(method: Pair<ClassId, MethodId>) = complexity.getOrDefault(method, UInt.MAX_VALUE)
     }
 
     override fun cleanup() {}
@@ -25,6 +27,6 @@ class CyclomaticComplexityCounter(
             e += (block.successors.size + block.handlers.size).toUInt()
         }
 
-        complexity[method] = e - n + 2U * p
+        complexity[method.fullId] = e - n + 2U * p
     }
 }

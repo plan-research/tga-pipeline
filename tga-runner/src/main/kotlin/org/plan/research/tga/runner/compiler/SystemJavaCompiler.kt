@@ -18,6 +18,11 @@ class SystemJavaCompiler(
     private val compiler = ToolProvider.getSystemJavaCompiler()
 
     override fun compile(sources: List<Path>, outputDirectory: Path): List<Path> {
+        if (sources.isEmpty()) {
+            log.error("Trying to compile empty list of sources, skipping compilation")
+            return emptyList()
+        }
+        log.debug("Compiling {} into {}", sources, outputDirectory)
         val fileManager = compiler.getStandardFileManager(null, null, null)
         fileManager.setLocation(StandardLocation.CLASS_PATH, classPath.map { it.toFile() })
         fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outputDirectory.toFile()))

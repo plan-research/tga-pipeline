@@ -1,7 +1,9 @@
 package org.plan.research.tga.runner.metrics
 
 import org.plan.research.tga.core.coverage.BranchId
+import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.LineId
+import org.plan.research.tga.core.coverage.MethodId
 import org.vorpal.research.kfg.ClassManager
 import org.vorpal.research.kfg.Package
 import org.vorpal.research.kfg.collectionClass
@@ -74,9 +76,9 @@ class ConditionTypeDfa(
             "java/util/Iterator"
         )
 
-        private val methodMetrics = mutableMapOf<Method, MutableMap<BranchId, ValueModel>>()
+        private val methodMetrics = mutableMapOf<Pair<ClassId, MethodId>, MutableMap<BranchId, ValueModel>>()
 
-        fun getMetrics(method: Method): Map<BranchId, ValueModel> =
+        fun getMetrics(method: Pair<ClassId, MethodId>): Map<BranchId, ValueModel> =
             methodMetrics.getOrDefault(method, emptyMap())
     }
 
@@ -166,7 +168,7 @@ class ConditionTypeDfa(
                 ids[location] = branchId + 1U
             }
         }
-        methodMetrics[method] = metrics
+        methodMetrics[method.fullId] = metrics
     }
 
     override fun visitArrayLoadInst(inst: ArrayLoadInst) {

@@ -5,6 +5,7 @@ import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
 import org.plan.research.tga.core.tool.protocol.GenerationResult
 import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.plan.research.tga.core.tool.protocol.protocolJson
+import org.vorpal.research.kthelper.logging.log
 import java.net.Socket
 
 
@@ -18,12 +19,16 @@ class TcpTool2TgaConnection(
 
     override fun receive(): BenchmarkRequest {
         val json = reader.readLine()
+        log.debug("Received request from server: $json")
         return protocolJson.decodeFromString(json)
     }
 
     override fun send(result: GenerationResult) {
-        writer.write(protocolJson.encodeToString(result))
+        val json = protocolJson.encodeToString(result)
+        log.debug("Sending result to server: $json")
+        writer.write(json)
         writer.write("\n")
+        writer.flush()
     }
 
     override fun close() {

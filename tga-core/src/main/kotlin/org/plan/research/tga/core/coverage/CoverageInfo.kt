@@ -31,7 +31,7 @@ interface CodeCoverageInfo {
     val lines: CoverageInfo<LineId>
     val branches: CoverageInfo<BranchId>
 
-    fun print(): String = "instructions - {%.2f}, lines - {%.2f}, branches - {%2.f}".format(
+    fun print(): String = "instructions - %.2f, lines - %.2f, branches - %.2f".format(
         instructions.ratio * 100.0,
         lines.ratio * 100.0,
         branches.ratio * 100.0
