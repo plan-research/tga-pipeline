@@ -14,9 +14,6 @@ services:
       - shared-network
     volumes:
       - ./results:/var/testgen/results
-    depends_on:
-      runner:
-        condition: service_healthy
 
 volumes:
   shared-volume:
