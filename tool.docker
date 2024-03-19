@@ -1,0 +1,9 @@
+FROM abdullin/tga-benchmarks:latest
+MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+
+USER root
+RUN git clone https://github.com/plan-research/tga-pipeline.git
+
+WORKDIR /tga-pipeline
+RUN ./gradlew :tga-tool:build
+ENTRYPOINT ["./gradlew", ":tga-tool:run"]

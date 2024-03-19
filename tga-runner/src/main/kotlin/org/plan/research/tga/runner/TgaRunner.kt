@@ -28,7 +28,9 @@ class TgaRunner(
     private val serverPort: UInt,
     private val configFile: Path,
     private val timeLimit: Duration,
-    private val outputDirectory: Path
+    private val outputDirectory: Path,
+    private val n: Int,
+    private val name: String
 ) {
     fun run(): Set<ToolResults> = buildSet {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
@@ -41,27 +43,33 @@ class TgaRunner(
         val toolConnection = server.accept()
         log.debug("Tool connected")
 
-        for (benchmark in benchmarkProvider.benchmarks()) {
-            log.debug("Running on benchmark ${benchmark.buildId}")
+        val baseDir = outputDirectory.resolve(name)
 
-            val benchmarkOutput = outputDirectory.resolve(benchmark.buildId)
-            toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
-            log.debug("Sent benchmark to tool")
+        for (run in 0 until n) {
+            val runDir = baseDir.resolve("$run")
 
-            val result = toolConnection.receive()
-            log.debug("Received an answer from tool")
-            if (result is UnsuccessfulGenerationResult) {
-                log.error("Unsuccessful run on benchmark ${benchmark.buildId}: $result")
+            for (benchmark in benchmarkProvider.benchmarks()) {
+                log.debug("Running on benchmark ${benchmark.buildId}")
+
+                val benchmarkOutput = runDir.resolve(benchmark.buildId)
+                toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
+                log.debug("Sent benchmark to tool")
+
+                val result = toolConnection.receive()
+                log.debug("Received an answer from tool")
+                if (result is UnsuccessfulGenerationResult) {
+                    log.error("Unsuccessful run on benchmark ${benchmark.buildId}: $result")
+                }
+
+                val testSuite = (result as SuccessfulGenerationResult).testSuite
+
+                log.debug("Computing metrics")
+                val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
+                val metrics = metricsProvider.getMetrics(benchmark)
+                log.debug(coverage)
+
+                add(ToolResults(benchmark, coverage, metrics))
             }
-
-            val testSuite = (result as SuccessfulGenerationResult).testSuite
-
-            log.debug("Computing metrics")
-            val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
-            val metrics = metricsProvider.getMetrics(benchmark)
-            log.debug(coverage)
-
-            add(ToolResults(benchmark, coverage, metrics))
         }
 
         metricsProvider.save()

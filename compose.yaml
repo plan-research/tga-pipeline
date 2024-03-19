@@ -1,0 +1,26 @@
+services:
+  runner:
+    image: "abdullin/tga-runner:latest"
+    command: --args="-p 10000 -c /var/benchmarks/gitbug/benchmarks.json -t 120 -o /var/testgen/results --runs 10 --name stub"
+    networks:
+      - shared-network
+    volumes:
+      - ./results:/var/testgen/results
+
+  tool:
+    image: "abdullin/tga-tool:latest"
+    command: --args="--ip runner --port 10000 --tool stub"
+    networks:
+      - shared-network
+    volumes:
+      - ./results:/var/testgen/results
+    depends_on:
+      runner:
+        condition: service_healthy
+
+volumes:
+  shared-volume:
+
+networks:
+  shared-network:
+    driver: bridge

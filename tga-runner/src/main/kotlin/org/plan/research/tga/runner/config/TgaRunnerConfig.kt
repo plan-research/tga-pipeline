@@ -33,6 +33,16 @@ class TgaRunnerConfig(args: Array<String>) : TgaConfig(options, args) {
                 Option("o", "output", true, "output directory")
                     .also { it.isRequired = true }
             )
+
+            addOption(
+                Option("n", "runs", true, "number of runs")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option(null, "name", true, "name of the run")
+                    .also { it.isRequired = true }
+            )
         }
     }
 }

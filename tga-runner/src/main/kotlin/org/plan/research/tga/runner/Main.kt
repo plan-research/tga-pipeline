@@ -16,7 +16,10 @@ fun main(args: Array<String>) {
     val timeLimit = config.getCmdValue("timeout")!!.toInt().toDuration(DurationUnit.SECONDS)
     val outputDirectory = Paths.get(config.getCmdValue("output")!!)
 
-    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory)
+    val n = config.getCmdValue("runs")!!.toInt()
+    val name = config.getCmdValue("name")!!
+
+    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory, n, name)
     val results = runner.run()
 
     val resultFile = outputDirectory.resolve("results.json")
