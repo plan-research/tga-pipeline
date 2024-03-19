@@ -15,7 +15,22 @@ class TgaRunnerConfig(args: Array<String>) : TgaConfig(options, args) {
             )
 
             addOption(
+                Option("p", "port", true, "server port to run on")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
                 Option("c", "config", true, "configuration file")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option("t", "timeout", true, "time limit for test generation, in seconds")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option("o", "output", true, "output directory")
                     .also { it.isRequired = true }
             )
         }
