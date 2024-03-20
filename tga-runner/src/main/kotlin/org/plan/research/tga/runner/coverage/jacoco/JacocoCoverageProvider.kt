@@ -26,27 +26,15 @@ import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
-import java.io.File
 import java.lang.reflect.Array
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
-import kotlin.io.path.name
 import kotlin.io.path.readBytes
-import kotlin.io.path.relativeTo
 
 val String.asmString get() = replace(Package.CANONICAL_SEPARATOR, Package.SEPARATOR)
-
-fun Path.fullyQualifiedName(base: Path): String =
-    relativeTo(base).toString()
-        .removePrefix("..")
-        .removePrefix(File.separatorChar.toString())
-        .replace(File.separatorChar, Package.CANONICAL_SEPARATOR)
-        .removeSuffix(".class")
-
-val Path.isClass get() = name.endsWith(".class")
 
 fun Class<*>.asArray(): Class<*> = Array.newInstance(this, 0).javaClass
 
@@ -62,52 +50,49 @@ fun ExecutionDataStore.deepCopy(): ExecutionDataStore {
 class JacocoCoverageProvider : CoverageProvider {
     private val tgaTempDir = Files.createTempDirectory("tga-runner").also {
         deleteOnExit(it)
-    }
-    private val compiledDir: Path = Files.createTempDirectory(tgaTempDir, "compiled").also {
-        deleteOnExit(it)
+    }.toAbsolutePath()
+    private val compiledDir: Path = tgaTempDir.resolve("compiled").toAbsolutePath().also {
+        it.toFile().mkdirs()
     }
 
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
-        val allTests = when {
-            testSuite.testSrcPath.exists() -> Files.walk(testSuite.testSrcPath).filter { it.isClass }.toList()
-            else -> emptyList()
-        }
+        val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
         val classPath = benchmark.classPath + testSuite.dependencies
         val compiler = SystemJavaCompiler(classPath)
-        compiler.compile(allTests, compiledDir)
+        compiler.compile(allTests.values.toList(), compiledDir)
 
         val runtime = LoggerRuntime()
-        val classLoader = InstrumentingPathClassLoader(classPath, setOf(benchmark.klass), runtime)
-
+        val classLoader = InstrumentingPathClassLoader(listOf(*classPath.toTypedArray(), compiledDir), setOf(benchmark.klass), runtime)
 
         val datum = mutableMapOf<Path, ExecutionDataStore>()
         val data = RuntimeData()
         runtime.startup(data)
 
-        for (testPath in allTests) {
-            val testClassName = testPath.fullyQualifiedName(compiledDir)
-            val testClass = classLoader.loadClass(testClassName)
-            log.debug("Running test {}", testClassName)
+        for ((testName, testPath) in allTests) {
+            try {
+                val testClass = classLoader.loadClass(testName)
+                val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
 
-            val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
+                @Suppress("DEPRECATION")
+                val jc = jcClass.newInstance()
+                val computerClass = classLoader.loadClass("org.junit.runner.Computer")
+                @Suppress("DEPRECATION")
+                jcClass.getMethod("run", computerClass, Class::class.java.asArray())
+                    .invoke(jc, computerClass.newInstance(), arrayOf(testClass))
 
-            @Suppress("DEPRECATION")
-            val jc = jcClass.newInstance()
-            val computerClass = classLoader.loadClass("org.junit.runner.Computer")
-            @Suppress("DEPRECATION")
-            jcClass.getMethod("run", computerClass, Class::class.java.asArray())
-                .invoke(jc, computerClass.newInstance(), arrayOf(testClass))
-
-            val executionData = ExecutionDataStore()
-            data.collect(executionData, SessionInfoStore(), false)
-            datum[testPath] = executionData.deepCopy()
-            data.reset()
+                val executionData = ExecutionDataStore()
+                data.collect(executionData, SessionInfoStore(), false)
+                datum[testPath] = executionData.deepCopy()
+                data.reset()
+            } catch (e: Throwable) {
+                log.error("Error when executing test $testName, ", e)
+            }
         }
 
         runtime.shutdown()
 
         val mergedExecutionData = ExecutionDataStore()
-        for (testPath in allTests) {
+        for ((_, testPath) in allTests) {
             val executions = datum[testPath] ?: continue
             for (d in executions.contents) {
                 mergedExecutionData.put(d)

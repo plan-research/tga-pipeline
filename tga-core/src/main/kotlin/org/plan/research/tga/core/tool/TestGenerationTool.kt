@@ -4,6 +4,8 @@ import java.nio.file.Path
 import kotlin.time.Duration
 
 interface TestGenerationTool {
+    val name: String
+
     fun init(
         src: Path,
         classPath: List<Path>,

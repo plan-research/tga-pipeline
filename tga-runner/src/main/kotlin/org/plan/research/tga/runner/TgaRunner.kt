@@ -33,7 +33,6 @@ class TgaRunner(
     private val timeLimit: Duration,
     private val outputDirectory: Path,
     private val n: Int,
-    private val name: String
 ) {
     fun run() {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
@@ -43,43 +42,48 @@ class TgaRunner(
         val server = TcpTgaServer(serverPort)
         log.debug("Started server, awaiting for tool connection")
 
-        val toolConnection = server.accept()
-        log.debug("Tool connected")
+        server.accept().use { toolConnection ->
+            log.debug("Tool connected")
 
-        val baseDir = outputDirectory.resolve(name)
+            val name = toolConnection.init()
+            log.debug("Initialized tool with name $name")
 
-        for (run in 0 until n) {
-            val runDir = baseDir.resolve("$run")
+            val baseDir = outputDirectory.resolve(name)
 
-            val results = buildSet {
-                for (benchmark in benchmarkProvider.benchmarks()) {
-                    log.debug("Running on benchmark ${benchmark.buildId}")
+            for (run in 0 until n) {
+                val runDir = baseDir.resolve("$run")
 
-                    val benchmarkOutput = runDir.resolve(benchmark.buildId)
-                    toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
-                    log.debug("Sent benchmark to tool")
+                val results = buildSet {
+                    for (benchmark in benchmarkProvider.benchmarks()) {
+                        log.debug("Running on benchmark ${benchmark.buildId}")
 
-                    val result = toolConnection.receive()
-                    log.debug("Received an answer from tool")
-                    if (result is UnsuccessfulGenerationResult) {
-                        log.error("Unsuccessful run on benchmark ${benchmark.buildId}: $result")
+                        val benchmarkOutput = runDir.resolve(benchmark.buildId)
+                        toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
+                        log.debug("Sent benchmark to tool")
+
+                        val result = toolConnection.receive()
+                        log.debug("Received an answer from tool")
+                        if (result is UnsuccessfulGenerationResult) {
+                            log.error("Unsuccessful run on benchmark ${benchmark.buildId}: $result")
+                            continue
+                        }
+
+                        val testSuite = (result as SuccessfulGenerationResult).testSuite
+
+                        log.debug("Computing metrics")
+                        val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
+                        val metrics = metricsProvider.getMetrics(benchmark)
+                        log.debug(coverage)
+
+                        add(ToolResults(benchmark, coverage, metrics))
                     }
-
-                    val testSuite = (result as SuccessfulGenerationResult).testSuite
-
-                    log.debug("Computing metrics")
-                    val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
-                    val metrics = metricsProvider.getMetrics(benchmark)
-                    log.debug(coverage)
-
-                    add(ToolResults(benchmark, coverage, metrics))
                 }
+
+                val resultFile = runDir.resolve("results.json")
+                resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(results))
             }
 
-            val resultFile = runDir.resolve("results.json")
-            resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(results))
+            metricsProvider.save()
         }
-
-        metricsProvider.save()
     }
 }

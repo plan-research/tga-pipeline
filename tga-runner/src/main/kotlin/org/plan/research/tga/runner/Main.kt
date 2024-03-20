@@ -14,8 +14,7 @@ fun main(args: Array<String>) {
     val outputDirectory = Paths.get(config.getCmdValue("output")!!)
 
     val n = config.getCmdValue("runs")!!.toInt()
-    val name = config.getCmdValue("name")!!
 
-    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory, n, name)
+    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory, n)
     runner.run()
 }

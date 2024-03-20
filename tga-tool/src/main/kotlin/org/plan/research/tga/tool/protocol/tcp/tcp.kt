@@ -17,6 +17,13 @@ class TcpTool2TgaConnection(
     private val reader = socket.getInputStream().bufferedReader()
     private val writer = socket.getOutputStream().bufferedWriter()
 
+    override fun init(name: String) {
+        log.debug("Initializing tool $name")
+        writer.write(name)
+        writer.write("\n")
+        writer.flush()
+    }
+
     override fun receive(): BenchmarkRequest {
         val json = reader.readLine()
         log.debug("Received request from server: $json")

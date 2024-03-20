@@ -7,6 +7,8 @@ import java.nio.file.Path
 import kotlin.time.Duration
 
 class StubTool : TestGenerationTool {
+    override val name = "stub"
+
     override fun init(src: Path, classPath: List<Path>) {
         log.debug("Initialized stub with {}, class path {}", src, classPath)
     }

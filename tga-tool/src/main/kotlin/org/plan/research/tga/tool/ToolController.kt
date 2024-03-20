@@ -11,9 +11,10 @@ import kotlin.concurrent.thread
 
 class ToolController(
     private val connection: Tool2TgaConnection,
-    val toolCreator: () -> TestGenerationTool,
+    val tool: TestGenerationTool,
 ) {
     fun run() = connection.use {
+        connection.init(tool.name)
         while (true) {
             val request = try {
                 connection.receive()
@@ -21,7 +22,6 @@ class ToolController(
                 log.error("Failed to receive a request from the server: ", e)
                 break
             }
-            val tool = toolCreator()
 
             tool.init(request.benchmark.root, request.benchmark.classPath)
 
@@ -38,6 +38,7 @@ class ToolController(
             }
             try {
                 execution.join(hardTimeout.inWholeMilliseconds)
+                execution.interrupt()
             } catch (e: Throwable) {
                 result = UnsuccessfulGenerationResult(e.stackTraceToString())
             }

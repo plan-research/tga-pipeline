@@ -32,11 +32,13 @@ interface TgaServer : AutoCloseable {
 }
 
 interface Tga2ToolConnection : AutoCloseable {
+    fun init(): String
     fun send(request: BenchmarkRequest)
     fun receive(): GenerationResult
 }
 
 interface Tool2TgaConnection : AutoCloseable {
+    fun init(name: String)
     fun receive(): BenchmarkRequest
     fun send(result: GenerationResult)
 }
