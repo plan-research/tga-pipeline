@@ -116,7 +116,7 @@ class JacocoCoverageProvider : CoverageProvider {
                 val branches = mutableMapOf<BranchId, Boolean>()
 
                 for (lineNumber in method.firstLine..method.lastLine) {
-                    val line = method.getLine(lineNumber - method.firstLine)
+                    val line = method.getLine(lineNumber)
 
                     val lineId = LineId(it.sourceFileName, lineNumber.toUInt())
                     lines[lineId] = when (line.status) {
