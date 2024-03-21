@@ -52,7 +52,14 @@ class KexCmdTool : TestGenerationTool {
             else -> emptyList()
         }
 
-        return TestSuite(testSrcPath, tests, listOf(kexHome.resolve("runtime-deps", "lib", "junit-4.13.2.jar")))
+        return TestSuite(
+            testSrcPath,
+            tests,
+            listOf(
+                kexHome.resolve("runtime-deps", "lib", "junit-4.13.2.jar"),
+                kexHome.resolve("runtime-deps", "lib", "hamcrest-core-1.3.jar")
+            )
+        )
     }
 
 }
