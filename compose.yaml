@@ -1,7 +1,7 @@
 services:
   runner:
     image: "abdullin/tga-runner:latest"
-    command: --args="-p 10000 -c /var/benchmarks/gitbug/benchmarks.json -t 120 -o /var/results --runs 10"
+    command: --args="-p 10000 -c /var/benchmarks/gitbug/benchmarks.json -t 120 -o /var/results --runs 1"
     networks:
       - shared-network
     volumes:

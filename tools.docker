@@ -15,10 +15,13 @@ RUN mkdir /var/tools
 # install kex
 USER root
 WORKDIR /var/tools
-RUN mkdir kex
+# RUN mkdir kex
+# WORKDIR /var/tools/kex
+# RUN wget https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip
+# RUN unzip kex-$KEX_VERSION.zip
+RUN git clone https://github.com/vorpal-research/kex.git
 WORKDIR /var/tools/kex
-RUN wget https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip
-RUN unzip kex-$KEX_VERSION.zip
+RUN mvn clean package
 ENV KEX_HOME=/var/tools/kex
 
 # install pipeline

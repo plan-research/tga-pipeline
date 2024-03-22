@@ -24,6 +24,7 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
+import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
 import java.lang.reflect.Array
@@ -59,7 +60,11 @@ class JacocoCoverageProvider : CoverageProvider {
         val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
         val classPath = benchmark.classPath + testSuite.dependencies
         val compiler = SystemJavaCompiler(classPath)
-        compiler.compile(allTests.values.toList(), compiledDir)
+        try {
+            compiler.compile(allTests.values.toList(), compiledDir)
+        } catch (e: Throwable) {
+            log.error(e)
+        }
 
         val runtime = LoggerRuntime()
         val classLoader = InstrumentingPathClassLoader(listOf(*classPath.toTypedArray(), compiledDir), setOf(benchmark.klass), runtime)
