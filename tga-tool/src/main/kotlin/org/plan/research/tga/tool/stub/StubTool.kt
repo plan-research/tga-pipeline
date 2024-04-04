@@ -8,12 +8,13 @@ import kotlin.time.Duration
 
 class StubTool : TestGenerationTool {
     override val name = "stub"
+    private lateinit var testDir: Path
 
     override fun init(src: Path, classPath: List<Path>) {
         log.debug("Initialized stub with {}, class path {}", src, classPath)
     }
 
-    override fun run(target: String, timeLimit: Duration, outputDirectory: Path): TestSuite {
+    override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
         log.debug(
             "Initialized stub with target {}, time limit {}, output directory {}",
             target,
@@ -21,10 +22,12 @@ class StubTool : TestGenerationTool {
             outputDirectory
         )
 
-        val testDir = outputDirectory.resolve("tests").also {
+        testDir = outputDirectory.resolve("tests").also {
             it.toFile().mkdirs()
         }
+    }
 
+    override fun report(): TestSuite {
         return TestSuite(testDir, emptyList(), emptyList())
     }
 }

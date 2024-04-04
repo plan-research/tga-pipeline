@@ -11,5 +11,7 @@ interface TestGenerationTool {
         classPath: List<Path>,
     )
 
-    fun run(target: String, timeLimit: Duration, outputDirectory: Path): TestSuite
+    fun run(target: String, timeLimit: Duration, outputDirectory: Path)
+
+    fun report(): TestSuite
 }

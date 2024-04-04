@@ -14,6 +14,7 @@ import kotlin.time.Duration
 
 class KexCmdTool : TestGenerationTool {
     override val name = "kex"
+    private lateinit var outputDirectory: Path
 
     private val kexHome = Paths.get(System.getenv("KEX_HOME"))
         ?: unreachable { log.error("No KEX_HOME environment variable") }
@@ -23,7 +24,9 @@ class KexCmdTool : TestGenerationTool {
         this.classPath = classPath
     }
 
-    override fun run(target: String, timeLimit: Duration, outputDirectory: Path): TestSuite {
+    override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
+        this.outputDirectory = outputDirectory
+        var process: Process? = null
         try {
             val kexProcessBuilder = ProcessBuilder(
                 "python3",
@@ -37,12 +40,16 @@ class KexCmdTool : TestGenerationTool {
             )
             log.debug("Starting Kex with command: {}", kexProcessBuilder.command())
 
-            val process = kexProcessBuilder.start()!!
+            process = kexProcessBuilder.start()!!
             process.waitFor()
         } catch (e: InterruptedException) {
             log.error("Kex was interrupted on target $target")
+        } finally {
+            process?.destroy()
         }
+    }
 
+    override fun report(): TestSuite {
         val testSrcPath = outputDirectory.resolve("tests")
         val tests = when {
             testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
@@ -51,7 +58,6 @@ class KexCmdTool : TestGenerationTool {
 
             else -> emptyList()
         }
-
         return TestSuite(
             testSrcPath,
             tests,
