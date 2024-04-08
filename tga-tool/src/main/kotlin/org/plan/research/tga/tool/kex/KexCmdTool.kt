@@ -12,7 +12,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.time.Duration
 
-class KexCmdTool : TestGenerationTool {
+class KexCmdTool(val args: List<String>) : TestGenerationTool {
     override val name = "kex"
     private lateinit var outputDirectory: Path
 
@@ -37,6 +37,7 @@ class KexCmdTool : TestGenerationTool {
                 "--output", outputDirectory.toString(),
                 "--option", "concolic:timeLimit:${timeLimit.inWholeSeconds}",
                 "--option", "kex:computeCoverage:false",
+                *args.toTypedArray()
             )
             log.debug("Starting Kex with command: {}", kexProcessBuilder.command())
 

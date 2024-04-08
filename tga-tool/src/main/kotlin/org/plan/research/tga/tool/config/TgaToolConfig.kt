@@ -27,6 +27,11 @@ class TgaToolConfig(args: Array<String>) : TgaConfig(options, args) {
                 Option("t", "tool", true, "tool name")
                     .also { it.isRequired = true }
             )
+
+            addOption(
+                Option(null, "toolArgs", true, "additional tool arguments")
+                    .also { it.isRequired = false }
+            )
         }
     }
 }

@@ -28,8 +28,9 @@ fun main(args: Array<String>) {
         connection
     }
 
+    val toolArgs = config.getCmdValue("toolArgs").orEmpty().split("\\s+".toRegex())
     val tool = when (val name = config.getCmdValue("tool")!!) {
-        "kex" -> KexCmdTool()
+        "kex" -> KexCmdTool(toolArgs)
         "stub" -> StubTool()
         else -> unreachable { log.error("Unknown tool name: $name") }
     }
