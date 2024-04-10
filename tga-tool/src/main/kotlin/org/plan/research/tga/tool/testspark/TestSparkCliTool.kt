@@ -95,21 +95,21 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         try {
             val processBuilder = ProcessBuilder(
                 "bash", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
-                "\"${src.toAbsolutePath()}\"", // path to project root
-                "\"src/main/java/${
+                "${src.toAbsolutePath()}", // path to project root
+                "src/main/java/${
                     target.replace(
                         '.',
                         '/'
                     )
-                }.java\"", // path to target source file relative to the project root
-                "\"$target\"", // fully qualified name of the target
-                "\"${classPath.joinToString(File.pathSeparator!!)}\"", // class path
-                "\"${argParser.getCmdValue("llm", DEFAULT_LLM)}\"", // LLM to use
-                "\"${argParser.getCmdValue("llmToken")!!}\"", // token to access chosen LLM
-                "\"${promptFile.toAbsolutePath()}\"", // path to prompt file
-                "\"${outputDirectory.toAbsolutePath()}\"", // path to output directory
-                "\"${argParser.getCmdValue("spaceUser")!!}\"", // Space username
-                "\"${argParser.getCmdValue("spaceToken")!!}\"", // token for accessing Space
+                }.java", // path to target source file relative to the project root
+                target, // fully qualified name of the target
+                classPath.joinToString(File.pathSeparator!!), // class path
+                argParser.getCmdValue("llm", DEFAULT_LLM), // LLM to use
+                argParser.getCmdValue("llmToken")!!, // token to access chosen LLM
+                "${promptFile.toAbsolutePath()}", // path to prompt file
+                "${outputDirectory.toAbsolutePath()}", // path to output directory
+                argParser.getCmdValue("spaceUser")!!, // Space username
+                argParser.getCmdValue("spaceToken")!!, // token for accessing Space
             )
             log.debug("Starting TestSpark with command: {}", processBuilder.command())
 
@@ -118,6 +118,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("TestSpark was interrupted on target $target")
         } finally {
+            log.debug(process?.inputStream?.bufferedReader()?.readText())
             process?.destroy()
         }
     }
