@@ -55,6 +55,7 @@ class TgaRunner(
 
             for (run in 0 until n) {
                 val runDir = baseDir.resolve("$run")
+                val resultFile = runDir.resolve("results.json")
 
                 val results = buildSet {
                     for (benchmark in benchmarkProvider.benchmarks()) {
@@ -79,10 +80,10 @@ class TgaRunner(
                         log.debug(coverage)
 
                         add(ToolResults(benchmark, coverage, metrics))
+                        resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(this))
                     }
                 }
 
-                val resultFile = runDir.resolve("results.json")
                 resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(results))
             }
 
