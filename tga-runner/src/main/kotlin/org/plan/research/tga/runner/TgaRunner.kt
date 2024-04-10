@@ -60,7 +60,7 @@ class TgaRunner(
                 }
 
                 val results = buildSet {
-                    for (benchmark in benchmarkProvider.benchmarks().take(2)) {
+                    for (benchmark in benchmarkProvider.benchmarks()) {
                         log.debug("Running on benchmark ${benchmark.buildId}")
 
                         val benchmarkOutput = runDir.resolve(benchmark.buildId)
