@@ -4,7 +4,7 @@ import org.apache.commons.cli.Option
 import org.plan.research.tga.core.config.TgaConfig
 import org.plan.research.tga.core.config.buildOptions
 
-class TgaToolConfig(args: Array<String>) : TgaConfig(options, args) {
+class TgaToolConfig(args: Array<String>) : TgaConfig("tga-tool", options, args) {
     companion object {
         private val options = buildOptions {
             addOption(

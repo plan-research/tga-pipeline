@@ -5,7 +5,7 @@ import org.plan.research.tga.core.config.TgaConfig
 import org.plan.research.tga.core.config.buildOptions
 
 
-class TgaRunnerConfig(args: Array<String>) : TgaConfig(options, args) {
+class TgaRunnerConfig(args: Array<String>) : TgaConfig("tga-runner", options, args) {
     companion object {
         private val options = buildOptions {
             addOption(

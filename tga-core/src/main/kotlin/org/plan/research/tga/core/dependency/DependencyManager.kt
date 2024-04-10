@@ -1,21 +1,18 @@
 package org.plan.research.tga.core.dependency
 
+import dev.jeka.core.api.depmanagement.JkDependencySet
+import dev.jeka.core.api.depmanagement.JkRepo
+import dev.jeka.core.api.depmanagement.resolution.JkDependencyResolver
+import dev.jeka.core.api.depmanagement.resolution.JkResolutionParameters
 import java.nio.file.Path
-import java.nio.file.Paths
 
 class DependencyManager {
-    private val loadedDependencies = preloadedDependencies.toMutableMap()
-
-    companion object {
-        private val preloadedDependencies = mutableMapOf(
-            Dependency("org.junit", "junit", "4.13.2") to listOf(
-                Paths.get("libs/hamcrest-core-1.3.jar"),
-                Paths.get("libs/junit-4.13.2.jar"),
-            )
-        )
-    }
+    private val loadedDependencies = mutableMapOf<Dependency, List<Path>>()
 
     fun findDependency(dependency: Dependency): List<Path> = loadedDependencies.getOrPut(dependency) {
-        TODO()
+        val deps = JkDependencySet.of()
+            .and("${dependency.groupId}:${dependency.artifactId}:${dependency.version}")
+        val resolver = JkDependencyResolver.of(JkRepo.ofMavenCentral());
+        resolver.resolve(deps, JkResolutionParameters.of()).files.entries
     }
 }

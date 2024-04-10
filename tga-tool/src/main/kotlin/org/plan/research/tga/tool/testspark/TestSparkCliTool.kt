@@ -1,21 +1,14 @@
 package org.plan.research.tga.tool.testspark
 
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
-import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
+import org.plan.research.tga.core.config.TgaConfig
 import org.plan.research.tga.core.config.buildOptions
 import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
-import org.vorpal.research.kthelper.assert.exit
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
 import java.io.File
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -23,13 +16,9 @@ import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
 
-private class TestSparkCliParser(args: List<String>) {
-    private val cmd: CommandLine
-    private val options: Options
-
-    init {
-        val parser = DefaultParser()
-        options = buildOptions {
+private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", options, args.toTypedArray()) {
+    companion object {
+        val options = buildOptions {
             addOption(
                 Option("h", "help", false, "print this help and quit").also {
                     it.isRequired = false
@@ -61,38 +50,7 @@ private class TestSparkCliParser(args: List<String>) {
                     .also { it.isRequired = true }
             )
         }
-
-        cmd = try {
-            parser.parse(options, args.toTypedArray())
-        } catch (e: ParseException) {
-            exit<CommandLine> {
-                System.err.println("Error parsing command line arguments: ${e.message}")
-                printHelp()
-            }
-        }
-
-        getCmdValue("help")?.let {
-            exit {
-                printHelp()
-            }
-        }
     }
-
-    fun getCmdValue(name: String): String? = cmd.getOptionValue(name)
-    fun getCmdValue(name: String, default: String) = getCmdValue(name) ?: default
-
-    fun printHelp() {
-        println(helpString)
-    }
-
-    private val helpString: String
-        get() {
-            val helpFormatter = HelpFormatter()
-            val sw = StringWriter()
-            val pw = PrintWriter(sw)
-            helpFormatter.printHelp(pw, 80, "org/plan/research/tga/runner", null, options, 1, 3, null)
-            return sw.toString()
-        }
 }
 
 class TestSparkCliTool(args: List<String>) : TestGenerationTool {

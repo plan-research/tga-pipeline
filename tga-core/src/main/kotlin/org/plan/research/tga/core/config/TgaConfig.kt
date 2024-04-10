@@ -15,7 +15,7 @@ fun buildOptions(builderAction: Options.() -> Unit): Options {
     return options
 }
 
-abstract class TgaConfig(val options: Options, args: Array<String>) {
+abstract class TgaConfig(val name: String, val options: Options, args: Array<String>) {
     private val cmd: CommandLine
 
     init {
@@ -49,7 +49,7 @@ abstract class TgaConfig(val options: Options, args: Array<String>) {
             val helpFormatter = HelpFormatter()
             val sw = StringWriter()
             val pw = PrintWriter(sw)
-            helpFormatter.printHelp(pw, 80, "org/plan/research/tga/runner", null, options, 1, 3, null)
+            helpFormatter.printHelp(pw, 80, name, null, options, 1, 3, null)
             return sw.toString()
         }
 }

@@ -55,7 +55,9 @@ class TgaRunner(
 
             for (run in 0 until n) {
                 val runDir = baseDir.resolve("$run")
-                val resultFile = runDir.resolve("results.json")
+                val resultFile = runDir.resolve("results.json").also {
+                    it.parent?.toFile()?.mkdirs()
+                }
 
                 val results = buildSet {
                     for (benchmark in benchmarkProvider.benchmarks()) {
