@@ -148,12 +148,12 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                 "\"${TEST_SPARK_SPACE_USER}\"", // Space username
                 "\"${TEST_SPARK_SPACE_TOKEN}\"", // token for accessing Space
             )
-            log.debug("Starting Kex with command: {}", processBuilder.command())
+            log.debug("Starting TestSpark with command: {}", processBuilder.command())
 
             process = processBuilder.start()!!
             process.waitFor()
         } catch (e: InterruptedException) {
-            log.error("Kex was interrupted on target $target")
+            log.error("TestSpark was interrupted on target $target")
         } finally {
             process?.destroy()
         }
