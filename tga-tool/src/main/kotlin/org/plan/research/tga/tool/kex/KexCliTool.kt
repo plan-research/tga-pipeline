@@ -12,14 +12,17 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.time.Duration
 
-class KexCmdTool(val args: List<String>) : TestGenerationTool {
+class KexCliTool(private val args: List<String>) : TestGenerationTool {
     override val name = "kex"
-    private lateinit var outputDirectory: Path
 
-    private val kexHome = Paths.get(System.getenv("KEX_HOME"))
-        ?: unreachable { log.error("No KEX_HOME environment variable") }
+    companion object {
+        private val KEX_HOME = Paths.get(System.getenv("KEX_HOME"))
+            ?: unreachable { log.error("No \$KEX_HOME environment variable") }
+    }
 
     private lateinit var classPath: List<Path>
+    private lateinit var outputDirectory: Path
+
     override fun init(src: Path, classPath: List<Path>) {
         this.classPath = classPath
     }
@@ -30,7 +33,7 @@ class KexCmdTool(val args: List<String>) : TestGenerationTool {
         try {
             val kexProcessBuilder = ProcessBuilder(
                 "python3",
-                "${kexHome.resolve("kex.py")}",
+                "${KEX_HOME.resolve("kex.py")}",
                 "--classpath", classPath.joinToString(File.pathSeparator!!),
                 "--target", target,
                 "--mode", "concolic",
@@ -67,5 +70,4 @@ class KexCmdTool(val args: List<String>) : TestGenerationTool {
             )
         )
     }
-
 }

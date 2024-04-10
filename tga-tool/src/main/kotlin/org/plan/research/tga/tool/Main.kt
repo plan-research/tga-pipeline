@@ -2,7 +2,7 @@ package org.plan.research.tga.tool
 
 import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.plan.research.tga.tool.config.TgaToolConfig
-import org.plan.research.tga.tool.kex.KexCmdTool
+import org.plan.research.tga.tool.kex.KexCliTool
 import org.plan.research.tga.tool.protocol.tcp.TcpTool2TgaConnection
 import org.plan.research.tga.tool.stub.StubTool
 import org.vorpal.research.kthelper.assert.unreachable
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 
     val toolArgs = config.getCmdValue("toolArgs").orEmpty().split("\\s+".toRegex())
     val tool = when (val name = config.getCmdValue("tool")!!) {
-        "kex" -> KexCmdTool(toolArgs)
+        "kex" -> KexCliTool(toolArgs)
         "stub" -> StubTool()
         else -> unreachable { log.error("Unknown tool name: $name") }
     }

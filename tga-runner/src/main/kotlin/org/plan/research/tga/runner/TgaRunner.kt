@@ -38,6 +38,7 @@ class TgaRunner(
     fun run() {
         val dependencyManager = DependencyManager()
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
+        // TODO: run coverage provider in a separate process
         val coverageProvider = JacocoCoverageProvider(dependencyManager)
         val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 

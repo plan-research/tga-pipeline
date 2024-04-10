@@ -6,8 +6,11 @@ all: runner tools
 benchmarks:
 	docker build -f dockerfiles/benchmarks.docker -t abdullin/tga-benchmarks:latest .
 
-tools: benchmarks
+pipeline: benchmarks
+	docker build -f dockerfiles/pipeline.docker -t abdullin/tga-tools:latest . --no-cache
+
+tools: pipeline
 	docker build -f dockerfiles/tools.docker -t abdullin/tga-tools:latest . --no-cache
 
-runner: benchmarks
+runner: pipeline
 	docker build -f dockerfiles/runner.docker -t abdullin/tga-runner:latest . --no-cache
