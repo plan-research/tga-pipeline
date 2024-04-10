@@ -43,12 +43,12 @@ private class TestSparkCliParser(args: List<String>) {
 
             addOption(
                 Option(null, "llmToken", true, "token for LLM access")
-                    .also { it.isRequired = true }
+                    .also { it.isRequired = false }
             )
 
             addOption(
                 Option(null, "prompt", true, "prompt to use for test generation")
-                    .also { it.isRequired = true }
+                    .also { it.isRequired = false }
             )
 
             addOption(
