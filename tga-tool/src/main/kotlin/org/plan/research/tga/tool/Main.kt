@@ -5,6 +5,7 @@ import org.plan.research.tga.tool.config.TgaToolConfig
 import org.plan.research.tga.tool.kex.KexCliTool
 import org.plan.research.tga.tool.protocol.tcp.TcpTool2TgaConnection
 import org.plan.research.tga.tool.stub.StubTool
+import org.plan.research.tga.tool.testspark.TestSparkCliTool
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
 
@@ -31,6 +32,7 @@ fun main(args: Array<String>) {
     val toolArgs = config.getCmdValue("toolArgs").orEmpty().split("\\s+".toRegex())
     val tool = when (val name = config.getCmdValue("tool")!!) {
         "kex" -> KexCliTool(toolArgs)
+        "TestSpark" -> TestSparkCliTool(toolArgs)
         "stub" -> StubTool()
         else -> unreachable { log.error("Unknown tool name: $name") }
     }
