@@ -28,7 +28,7 @@ RUN git clone https://github.com/JetBrains-Research/TestSpark.git
 WORKDIR /var/tools/TestSpark
 RUN git switch pderakhshanfar/improvements/headless-mode
 ## try to prebuild TestSpark
-RUN gradle runide || true
+RUN ./gradlew runide || true
 RUN bash runTestSpark.sh || true
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
 

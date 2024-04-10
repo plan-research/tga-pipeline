@@ -23,7 +23,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
 
-private class TestSparkCliParser(val args: List<String>) {
+private class TestSparkCliParser(args: List<String>) {
     private val cmd: CommandLine
     private val options: Options
 
@@ -42,13 +42,23 @@ private class TestSparkCliParser(val args: List<String>) {
             )
 
             addOption(
+                Option(null, "llmToken", true, "token for LLM access")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
                 Option(null, "prompt", true, "prompt to use for test generation")
                     .also { it.isRequired = true }
             )
 
             addOption(
-                Option(null, "toolArgs", true, "additional tool arguments")
-                    .also { it.isRequired = false }
+                Option(null, "spaceUser", true, "Space user name")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option(null, "spaceToken", true, "token for accessing Space")
+                    .also { it.isRequired = true }
             )
         }
 
@@ -96,17 +106,12 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
     companion object {
         private val TEST_SPARK_HOME: Path = Paths.get(System.getenv("TEST_SPARK_HOME"))
             ?: unreachable { log.error("No \$TEST_SPARK_HOME environment variable") }
-        private val TEST_SPARK_LLM_TOKEN: String = System.getenv("TEST_SPARK_LLM_TOKEN")
-            ?: unreachable { log.error("No \$TEST_SPARK_LLM_TOKEN environment variable") }
-        private val TEST_SPARK_SPACE_USER: String = System.getenv("TEST_SPARK_SPACE_USER")
-            ?: unreachable { log.error("No \$TEST_SPARK_SPACE_USER environment variable") }
-        private val TEST_SPARK_SPACE_TOKEN: String = System.getenv("TEST_SPARK_SPACE_TOKEN")
-            ?: unreachable { log.error("No \$TEST_SPARK_SPACE_TOKEN environment variable") }
 
         private val DEFAULT_LLM = "GPT-4"
         private val DEFAULT_PROMPT =
             "Generate unit tests in \$LANGUAGE for \$NAME to achieve 100% line coverage for this class.\\n" +
-                    "Dont use @Before and @After test methods.\\nMake tests as atomic as possible.\\n" +
+                    "Dont use @Before and @After test methods.\\n" +
+                    "Make tests as atomic as possible.\\n" +
                     "All tests should be for \$TESTING_PLATFORM.\\n" +
                     "In case of mocking, use \$MOCKING_FRAMEWORK. But, do not use mocking for all tests.\\n" +
                     "Name all methods according to the template - [MethodUnderTest][Scenario]Test, and use only English letters.\\n" +
@@ -142,11 +147,11 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                 "\"$target\"", // fully qualified name of the target
                 "\"${classPath.joinToString(File.pathSeparator!!)}\"", // class path
                 "\"${argParser.getCmdValue("llm") ?: DEFAULT_LLM}\"", // LLM to use
-                "\"$TEST_SPARK_LLM_TOKEN\"", // token to access chosen LLM
+                "\"${argParser.getCmdValue("llmToken")!!}\"", // token to access chosen LLM
                 "\"${promptFile.toAbsolutePath()}\"", // path to prompt file
                 "\"${outputDirectory.toAbsolutePath()}\"", // path to output directory
-                "\"${TEST_SPARK_SPACE_USER}\"", // Space username
-                "\"${TEST_SPARK_SPACE_TOKEN}\"", // token for accessing Space
+                "\"${argParser.getCmdValue("spaceUser")!!}\"", // Space username
+                "\"${argParser.getCmdValue("spaceToken")!!}\"", // token for accessing Space
             )
             log.debug("Starting Kex with command: {}", processBuilder.command())
 

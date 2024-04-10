@@ -7,7 +7,7 @@ services:
     volumes:
       - ./results:/var/results
 
-  tool:
+  tools:
     image: "abdullin/tga-tools:latest"
     command: --args="--ip runner --port 10000 --tool kex"
     networks:
