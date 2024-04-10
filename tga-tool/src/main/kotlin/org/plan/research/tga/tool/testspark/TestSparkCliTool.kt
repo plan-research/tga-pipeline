@@ -123,7 +123,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
     }
 
     override fun report(): TestSuite {
-        val testSrcPath = outputDirectory.resolve("tests")
+        val testSrcPath = outputDirectory
         val tests = when {
             testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
                 .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
