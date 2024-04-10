@@ -29,7 +29,6 @@ WORKDIR /var/tools/TestSpark
 RUN git switch pderakhshanfar/improvements/headless-mode
 ## try to prebuild TestSpark
 RUN ./gradlew runide || true
-RUN bash runTestSpark.sh || true
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
 
 # run tool
