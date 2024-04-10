@@ -20,6 +20,7 @@ import org.plan.research.tga.core.coverage.InstructionId
 import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodCoverageInfo
 import org.plan.research.tga.core.coverage.MethodId
+import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kfg.Package
@@ -48,7 +49,9 @@ fun ExecutionDataStore.deepCopy(): ExecutionDataStore {
     return executionDataCopy
 }
 
-class JacocoCoverageProvider : CoverageProvider {
+class JacocoCoverageProvider(
+    private val dependencyManager: DependencyManager
+) : CoverageProvider {
     private val tgaTempDir = Files.createTempDirectory("tga-runner").also {
         deleteOnExit(it)
     }.toAbsolutePath()
@@ -58,7 +61,7 @@ class JacocoCoverageProvider : CoverageProvider {
 
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
         val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-        val classPath = benchmark.classPath + testSuite.dependencies
+        val classPath = benchmark.classPath + testSuite.dependencies.flatMap { dependencyManager.findDependency(it) }
         val compiler = SystemJavaCompiler(classPath)
         try {
             compiler.compile(allTests.values.toList(), compiledDir)
@@ -67,7 +70,11 @@ class JacocoCoverageProvider : CoverageProvider {
         }
 
         val runtime = LoggerRuntime()
-        val classLoader = InstrumentingPathClassLoader(listOf(*classPath.toTypedArray(), compiledDir), setOf(benchmark.klass), runtime)
+        val classLoader = InstrumentingPathClassLoader(
+            listOf(*classPath.toTypedArray(), compiledDir),
+            setOf(benchmark.klass),
+            runtime
+        )
 
         val datum = mutableMapOf<Path, ExecutionDataStore>()
         val data = RuntimeData()

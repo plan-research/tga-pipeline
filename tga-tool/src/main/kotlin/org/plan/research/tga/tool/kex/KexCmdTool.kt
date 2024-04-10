@@ -1,10 +1,10 @@
 package org.plan.research.tga.tool.kex
 
+import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
-import org.vorpal.research.kthelper.resolve
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -63,8 +63,7 @@ class KexCmdTool(val args: List<String>) : TestGenerationTool {
             testSrcPath,
             tests,
             listOf(
-                kexHome.resolve("runtime-deps", "lib", "junit-4.13.2.jar"),
-                kexHome.resolve("runtime-deps", "lib", "hamcrest-core-1.3.jar")
+                Dependency("org.junit", "junit", "4.13.2")
             )
         )
     }
