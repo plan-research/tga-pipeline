@@ -66,7 +66,7 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
             testSrcPath,
             tests,
             listOf(
-                Dependency("org.junit", "junit", "4.13.2")
+                Dependency("junit", "junit", "4.13.2")
             )
         )
     }

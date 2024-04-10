@@ -135,7 +135,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             testSrcPath,
             tests,
             listOf(
-                Dependency("org.junit", "junit", "4.13.2"),
+                Dependency("junit", "junit", "4.13.2"),
                 Dependency("org.mockito", "mockito-junit-jupiter", "5.11.0")
             )
         )
