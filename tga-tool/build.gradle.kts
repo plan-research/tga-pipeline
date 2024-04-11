@@ -1,6 +1,5 @@
 plugins {
     id("org.plan.research.tga-pipeline-base")
-    application
 }
 
 dependencies {
@@ -8,6 +7,7 @@ dependencies {
 }
 
 
-application {
+task<JavaExec>("run") {
+    classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.plan.research.tga.tool.MainKt")
 }

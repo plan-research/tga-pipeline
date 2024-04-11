@@ -6,11 +6,10 @@ import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
-import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
 import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
-import org.plan.research.tga.runner.coverage.jacoco.JacocoCoverageProvider
+import org.plan.research.tga.runner.coverage.ExternalCoverageProvider
 import org.plan.research.tga.runner.metrics.ClassMetrics
 import org.plan.research.tga.runner.metrics.MetricsProvider
 import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
@@ -19,6 +18,7 @@ import org.vorpal.research.kthelper.logging.log
 import java.nio.file.Path
 import kotlin.io.path.writeText
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 
 @Serializable
@@ -36,10 +36,8 @@ class TgaRunner(
     private val n: Int,
 ) {
     fun run() {
-        val dependencyManager = DependencyManager()
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
-        // TODO: run coverage provider in a separate process
-        val coverageProvider = JacocoCoverageProvider(dependencyManager)
+        val coverageProvider = ExternalCoverageProvider(10.seconds)
         val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 
         val server = TcpTgaServer(serverPort)

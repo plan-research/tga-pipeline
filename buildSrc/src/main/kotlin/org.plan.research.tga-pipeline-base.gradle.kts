@@ -31,3 +31,10 @@ tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("junit.jupiter.execution.parallel.enabled", true)
 }
+
+tasks.withType<JavaExec> {
+    systemProperties(
+        "logback.statusListenerClass" to "ch.qos.logback.core.status.NopStatusListener",
+        "tga.pipeline.home" to project.parent!!.projectDir.toPath().toAbsolutePath()
+    )
+}

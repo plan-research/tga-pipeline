@@ -1,5 +1,4 @@
 plugins {
-    application
     id("org.plan.research.tga-pipeline-base")
     kotlin("plugin.serialization") version "1.9.20"
 }
@@ -10,6 +9,12 @@ dependencies {
 }
 
 
-application {
+task<JavaExec>("run") {
+    classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("org.plan.research.tga.runner.MainKt")
+}
+
+task<JavaExec>("runCoverage") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("org.plan.research.tga.runner.coverage.jacoco.MainKt")
 }
