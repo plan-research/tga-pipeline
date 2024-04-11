@@ -14,8 +14,8 @@ import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
 import org.plan.research.tga.core.coverage.ClassId
-import org.plan.research.tga.core.coverage.CoverageInfo
 import org.plan.research.tga.core.coverage.CoverageProvider
+import org.plan.research.tga.core.coverage.ExtendedCoverageInfo
 import org.plan.research.tga.core.coverage.InstructionId
 import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodCoverageInfo
@@ -155,9 +155,9 @@ class JacocoCoverageProvider(
 
                 MethodCoverageInfo(
                     MethodId(method.name, method.desc),
-                    CoverageInfo(instructions),
-                    CoverageInfo(lines),
-                    CoverageInfo(branches)
+                    ExtendedCoverageInfo(instructions),
+                    ExtendedCoverageInfo(lines),
+                    ExtendedCoverageInfo(branches)
                 )
             }
         }.firstOrNull() ?: return ClassCoverageInfo(ClassId(benchmark.klass), emptySet())

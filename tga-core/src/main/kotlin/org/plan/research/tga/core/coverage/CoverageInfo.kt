@@ -1,14 +1,31 @@
 package org.plan.research.tga.core.coverage
 
+import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CoverageInfo<T : Any>(
+sealed class CoverageInfo<T: Any> {
+    abstract val covered: UInt
+    abstract val total: UInt
+
+    @Required
+    val ratio: Double get() = covered.toDouble() / total.toDouble()
+}
+
+@Serializable
+data class BasicCoverageInfo<T : Any>(
+    override val covered: UInt,
+    override val total: UInt,
+) : CoverageInfo<T>()
+
+@Serializable
+data class ExtendedCoverageInfo<T : Any>(
     val coverage: Map<T, Boolean>
-) {
-    val covered: UInt = coverage.count { it.value }.toUInt()
-    val total: UInt = coverage.size.toUInt()
-    val ratio = covered.toDouble() / total.toDouble()
+) : CoverageInfo<T>() {
+    @Required
+    override val covered: UInt = coverage.count { it.value }.toUInt()
+    @Required
+    override val total: UInt = coverage.size.toUInt()
 }
 
 @Serializable
@@ -41,9 +58,9 @@ interface CodeCoverageInfo {
 @Serializable
 data class MethodCoverageInfo(
     val methodId: MethodId,
-    override val instructions: CoverageInfo<InstructionId>,
-    override val lines: CoverageInfo<LineId>,
-    override val branches: CoverageInfo<BranchId>
+    override val instructions: ExtendedCoverageInfo<InstructionId>,
+    override val lines: ExtendedCoverageInfo<LineId>,
+    override val branches: ExtendedCoverageInfo<BranchId>
 ) : CodeCoverageInfo {
     override fun toString(): String = "Method $methodId coverage: ${print()}"
 }
@@ -53,18 +70,18 @@ data class ClassCoverageInfo(
     val klassId: ClassId,
     val methods: Set<MethodCoverageInfo>
 ) : CodeCoverageInfo {
-    override val instructions = CoverageInfo<InstructionId>(methods.fold(mutableMapOf()) { a, b ->
-        a.putAll(b.instructions.coverage)
-        a
-    })
-    override val lines = CoverageInfo<LineId>(methods.fold(mutableMapOf()) { a, b ->
-        a.putAll(b.lines.coverage)
-        a
-    })
-    override val branches = CoverageInfo<BranchId>(methods.fold(mutableMapOf()) { a, b ->
-        a.putAll(b.branches.coverage)
-        a
-    })
+    @Required
+    override val instructions = BasicCoverageInfo<InstructionId>(
+        methods.sumOf { it.instructions.covered }, methods.sumOf { it.instructions.total }
+    )
+    @Required
+    override val lines = BasicCoverageInfo<LineId>(
+        methods.sumOf { it.lines.covered }, methods.sumOf { it.lines.total }
+    )
+    @Required
+    override val branches = BasicCoverageInfo<BranchId>(
+        methods.sumOf { it.branches.covered }, methods.sumOf { it.branches.total }
+    )
 
     override fun toString(): String = "Class $klassId coverage: ${print()}"
 }
