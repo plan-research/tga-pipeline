@@ -57,5 +57,6 @@ fun main(args: Array<String>) {
     val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
 
     val outputFile = Paths.get(config.getCmdValue("output")!!)
+    outputFile.parent.toFile().mkdirs()
     outputFile.writeText(serializer.encodeToString(coverage))
 }
