@@ -46,3 +46,4 @@ bin/
 
 benchmarks/
 /.idea/
+/test-spark-config.env
