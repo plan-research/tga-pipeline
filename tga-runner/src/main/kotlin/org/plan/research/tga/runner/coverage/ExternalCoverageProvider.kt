@@ -23,9 +23,11 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
         val benchmarkStr = json.encodeToString(benchmark)
         val testSuiteStr = json.encodeToString(testSuite)
         val benchmarkPath = testSuite.testSrcPath.resolve("benchmark.json").also {
+            it.parent.toFile().mkdirs()
             it.writeText(benchmarkStr)
         }
         val testSuitePath = testSuite.testSrcPath.resolve("testSuite.json").also {
+            it.parent.toFile().mkdirs()
             it.writeText(testSuiteStr)
         }
         val output = testSuite.testSrcPath.resolve("coverage.json")
