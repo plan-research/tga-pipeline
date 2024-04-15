@@ -143,14 +143,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         val testSrcPath = outputDirectory
         val tests = getCompilableTestCases(testSrcPath)
         log.debug("compilable tests: {}", tests)
-        /*
-        val tests = when {
-            testSrcPath.exists() -> Files.walk(testSrcPath)
-                .filter { it.fileName.toString().endsWith(".java") }
-                .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
-                .toList()
-            else -> emptyList()
-        }*/
+        
         return TestSuite(
             testSrcPath,
             tests,
