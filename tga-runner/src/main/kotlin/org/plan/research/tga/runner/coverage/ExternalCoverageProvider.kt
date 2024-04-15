@@ -20,23 +20,31 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
     private val json = getJsonSerializer(pretty = false)
 
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
-        val benchmarkStr = json.encodeToString(benchmark)
-        val testSuiteStr = json.encodeToString(testSuite)
-        val benchmarkPath = testSuite.testSrcPath.resolve("benchmark.json").also {
-            it.parent.toFile().mkdirs()
-            it.writeText(benchmarkStr)
-        }
-        val testSuitePath = testSuite.testSrcPath.resolve("testSuite.json").also {
-            it.parent.toFile().mkdirs()
-            it.writeText(testSuiteStr)
-        }
-        val output = testSuite.testSrcPath.resolve("coverage.json")
+        try {
+            val benchmarkStr = json.encodeToString(benchmark)
+            val testSuiteStr = json.encodeToString(testSuite)
+            val benchmarkPath = testSuite.testSrcPath.resolve("benchmark.json").also {
+                it.parent.toFile().mkdirs()
+                it.writeText(benchmarkStr)
+            }
+            val testSuitePath = testSuite.testSrcPath.resolve("testSuite.json").also {
+                it.parent.toFile().mkdirs()
+                it.writeText(testSuiteStr)
+            }
+            val output = testSuite.testSrcPath.resolve("coverage.json")
 
-        runExternalCoverage(benchmarkPath, testSuitePath, output)
+            runExternalCoverage(benchmarkPath, testSuitePath, output)
 
-        return when {
-            output.exists() -> json.decodeFromString<ClassCoverageInfo>(output.readText())
-            else -> ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
+            println("'coverage.json' exists: ${output.exists()}")
+
+            return when {
+                output.exists() -> json.decodeFromString<ClassCoverageInfo>(output.readText())
+                else -> ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
+            }
+        }
+        catch (err: Exception) {
+            log.error("Execution of ExternalCoverageProvider.computeCoverage function failed due to the error: ${err.message}", err)
+            return ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
         }
     }
 
