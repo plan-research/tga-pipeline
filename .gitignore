@@ -47,3 +47,10 @@ bin/
 benchmarks/
 /.idea/
 /test-spark-config.env
+
+venv/
+gitbug-projects/
+TestSpark/
+artifacts/
+gitbug-java/
+research/

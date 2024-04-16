@@ -8,6 +8,7 @@ import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.resolve
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -15,6 +16,10 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
+import java.nio.charset.StandardCharsets
+import kotlin.io.path.absolutePathString
+import java.util.Locale
+
 
 private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", options, args.toTypedArray()) {
     companion object {
@@ -114,7 +119,9 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             log.debug("Starting TestSpark with command: {}", processBuilder.command())
 
             process = processBuilder.start()!!
+            log.debug("Waiting for the TestSpark process...")
             process.waitFor()
+            log.debug("TestSpark process has merged")
         } catch (e: InterruptedException) {
             log.error("TestSpark was interrupted on target $target")
         } finally {
@@ -124,14 +131,19 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
     }
 
     override fun report(): TestSuite {
+        /**
+         * TestSpark may generate non-compilable test cases together with those that compile (99% it is the case!),
+         * thus it is important to sieve out the non-compilable test cases,
+         * since thereafter the pipeline tries to compile the set of provided test files:
+         * if any of them is non-compilable the coverage may not be generated.
+         *
+         * TestSpark insures that the test suite file named `GeneratedTest.java` will always contain only
+         * compilable test cases, thus it is safe to use it in order to get a set of compilable test cases.
+         */
         val testSrcPath = outputDirectory
-        val tests = when {
-            testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
-                .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
-                .toList()
-
-            else -> emptyList()
-        }
+        val tests = getCompilableTestCases(testSrcPath)
+        log.debug("compilable tests: {}", tests)
+        
         return TestSuite(
             testSrcPath,
             tests,
@@ -140,5 +152,79 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                 Dependency("org.mockito", "mockito-junit-jupiter", "5.11.0")
             )
         )
+    }
+
+    private fun getCompilableTestCases(testSrcPath: Path): List<String> {
+        val testSuiteFilepath = Files.walk(testSrcPath)
+            .filter { path -> path.toString().endsWith("GeneratedTest.java") }
+            .findFirst()
+
+        log.debug("testSrcPath='{}'", testSrcPath)
+        if (testSuiteFilepath.isPresent) {
+            log.debug("testSuiteFilepath={}", testSuiteFilepath.get())
+        }
+        else {
+            log.debug("testSuiteFilepath is empty")
+        }
+
+        if (testSuiteFilepath.isEmpty) {
+            /**
+             * If the test suite file not found them return all the files present in the directory
+             */
+            val tests = when {
+                testSrcPath.exists() -> Files.walk(testSrcPath)
+                    .filter { it.fileName.toString().endsWith(".java") }
+                    .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
+                    .toList()
+                else -> emptyList()
+            }
+            return tests
+        }
+        else {
+            val testSuiteFilename = testSuiteFilepath.get().fileName.toString().removeSuffix(".java")
+
+            val tests = when {
+                testSrcPath.exists() -> Files.walk(testSrcPath)
+                    .toList()
+                    .filter { it.fileName.toString().endsWith(".java") }
+                    .map {
+                        testSrcPath.relativize(it).toString()
+                            .replace('/', '.')
+                            .removeSuffix(".java")
+                    }
+                    /** filtering out non-compilable test cases **/
+                    .filter {
+                        /**
+                         * Current test is either a test suite or a test case which is contained inside the test suite.
+                         * Test suite is supposed to contain only compilable test cases, thus such a condition
+                         * insures compilability.
+                         */
+                        val testCaseName = it.split(".").last()
+                        log.debug("Current test case fully qualified name: '{}', filename: '{}'", it, testCaseName)
+                        (testCaseName == testSuiteFilename) || (isTestCaseUsedInTestSuite(testCaseName, testSuiteFilepath.get()))
+                    }
+                    .toList()
+
+                else -> emptyList()
+            }
+            val compilableTestCasesCount = Files.lines(testSuiteFilepath.get())
+                .filter { line -> line.contains("@Test") }
+                .count()
+            assert(tests.size.toLong() == 1 + compilableTestCasesCount)
+            return tests
+        }
+    }
+
+    private fun isTestCaseUsedInTestSuite(testCaseName: String, testSuiteFilepath: Path): Boolean {
+        // some test cases may start with an uppercase letter (e.g., `DBAppConstructorTest`)
+        val requiredFunctionNameCapitalized = testCaseName.removePrefix("Generated")
+        val requiredFunctionNameLowerCased = requiredFunctionNameCapitalized
+            .replaceFirstChar { if (it.isUpperCase()) it.lowercase(Locale.getDefault()) else it.toString() }
+
+        val result = Files.lines(testSuiteFilepath).anyMatch {
+            line -> line.contains(requiredFunctionNameCapitalized) ||
+                    line.contains(requiredFunctionNameLowerCased)
+        }
+        return result
     }
 }
