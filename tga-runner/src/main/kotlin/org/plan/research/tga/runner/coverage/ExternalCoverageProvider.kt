@@ -35,7 +35,7 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
 
             runExternalCoverage(benchmarkPath, testSuitePath, output)
 
-            println("'coverage.json' exists: ${output.exists()}")
+            log.debug("'coverage.json' exists: ${output.exists()}")
 
             return when {
                 output.exists() -> json.decodeFromString<ClassCoverageInfo>(output.readText())
