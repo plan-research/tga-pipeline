@@ -17,13 +17,21 @@ data class BenchmarkRequest(
 )
 
 @Serializable
-sealed interface GenerationResult
+sealed interface GenerationResult {
+    val generationTime: Duration
+}
 
 @Serializable
-data class SuccessfulGenerationResult(val testSuite: TestSuite) : GenerationResult
+data class SuccessfulGenerationResult(
+    val testSuite: TestSuite,
+    override val generationTime: Duration
+) : GenerationResult
 
 @Serializable
-data class UnsuccessfulGenerationResult(val reason: String) : GenerationResult
+data class UnsuccessfulGenerationResult(
+    val reason: String,
+    override val generationTime: Duration
+) : GenerationResult
 
 val protocolJson = getJsonSerializer(pretty = false)
 
