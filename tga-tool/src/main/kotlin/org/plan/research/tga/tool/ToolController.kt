@@ -6,7 +6,7 @@ import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.vorpal.research.kthelper.logging.log
 import kotlin.concurrent.thread
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.measureTime
 
 
 class ToolController(
@@ -26,22 +26,23 @@ class ToolController(
             tool.init(request.benchmark.root, request.benchmark.classPath)
 
             val hardTimeout = request.timeLimit * 2
-            val startTime = System.currentTimeMillis().milliseconds
-            val execution = thread(start = true) {
-                tool.run(
-                    request.benchmark.klass,
-                    request.timeLimit,
-                    request.outputDirectory
-                )
+            val generationTime = measureTime {
+                val execution = thread(start = true) {
+                    tool.run(
+                        request.benchmark.klass,
+                        request.timeLimit,
+                        request.outputDirectory
+                    )
+                }
+                try {
+                    execution.join(hardTimeout.inWholeMilliseconds)
+                    execution.interrupt()
+                } catch (_: Throwable) {
+                }
             }
-            try {
-                execution.join(hardTimeout.inWholeMilliseconds)
-                execution.interrupt()
-            } catch (_: Throwable) {}
-            val endTime = System.currentTimeMillis().milliseconds
             val result: GenerationResult = SuccessfulGenerationResult(
                 tool.report(),
-                endTime - startTime
+                generationTime
             )
 
             try {
