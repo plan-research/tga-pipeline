@@ -24,6 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 @Serializable
 data class ToolResults(
     val benchmark: Benchmark,
+    val generationTime: Duration, // <-- new field
     val coverage: ClassCoverageInfo,
     val metrics: ClassMetrics
 )
@@ -67,6 +68,7 @@ class TgaRunner(
 
                         val result = toolConnection.receive()
                         log.debug("Received an answer from tool")
+                        log.debug("Generation time is ${result.generationTime}")
                         if (result is UnsuccessfulGenerationResult) {
                             log.error("Unsuccessful run on benchmark ${benchmark.buildId}: $result")
                             continue
@@ -79,7 +81,7 @@ class TgaRunner(
                         val metrics = metricsProvider.getMetrics(benchmark)
                         log.debug(coverage)
 
-                        add(ToolResults(benchmark, coverage, metrics))
+                        add(ToolResults(benchmark, result.generationTime, coverage, metrics))
                         resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(this))
                     }
                 }
