@@ -9,7 +9,9 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -133,7 +135,16 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             )
             log.debug("Starting TestSpark with command: {}", processBuilder.command())
 
+            processBuilder.redirectErrorStream(true)
             process = processBuilder.start()!!
+
+            log.debug("Configure reader for the TestSpark process")
+
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            var line = ""
+            while (reader.readLine()?.also { line = it } != null) {
+                println(line)
+            }
             log.debug("Waiting for the TestSpark process...")
             process.waitFor()
             log.debug("TestSpark process has merged")
