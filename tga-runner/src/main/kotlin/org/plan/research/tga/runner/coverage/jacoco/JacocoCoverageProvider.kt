@@ -67,12 +67,12 @@ class JacocoCoverageProvider(
         val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
         // set of sources containing the single test suite
         val testSuiteOnly = if (testSuite.testSuiteQualifiedName.isNotEmpty()) {
-            testSuite.testSuiteQualifiedName.let { testSuiteName ->
-                listOf(testSuiteName).associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+                testSuite.testSuiteQualifiedName.let { testSuiteName ->
+                    listOf(testSuiteName).associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+                }
+            } else {
+                null
             }
-        } else {
-            null
-        }
         // set of sources containing only test cases without the test suite
         val testCasesOnly = if (testSuite.testCasesOnly.isNotEmpty()) {
                 testSuite.testCasesOnly.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
@@ -95,6 +95,8 @@ class JacocoCoverageProvider(
         val classPath = benchmark.classPath + testSuite.dependencies.flatMap { dependencyManager.findDependency(it) }
         val compiler = SystemJavaCompiler(classPath)
 
+        var selectedTestSet: Map<String, Path> = emptyMap()
+
         for ((index, attempt) in compilationAttempts.withIndex()) {
             log.debug(
                 "Attempting to compile {}-th set of tests: [\n{}\n\t]",
@@ -104,6 +106,7 @@ class JacocoCoverageProvider(
 
             try {
                 val result = compiler.compile(attempt.values.toList(), compiledDir)
+                selectedTestSet = attempt
                 log.debug("Compilation succeeded with result: {}", result)
                 break
             }
@@ -124,7 +127,7 @@ class JacocoCoverageProvider(
         val data = RuntimeData()
         runtime.startup(data)
 
-        for ((testName, testPath) in allTests) {
+        for ((testName, testPath) in selectedTestSet/*allTests*/) {
             try {
                 val testClass = classLoader.loadClass(testName)
                 val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
@@ -148,7 +151,7 @@ class JacocoCoverageProvider(
         runtime.shutdown()
 
         val mergedExecutionData = ExecutionDataStore()
-        for ((_, testPath) in allTests) {
+        for ((_, testPath) in selectedTestSet/*allTests*/) {
             val executions = datum[testPath] ?: continue
             for (d in executions.contents) {
                 mergedExecutionData.put(d)

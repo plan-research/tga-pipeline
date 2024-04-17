@@ -158,7 +158,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         val testSrcPath = outputDirectory
         val tests = getCompilableTestCases(testSrcPath)
         val testCasesOnly = tests.filter { test -> !test.endsWith("GeneratedTest") }
-        val testSuite = tests.first { test -> test.endsWith("GeneratedTest") }
+        val testSuite = tests.firstOrNull { test -> test.endsWith("GeneratedTest") } ?: ""
 
         log.debug("Compilable tests {}: {}", tests.size, tests)
         log.debug("Compilable test cases {}: {}", testCasesOnly.size, testCasesOnly)
