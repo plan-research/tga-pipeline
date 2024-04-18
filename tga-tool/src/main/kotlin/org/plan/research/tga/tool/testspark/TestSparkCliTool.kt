@@ -9,7 +9,9 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -41,7 +43,7 @@ private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", op
             )
 
             addOption(
-                Option(null, "prompt", true, "prompt to use for test generation")
+                Option(null, "prompt", true, "Filepath to the file with prompt to use for test generation")
                     .also { it.isRequired = false }
             )
 
@@ -63,7 +65,22 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
 
     private val argParser = TestSparkCliParser(args)
     private val promptFile = Files.createTempFile("prompt", ".txt")!!.also {
-        it.writeText(argParser.getCmdValue("prompt", DEFAULT_PROMPT))
+        val promptFilepath = argParser.getCmdValue("prompt")
+
+        val promptContent = if (promptFilepath == null) {
+                log.debug("No prompt filepath provided, using default prompt")
+                DEFAULT_PROMPT
+            }
+            else {
+                log.debug("Provided prompt filepath: '$promptFilepath'")
+                Files.readAllLines(Paths.get(promptFilepath), StandardCharsets.UTF_8)
+                     .joinToString(separator = "\n", postfix = "\n")
+            }
+
+        log.debug("promptContent: '$promptContent'")
+
+        log.debug("Temp file where prompt is saved: '${it.absolutePathString()}'")
+        it.writeText(promptContent)
     }
 
     companion object {
@@ -118,7 +135,16 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             )
             log.debug("Starting TestSpark with command: {}", processBuilder.command())
 
+            processBuilder.redirectErrorStream(true)
             process = processBuilder.start()!!
+
+            log.debug("Configure reader for the TestSpark process")
+
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            var line = ""
+            while (reader.readLine()?.also { line = it } != null) {
+                println(line)
+            }
             log.debug("Waiting for the TestSpark process...")
             process.waitFor()
             log.debug("TestSpark process has merged")
@@ -142,11 +168,18 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
          */
         val testSrcPath = outputDirectory
         val tests = getCompilableTestCases(testSrcPath)
-        log.debug("compilable tests: {}", tests)
-        
+        val testCasesOnly = tests.filter { test -> !test.endsWith("GeneratedTest") }
+        val testSuite = tests.firstOrNull { test -> test.endsWith("GeneratedTest") } ?: ""
+
+        log.debug("Compilable tests {}: {}", tests.size, tests)
+        log.debug("Compilable test cases {}: {}", testCasesOnly.size, testCasesOnly)
+        log.debug("Test suite: {}", testSuite)
+
         return TestSuite(
             testSrcPath,
             tests,
+            testCasesOnly,
+            testSuite,
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
                 Dependency("org.mockito", "mockito-junit-jupiter", "5.11.0")

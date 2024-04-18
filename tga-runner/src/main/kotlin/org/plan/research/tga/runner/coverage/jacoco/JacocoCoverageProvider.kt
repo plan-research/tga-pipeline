@@ -25,6 +25,7 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
+import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
@@ -60,13 +61,59 @@ class JacocoCoverageProvider(
     }
 
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
+        log.debug("Computing coverage: compiledDir='{}'", compiledDir)
+
+        // set of sources containing both test cases and the test suite
         val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+        // set of sources containing the single test suite
+        val testSuiteOnly = if (testSuite.testSuiteQualifiedName.isNotEmpty()) {
+                testSuite.testSuiteQualifiedName.let { testSuiteName ->
+                    listOf(testSuiteName).associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+                }
+            } else {
+                null
+            }
+        // set of sources containing only test cases without the test suite
+        val testCasesOnly = if (testSuite.testCasesOnly.isNotEmpty()) {
+                testSuite.testCasesOnly.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+            } else {
+                null
+            }
+
+        /**
+         * Provide up to 3 sets of source files suitable for compilation and
+         * try to collect coverage for at least one of them since all 3 represent
+         * the same coverage set:
+         * 1. All the compilable test cases and the test suite (test suite contains only compilable test cases).
+         * 2. All the compilable test case alone.
+         * 3. The test suite alone.
+         */
+        val compilationAttempts = mutableListOf(allTests)
+        testSuiteOnly?.also { compilationAttempts.add(it) }
+        testCasesOnly?.also { compilationAttempts.add(it) }
+
         val classPath = benchmark.classPath + testSuite.dependencies.flatMap { dependencyManager.findDependency(it) }
         val compiler = SystemJavaCompiler(classPath)
-        try {
-            compiler.compile(allTests.values.toList(), compiledDir)
-        } catch (e: Throwable) {
-            log.error(e)
+
+        var selectedTestSet: Map<String, Path> = emptyMap()
+
+        for ((index, attempt) in compilationAttempts.withIndex()) {
+            log.debug(
+                "Attempting to compile {}-th set of tests: [\n{}\n\t]",
+                index,
+                attempt.keys.joinToString(separator = "\n") { "\t\t$it," },
+            )
+
+            try {
+                val result = compiler.compile(attempt.values.toList(), compiledDir)
+                selectedTestSet = attempt
+                log.debug("Compilation succeeded with result: {}", result)
+                break
+            }
+            catch (e: Throwable) {
+                log.error(e)
+                // TODO: should compiledDir be cleaned up before next attempt?
+            }
         }
 
         val runtime = LoggerRuntime()
@@ -80,7 +127,7 @@ class JacocoCoverageProvider(
         val data = RuntimeData()
         runtime.startup(data)
 
-        for ((testName, testPath) in allTests) {
+        for ((testName, testPath) in selectedTestSet/*allTests*/) {
             try {
                 val testClass = classLoader.loadClass(testName)
                 val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
@@ -104,7 +151,7 @@ class JacocoCoverageProvider(
         runtime.shutdown()
 
         val mergedExecutionData = ExecutionDataStore()
-        for ((_, testPath) in allTests) {
+        for ((_, testPath) in selectedTestSet/*allTests*/) {
             val executions = datum[testPath] ?: continue
             for (d in executions.contents) {
                 mergedExecutionData.put(d)

@@ -10,5 +10,7 @@ data class TestSuite(
     @Serializable(with = PathAsStringSerializer::class)
     val testSrcPath: Path,
     val tests: List<String>,
+    val testCasesOnly: List<String>,
+    val testSuiteQualifiedName: String,
     val dependencies: List<Dependency>,
 )
