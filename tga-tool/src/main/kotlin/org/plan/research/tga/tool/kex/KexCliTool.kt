@@ -42,6 +42,8 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
                 "--option", "kex:computeCoverage:false",
                 *args.toTypedArray()
             )
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
             log.debug("Starting Kex with command: {}", kexProcessBuilder.command())
 
             process = kexProcessBuilder.start()!!

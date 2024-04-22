@@ -8,19 +8,19 @@ import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.logging.log
-import org.vorpal.research.kthelper.resolve
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.bufferedWriter
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
-import java.nio.charset.StandardCharsets
-import kotlin.io.path.absolutePathString
-import java.util.Locale
 
 
 private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", options, args.toTypedArray()) {
@@ -43,7 +43,7 @@ private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", op
             )
 
             addOption(
-                Option(null, "prompt", true, "Filepath to the file with prompt to use for test generation")
+                Option(null, "prompt", true, "path to a file with a prompt to use for test generation")
                     .also { it.isRequired = false }
             )
 
@@ -100,6 +100,8 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                     "Here are some information about other methods and classes used by the class under test. Only use them for creating objects, not your own ideas.\\n" +
                     "\$METHODS\\n" +
                     "\$POLYMORPHISM"
+
+        private const val TEST_SPARK_LOG = "test-spark.log"
     }
 
     private lateinit var src: Path
@@ -139,11 +141,13 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             process = processBuilder.start()!!
 
             log.debug("Configure reader for the TestSpark process")
-
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            var line = ""
-            while (reader.readLine()?.also { line = it } != null) {
-                println(line)
+            outputDirectory.resolve(TEST_SPARK_LOG).bufferedWriter().use { writer ->
+                val reader = BufferedReader(InputStreamReader(process.inputStream))
+                while (true) {
+                    val line = reader.readLine() ?: break
+                    writer.write(line)
+                    writer.write("\n")
+                }
             }
             log.debug("Waiting for the TestSpark process...")
             process.waitFor()
@@ -161,10 +165,10 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
          * TestSpark may generate non-compilable test cases together with those that compile (99% it is the case!),
          * thus it is important to sieve out the non-compilable test cases,
          * since thereafter the pipeline tries to compile the set of provided test files:
-         * if any of them is non-compilable the coverage may not be generated.
+         * if any of them is non-compilable, the coverage may not be generated.
          *
          * TestSpark insures that the test suite file named `GeneratedTest.java` will always contain only
-         * compilable test cases, thus it is safe to use it in order to get a set of compilable test cases.
+         * compilable test cases, thus it is safe to use it to get a set of compilable test cases.
          */
         val testSrcPath = outputDirectory
         val tests = getCompilableTestCases(testSrcPath)
@@ -202,7 +206,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
 
         if (testSuiteFilepath.isEmpty) {
             /**
-             * If the test suite file not found them return all the files present in the directory
+             * If the test suite file is not found, then return all the files present in the directory
              */
             val tests = when {
                 testSrcPath.exists() -> Files.walk(testSrcPath)
@@ -229,8 +233,8 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                     .filter {
                         /**
                          * Current test is either a test suite or a test case which is contained inside the test suite.
-                         * Test suite is supposed to contain only compilable test cases, thus such a condition
-                         * insures compilability.
+                         * The test suite is supposed to contain only compilable test cases, thus such a condition
+                         * insures successful compilation.
                          */
                         val testCaseName = it.split(".").last()
                         log.debug("Current test case fully qualified name: '{}', filename: '{}'", it, testCaseName)

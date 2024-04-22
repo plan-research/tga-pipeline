@@ -5,6 +5,7 @@ import org.plan.research.tga.core.benchmark.json.PathAsStringSerializer
 import org.plan.research.tga.core.dependency.Dependency
 import java.nio.file.Path
 
+// TODO: remove all the unnecessary fields after the fix of TestSpark
 @Serializable
 data class TestSuite(
     @Serializable(with = PathAsStringSerializer::class)

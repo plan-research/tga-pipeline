@@ -25,7 +25,6 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
-import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
@@ -60,6 +59,7 @@ class JacocoCoverageProvider(
         it.toFile().mkdirs()
     }
 
+    // TODO: rewrite this after fixing TestSpark
     override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
         log.debug("Computing coverage: compiledDir='{}'", compiledDir)
 
@@ -81,11 +81,11 @@ class JacocoCoverageProvider(
             }
 
         /**
-         * Provide up to 3 sets of source files suitable for compilation and
+         * Provide up to three sets of source files suitable for compilation and
          * try to collect coverage for at least one of them since all 3 represent
          * the same coverage set:
          * 1. All the compilable test cases and the test suite (test suite contains only compilable test cases).
-         * 2. All the compilable test case alone.
+         * 2. All the compilable test cases alone.
          * 3. The test suite alone.
          */
         val compilationAttempts = mutableListOf(allTests)
