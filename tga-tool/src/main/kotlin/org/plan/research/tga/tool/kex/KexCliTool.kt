@@ -12,6 +12,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.time.Duration
 
+
 class KexCliTool(private val args: List<String>) : TestGenerationTool {
     override val name = "kex"
 
@@ -51,7 +52,12 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("Kex was interrupted on target $target")
         } finally {
-            process?.destroy()
+            process?.let {
+                it.destroy()
+                if (it.isAlive) {
+                    it.destroyForcibly()
+                }
+            }
         }
     }
 

@@ -155,7 +155,12 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             log.error("TestSpark was interrupted on target $target")
         } finally {
             log.debug(process?.inputStream?.bufferedReader()?.readText())
-            process?.destroy()
+            process?.let {
+                it.destroy()
+                if (it.isAlive) {
+                    it.destroyForcibly()
+                }
+            }
         }
     }
 
