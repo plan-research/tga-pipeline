@@ -38,7 +38,7 @@ class TgaRunner(
 ) {
     fun run() {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
-        val coverageProvider = ExternalCoverageProvider(10.seconds)
+        val coverageProvider = ExternalCoverageProvider(100.seconds)
         val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 
         val server = TcpTgaServer(serverPort)

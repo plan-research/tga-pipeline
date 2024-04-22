@@ -9,8 +9,8 @@ import org.plan.research.tga.core.config.buildOptions
 import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import java.nio.file.Paths
+import kotlin.io.path.bufferedWriter
 import kotlin.io.path.readText
-import kotlin.io.path.writeText
 
 
 private class TgaCoverageConfig(args: Array<String>) : TgaConfig("tga-coverage", options, args) {
@@ -58,5 +58,7 @@ fun main(args: Array<String>) {
 
     val outputFile = Paths.get(config.getCmdValue("output")!!)
     outputFile.parent.toFile().mkdirs()
-    outputFile.writeText(serializer.encodeToString(coverage))
+    outputFile.bufferedWriter().use {
+        it.write(serializer.encodeToString(coverage))
+    }
 }

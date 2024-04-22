@@ -68,14 +68,13 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         val promptFilepath = argParser.getCmdValue("prompt")
 
         val promptContent = if (promptFilepath == null) {
-                log.debug("No prompt filepath provided, using default prompt")
-                DEFAULT_PROMPT
-            }
-            else {
-                log.debug("Provided prompt filepath: '$promptFilepath'")
-                Files.readAllLines(Paths.get(promptFilepath), StandardCharsets.UTF_8)
-                     .joinToString(separator = "\n", postfix = "\n")
-            }
+            log.debug("No prompt filepath provided, using default prompt")
+            DEFAULT_PROMPT
+        } else {
+            log.debug("Provided prompt filepath: '$promptFilepath'")
+            Files.readAllLines(Paths.get(promptFilepath), StandardCharsets.UTF_8)
+                .joinToString(separator = "\n", postfix = "\n")
+        }
 
         log.debug("promptContent: '$promptContent'")
 
@@ -199,8 +198,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         log.debug("testSrcPath='{}'", testSrcPath)
         if (testSuiteFilepath.isPresent) {
             log.debug("testSuiteFilepath={}", testSuiteFilepath.get())
-        }
-        else {
+        } else {
             log.debug("testSuiteFilepath is empty")
         }
 
@@ -213,11 +211,11 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                     .filter { it.fileName.toString().endsWith(".java") }
                     .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
                     .toList()
+
                 else -> emptyList()
             }
             return tests
-        }
-        else {
+        } else {
             val testSuiteFilename = testSuiteFilepath.get().fileName.toString().removeSuffix(".java")
 
             val tests = when {
@@ -238,7 +236,10 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                          */
                         val testCaseName = it.split(".").last()
                         log.debug("Current test case fully qualified name: '{}', filename: '{}'", it, testCaseName)
-                        (testCaseName == testSuiteFilename) || (isTestCaseUsedInTestSuite(testCaseName, testSuiteFilepath.get()))
+                        (testCaseName == testSuiteFilename) || (isTestCaseUsedInTestSuite(
+                            testCaseName,
+                            testSuiteFilepath.get()
+                        ))
                     }
                     .toList()
 
@@ -258,8 +259,8 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         val requiredFunctionNameLowerCased = requiredFunctionNameCapitalized
             .replaceFirstChar { if (it.isUpperCase()) it.lowercase(Locale.getDefault()) else it.toString() }
 
-        val result = Files.lines(testSuiteFilepath).anyMatch {
-            line -> line.contains(requiredFunctionNameCapitalized) ||
+        val result = Files.lines(testSuiteFilepath).anyMatch { line ->
+            line.contains(requiredFunctionNameCapitalized) ||
                     line.contains(requiredFunctionNameLowerCased)
         }
         return result

@@ -57,6 +57,8 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
         val builder = ProcessBuilder(
             "/bin/sh", "gradlew", "tga-runner:runCoverage", "--args=$args",
         )
+            .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
         builder.directory(TGA_PIPELINE_HOME.toFile())
         log.debug("Running coverage computation with command \"${builder.command().joinToString(" ")}\"")
         val process = builder.start()
