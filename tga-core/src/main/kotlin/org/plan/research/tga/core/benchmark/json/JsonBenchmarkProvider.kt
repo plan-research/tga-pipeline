@@ -11,8 +11,8 @@ class JsonBenchmarkProvider(
     private val json = getJsonSerializer(pretty = true)
 
     override fun benchmarks(): Collection<Benchmark> {
-        return json.decodeFromString(
+        return json.decodeFromString<Collection<Benchmark>>(
             benchmarksFile.readText()
-        )
+        ).map { it.copy(classPath = it.classPath.filterNot { path -> path.toString().endsWith(".zip") }) }
     }
 }

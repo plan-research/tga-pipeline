@@ -191,6 +191,8 @@ def produce_benchmarks(downloaded_projects):
 
 			if os.path.exists(dependency_dir):
 				for file in os.listdir(dependency_dir):
+					if file.endswith('.zip'):
+						continue
 					class_path.append(os.path.join(dependency_dir, file))
 
 		benchmark['classPath'] = class_path
