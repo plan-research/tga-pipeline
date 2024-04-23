@@ -113,7 +113,9 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
     }
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
-        this.outputDirectory = outputDirectory
+        this.outputDirectory = outputDirectory.also {
+            it.toFile().mkdirs()
+        }
         var process: Process? = null
         try {
             val processBuilder = ProcessBuilder(
