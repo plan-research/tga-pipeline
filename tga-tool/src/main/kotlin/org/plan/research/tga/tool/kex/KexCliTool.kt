@@ -4,6 +4,8 @@ import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
+import org.vorpal.research.kthelper.buildProcess
+import org.vorpal.research.kthelper.destroyReliably
 import org.vorpal.research.kthelper.logging.log
 import java.io.File
 import java.nio.file.Files
@@ -32,7 +34,7 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
         this.outputDirectory = outputDirectory
         var process: Process? = null
         try {
-            val kexProcessBuilder = ProcessBuilder(
+            process = buildProcess(
                 "python3",
                 "${KEX_HOME.resolve("kex.py")}",
                 "--classpath", classPath.joinToString(File.pathSeparator!!),
@@ -42,22 +44,16 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
                 "--option", "concolic:timeLimit:${timeLimit.inWholeSeconds}",
                 "--option", "kex:computeCoverage:false",
                 *args.toTypedArray()
-            )
-                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                .redirectError(ProcessBuilder.Redirect.DISCARD)
-            log.debug("Starting Kex with command: {}", kexProcessBuilder.command())
-
-            process = kexProcessBuilder.start()!!
+            ) {
+                redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                redirectError(ProcessBuilder.Redirect.DISCARD)
+                log.debug("Starting Kex with command: {}", command())
+            }
             process.waitFor()
         } catch (e: InterruptedException) {
             log.error("Kex was interrupted on target $target")
         } finally {
-            process?.let {
-                it.destroy()
-                if (it.isAlive) {
-                    it.destroyForcibly()
-                }
-            }
+            process?.destroyReliably()
         }
     }
 

@@ -1,5 +1,5 @@
 
-const val ktHelperVersion = "0.1.15"
+const val ktHelperVersion = "0.1.17"
 const val kfgVersion = "0.4.14"
 const val serializationVersion = "1.6.3"
 

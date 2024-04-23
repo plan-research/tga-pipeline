@@ -7,6 +7,9 @@ import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
+import org.vorpal.research.kthelper.buildProcess
+import org.vorpal.research.kthelper.destroyReliably
+import org.vorpal.research.kthelper.executeProcess
 import org.vorpal.research.kthelper.logging.log
 import java.io.BufferedReader
 import java.io.File
@@ -118,8 +121,8 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         }
         var process: Process? = null
         try {
-            val processBuilder = ProcessBuilder(
-                "bash", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
+            process = buildProcess(
+                "/bin/sh", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
                 "${src.toAbsolutePath()}", // path to project root
                 "src/main/java/${
                     target.replace(
@@ -135,11 +138,10 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
                 "${outputDirectory.toAbsolutePath()}", // path to output directory
                 argParser.getCmdValue("spaceUser")!!, // Space username
                 argParser.getCmdValue("spaceToken")!!, // token for accessing Space
-            )
-            log.debug("Starting TestSpark with command: {}", processBuilder.command())
-
-            processBuilder.redirectErrorStream(true)
-            process = processBuilder.start()!!
+            ) {
+                redirectErrorStream(true)
+                log.debug("Starting TestSpark with command: {}", command())
+            }
 
             log.debug("Configure reader for the TestSpark process")
             outputDirectory.resolve(TEST_SPARK_LOG).bufferedWriter().use { writer ->
@@ -157,12 +159,10 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             log.error("TestSpark was interrupted on target $target")
         } finally {
             log.debug(process?.inputStream?.bufferedReader()?.readText())
-            process?.let {
-                it.destroy()
-                if (it.isAlive) {
-                    it.destroyForcibly()
-                }
-            }
+            process?.destroyReliably()
+
+            // stop gradle daemon so that it does not interfere with the following executions
+            executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
         }
     }
 
