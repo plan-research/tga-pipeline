@@ -46,7 +46,7 @@ bin/
 
 benchmarks/
 /.idea/
-/test-spark-config.env
+/tool-configs/test-spark-config.env
 
 venv/
 gitbug-projects/

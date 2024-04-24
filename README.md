@@ -28,12 +28,12 @@ make all
 To start the pipeline one can run the following command:
 
 ```bash
-docker compose --env-file pipeline-config.env up
+docker compose --env-file tool-configs/kex-config.env up
 ```
 
 ## Configuration
 
-The pipeline configuration is done via the [pipeline-config.env](pipeline-config.env), where
+The pipeline configuration is done via the [pipeline-config.env](tool-configs/kex-config.env), where
 you can specify arguments for each of the docker containers being executed.
 
 The pipeline currently consists of two containers: *runner* and *tools*.
@@ -58,7 +58,7 @@ between a tool and a *runner*.
 Currently, the pipeline supports two tools: [Kex](https://github.com/vorpal-research/kex)
 and [TestSpark](https://github.com/JetBrains-Research/TestSpark).
 
-You can choose between these tools by modifying parameters for *tools* container in the [pipeline-config.env](pipeline-config.env):
+You can choose between these tools by modifying parameters for *tools* container in the [pipeline-config.env](tool-configs/kex-config.env):
 ```
  -h,--help             print this help and quit
  -i,--ip <arg>         tga server address
