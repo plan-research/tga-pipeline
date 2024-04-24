@@ -3,9 +3,9 @@ package org.plan.research.tga.tool.kex
 import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
+import org.plan.research.tga.core.util.destroyRecursively
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
-import org.vorpal.research.kthelper.destroyReliably
 import org.vorpal.research.kthelper.logging.log
 import java.io.File
 import java.nio.file.Files
@@ -53,7 +53,7 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("Kex was interrupted on target $target")
         } finally {
-            process?.destroyReliably()
+            process?.destroyRecursively()
         }
     }
 
