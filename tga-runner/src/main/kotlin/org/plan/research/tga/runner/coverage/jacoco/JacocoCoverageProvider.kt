@@ -176,6 +176,7 @@ class JacocoCoverageProvider(
 
                 for (lineNumber in method.firstLine..method.lastLine) {
                     val line = method.getLine(lineNumber)
+                    if (line.instructionCounter.totalCount == 0) continue
 
                     val lineId = LineId(it.sourceFileName, lineNumber.toUInt())
                     lines[lineId] = when (line.status) {
