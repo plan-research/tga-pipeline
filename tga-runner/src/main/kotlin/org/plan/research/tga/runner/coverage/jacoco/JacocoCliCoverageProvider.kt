@@ -121,7 +121,6 @@ class JacocoCliCoverageProvider(
         }
 
         val xmlCoverageReport = testSuite.testSrcPath.resolve("coverage.xml")
-        // TODO: add src path and bin path to benchmark json
         executeProcess(
             "java",
             "-jar",
