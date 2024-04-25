@@ -154,12 +154,22 @@ def produce_benchmarks(downloaded_projects):
 		benchmark['root'] = project_dir
 		benchmark['build_id'] = project_dir.split('/')[-1]
 
+		src_path = ''
+		bin_path = ''
 		class_path = []
+
+		if os.path.exists(os.path.join(project_dir, 'src', 'main', 'java')):
+			src_path = os.path.join(project_dir, 'src', 'main', 'java')
+		else:
+			logging.error("Could not find src path of project {}".format(project_dir))
+			continue
+
 		if os.path.exists(os.path.join(project_dir, 'target')):
 			target_dir_path = os.path.join(project_dir, 'target')
 
 			classes_dir_path = os.path.join(target_dir_path, 'classes')
 			if os.path.exists(classes_dir_path):
+				bin_path = classes_dir_path
 				class_path.append(classes_dir_path)
 
 			dependency_dir = ''
@@ -182,6 +192,7 @@ def produce_benchmarks(downloaded_projects):
 				classes_dir_path = os.path.join(classes_dir_path, 'kotlin')
 			if os.path.exists(os.path.join(classes_dir_path, 'main')):
 				classes_dir_path = os.path.join(classes_dir_path, 'main')
+			bin_path = classes_dir_path
 
 			class_path.append(classes_dir_path)
 
@@ -195,31 +206,10 @@ def produce_benchmarks(downloaded_projects):
 						continue
 					class_path.append(os.path.join(dependency_dir, file))
 
+		benchmark['src'] = src_path
+		benchmark['bin'] = bin_path
 		benchmark['classPath'] = class_path
-
-		# failed_tests = set({})
-		# for l in project_json['actions_runs']:
-		# 	tests = []
-		# 	if l is None:
-		# 		continue
-		# 	if type(l) is list:
-		# 		tests = l[0]['tests']
-		# 	else:
-		# 		tests = l['tests']
-		#
-		# 	for test in tests:
-		# 		if test['results'][0]['result'] == 'Failure':
-		# 			failed_tests.add(test['classname'].removesuffix('Test').removesuffix('Tests'))
 		benchmark['klass'] = cut_map[benchmark['build_id']]
-
-		# patched_class_name = project_json['bug_patch'].split('\n')[0].split(' ')[2].removeprefix('a/').removeprefix('src/').removeprefix('main/').removeprefix('java/').replace('/', '.').removesuffix('.java')
-
-		# logging.error(project_dir)
-		# if len(failed_tests) == 1 and patched_class_name in failed_tests:
-		# 	logging.error("{} -> {}".format(benchmark['build_id'], patched_class_name))
-		# logging.error(patched_class_name)
-		# logging.error(failed_tests)
-		# logging.error()
 
 		benchmarks.append(benchmark)
 	return benchmarks

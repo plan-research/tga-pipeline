@@ -15,6 +15,10 @@ data class Benchmark(
     val root: Path,
     @JsonNames("build_id", "buildId")
     val buildId: String,
+    @Serializable(with = PathAsStringSerializer::class)
+    val src: Path,
+    @Serializable(with = PathAsStringSerializer::class)
+    val bin: Path,
     @Serializable(with = ListOfPathSerializer::class)
     val classPath: List<Path>,
     val klass: String,
