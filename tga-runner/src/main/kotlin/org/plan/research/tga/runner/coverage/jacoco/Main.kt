@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
     val config = TgaCoverageConfig(args)
 
     val dependencyManager = DependencyManager()
-    val coverageProvider = JacocoCoverageProvider(dependencyManager)
+    val coverageProvider = JacocoCliCoverageProvider(dependencyManager)
 
     val serializer = getJsonSerializer(pretty = false)
 
