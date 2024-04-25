@@ -158,9 +158,11 @@ def produce_benchmarks(downloaded_projects):
 		bin_path = ''
 		class_path = []
 
-		if os.path.exists(os.path.join(project_dir, 'src', 'main', 'java')):
-			src_path = os.path.join(project_dir, 'src', 'main', 'java')
-		else:
+		for word in ['src', 'main', 'java']:
+			if os.path.exists(os.path.join(project_dir, word)):
+				src_path = os.path.join(project_dir, word)
+
+		if not src_path:
 			logging.error("Could not find src path of project {}".format(project_dir))
 			continue
 
