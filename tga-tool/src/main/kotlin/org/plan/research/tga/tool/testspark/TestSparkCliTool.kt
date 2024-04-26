@@ -122,7 +122,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         var process: Process? = null
         try {
             process = buildProcess(
-                "/bin/sh", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
+                "/bin/bash", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
                 "${src.toAbsolutePath()}", // path to project root
                 "src/main/java/${
                     target.replace(
