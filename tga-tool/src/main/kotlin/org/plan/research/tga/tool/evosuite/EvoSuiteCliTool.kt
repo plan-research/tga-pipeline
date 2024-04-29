@@ -24,6 +24,7 @@ class EvoSuiteCliTool : TestGenerationTool {
 
     companion object {
         private const val EVOSUITE_VERSION = "1.0.5"
+        private const val EVOSUITE_DEPENDENCY_VERSION = "1.0.6"
         private const val EVOSUITE_LOG = "evosuite.log"
         private val EVOSUITE_JAR_PATH = TGA_PIPELINE_HOME.resolve("lib", "evosuite-$EVOSUITE_VERSION.jar")
     }
@@ -96,7 +97,8 @@ class EvoSuiteCliTool : TestGenerationTool {
             "",
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
-                Dependency("org.evosuite", "evosuite-master", EVOSUITE_VERSION),
+                Dependency("org.evosuite", "evosuite-master", EVOSUITE_DEPENDENCY_VERSION),
+                Dependency("org.evosuite", "evosuite-standalone-runtime", EVOSUITE_DEPENDENCY_VERSION),
             )
         )
     }
