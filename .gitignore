@@ -45,6 +45,7 @@ bin/
 *.log
 
 benchmarks/
+benchmarks-11/
 /.idea/
 /tool-configs/test-spark-config.env
 
@@ -54,4 +55,3 @@ TestSpark/
 artifacts/
 gitbug-java/
 research/
-/benchmarks-11/
