@@ -45,6 +45,8 @@ bin/
 *.log
 
 benchmarks/
+results/
+
 benchmarks-11/
 /.idea/
 /tool-configs/test-spark-config.env
