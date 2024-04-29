@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
     val tool = when (val name = config.getCmdValue("tool")!!) {
         "kex" -> KexCliTool(toolArgs)
         "TestSpark" -> TestSparkCliTool(toolArgs)
-        "EvoSuite" -> EvoSuiteCliTool(toolArgs)
+        "EvoSuite" -> EvoSuiteCliTool()
         "stub" -> StubTool()
         else -> unreachable { log.error("Unknown tool name: $name") }
     }

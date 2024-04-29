@@ -9,20 +9,25 @@ import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
 import org.plan.research.tga.core.util.destroyRecursively
 import org.vorpal.research.kthelper.buildProcess
+import org.vorpal.research.kthelper.getJavaPath
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.nio.file.Path
 import kotlin.io.path.bufferedWriter
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.time.Duration
 
-class EvoSuiteCliTool(private val args: List<String>) : TestGenerationTool {
+class EvoSuiteCliTool : TestGenerationTool {
     override val name: String = "EvoSuite"
 
     companion object {
         private const val EVOSUITE_VERSION = "1.0.5"
         private const val RESULTS_FILE_NAME = "serialized.json"
+        private const val EVOSUITE_LOG = "evosuite.log"
         private val EVOSUITE_JAR_PATH = TGA_PIPELINE_HOME.resolve("lib", "evosuite-$EVOSUITE_VERSION.jar")
     }
 
@@ -46,7 +51,7 @@ class EvoSuiteCliTool(private val args: List<String>) : TestGenerationTool {
         var process: Process? = null
         try {
             process = buildProcess(
-                "/usr/lib/jvm/java-11-openjdk/bin/java", "-jar",
+                getJavaPath().toString(), "-jar",
                 EVOSUITE_JAR_PATH.toString(),
                 "-generateMOSuite",
                 "-serializeResult",
@@ -60,13 +65,22 @@ class EvoSuiteCliTool(private val args: List<String>) : TestGenerationTool {
                 "-Dtest_naming_strategy=COVERAGE",
                 "-Dalgorithm=DYNAMOSA",
                 "-Dcriterion=LINE:BRANCH:EXCEPTION:WEAKMUTATION:OUTPUT:METHOD:METHODNOEXCEPTION:CBRANCH",
-                *args.toTypedArray()
             ) {
-                redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                redirectError(ProcessBuilder.Redirect.DISCARD)
+                redirectErrorStream(true)
                 log.debug("Starting EvoSuite with command: {}", command())
             }
+            log.debug("Configure reader for the EvoSuite process")
+            outputDirectory.resolve(EVOSUITE_LOG).bufferedWriter().use { writer ->
+                val reader = BufferedReader(InputStreamReader(process.inputStream))
+                while (true) {
+                    val line = reader.readLine() ?: break
+                    writer.write(line)
+                    writer.write("\n")
+                }
+            }
+            log.debug("Waiting for the EvoSuite process...")
             process.waitFor()
+            log.debug("EvoSuite process has merged")
         } catch (e: InterruptedException) {
             log.error("EvoSuite was interrupted on target $target")
         } finally {
@@ -75,6 +89,9 @@ class EvoSuiteCliTool(private val args: List<String>) : TestGenerationTool {
     }
 
     override fun report(): TestSuite {
+        val evoSuiteReport = outputDirectory.resolve(RESULTS_FILE_NAME)
+        if (!evoSuiteReport.exists()) return TestSuite(outputDirectory, emptyList(), emptyList(), "", emptyList())
+
         val json = getJsonSerializer(pretty = false).parseToJsonElement(
             outputDirectory.resolve(RESULTS_FILE_NAME).readText()
         ).jsonObject

@@ -20,7 +20,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 }
 
 tasks.getByName<KotlinCompile>("compileKotlin") {
