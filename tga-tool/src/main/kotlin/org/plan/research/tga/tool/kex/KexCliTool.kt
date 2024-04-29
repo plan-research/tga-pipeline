@@ -26,7 +26,7 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
     private lateinit var classPath: List<Path>
     private lateinit var outputDirectory: Path
 
-    override fun init(src: Path, classPath: List<Path>) {
+    override fun init(root: Path, classPath: List<Path>) {
         this.classPath = classPath
     }
 

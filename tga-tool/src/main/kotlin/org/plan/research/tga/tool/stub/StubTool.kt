@@ -10,8 +10,8 @@ class StubTool : TestGenerationTool {
     override val name = "stub"
     private lateinit var testDir: Path
 
-    override fun init(src: Path, classPath: List<Path>) {
-        log.debug("Initialized stub with {}, class path {}", src, classPath)
+    override fun init(root: Path, classPath: List<Path>) {
+        log.debug("Initialized stub with {}, class path {}", root, classPath)
     }
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {

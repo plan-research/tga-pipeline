@@ -106,12 +106,12 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         private const val TEST_SPARK_LOG = "test-spark.log"
     }
 
-    private lateinit var src: Path
+    private lateinit var root: Path
     private lateinit var classPath: List<Path>
     private lateinit var outputDirectory: Path
 
-    override fun init(src: Path, classPath: List<Path>) {
-        this.src = src
+    override fun init(root: Path, classPath: List<Path>) {
+        this.root = root
         this.classPath = classPath
     }
 
@@ -123,7 +123,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         try {
             process = buildProcess(
                 "/bin/bash", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
-                "${src.toAbsolutePath()}", // path to project root
+                "${root.toAbsolutePath()}", // path to project root
                 "src/main/java/${
                     target.replace(
                         '.',

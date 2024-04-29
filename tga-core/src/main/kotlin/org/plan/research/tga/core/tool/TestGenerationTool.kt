@@ -7,7 +7,7 @@ interface TestGenerationTool {
     val name: String
 
     fun init(
-        src: Path,
+        root: Path,
         classPath: List<Path>,
     )
 
