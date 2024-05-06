@@ -1,7 +1,7 @@
 FROM abdullin/tga-pipeline:latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
-ARG KEX_VERSION=0.0.2
+ARG KEX_VERSION=0.0.4
 
 # install additional dependencies
 RUN apt-get -y install \
