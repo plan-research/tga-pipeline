@@ -3,10 +3,10 @@ package org.plan.research.tga.tool.kex
 import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
-import org.plan.research.tga.core.util.destroyRecursively
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.terminateOrKill
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -14,6 +14,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.streams.toList
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class KexCliTool(private val args: List<String>) : TestGenerationTool {
@@ -54,7 +55,7 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("Kex was interrupted on target $target")
         } finally {
-            process?.destroyRecursively()
+            process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
         }
     }
 

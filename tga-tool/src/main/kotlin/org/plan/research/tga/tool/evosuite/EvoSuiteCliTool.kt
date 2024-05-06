@@ -4,11 +4,11 @@ import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
-import org.plan.research.tga.core.util.destroyRecursively
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.getJavaPath
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
+import org.vorpal.research.kthelper.terminateOrKill
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -18,6 +18,7 @@ import kotlin.io.path.bufferedWriter
 import kotlin.io.path.exists
 import kotlin.streams.toList
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 class EvoSuiteCliTool : TestGenerationTool {
     override val name: String = "EvoSuite"
@@ -77,7 +78,7 @@ class EvoSuiteCliTool : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("EvoSuite was interrupted on target $target")
         } finally {
-            process?.destroyRecursively()
+            process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
         }
     }
 

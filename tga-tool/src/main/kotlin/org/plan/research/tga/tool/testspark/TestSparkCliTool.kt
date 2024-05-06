@@ -8,9 +8,9 @@ import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
-import org.vorpal.research.kthelper.destroyReliably
 import org.vorpal.research.kthelper.executeProcess
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.terminateOrKill
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -25,6 +25,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.streams.toList
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", options, args.toTypedArray()) {
@@ -160,7 +161,7 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             log.error("TestSpark was interrupted on target $target")
         } finally {
             log.debug(process?.inputStream?.bufferedReader()?.readText())
-            process?.destroyReliably()
+            process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
 
             // stop gradle daemon so that it does not interfere with the following executions
             executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
