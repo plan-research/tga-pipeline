@@ -74,7 +74,8 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
             emptyList(),
             "",
             listOf(
-                Dependency("junit", "junit", "4.13.2")
+                Dependency("junit", "junit", "4.13.2"),
+                Dependency("org.mockito", "mockito-core", "4.11.0"),
             )
         )
     }
