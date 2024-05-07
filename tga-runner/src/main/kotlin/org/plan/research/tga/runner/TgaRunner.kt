@@ -1,16 +1,13 @@
 package org.plan.research.tga.runner
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
-import org.plan.research.tga.core.coverage.ClassCoverageInfo
+import org.plan.research.tga.core.tool.ToolResults
 import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
 import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
 import org.plan.research.tga.runner.coverage.ExternalCoverageProvider
-import org.plan.research.tga.runner.metrics.ClassMetrics
 import org.plan.research.tga.runner.metrics.MetricsProvider
 import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.debug
@@ -19,15 +16,6 @@ import java.nio.file.Path
 import kotlin.io.path.writeText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-
-
-@Serializable
-data class ToolResults(
-    val benchmark: Benchmark,
-    val generationTime: Duration, // <-- new field
-    val coverage: ClassCoverageInfo,
-    val metrics: ClassMetrics
-)
 
 class TgaRunner(
     private val serverPort: UInt,
@@ -38,7 +26,7 @@ class TgaRunner(
 ) {
     fun run() {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
-        val coverageProvider = ExternalCoverageProvider(100.seconds)
+        val coverageProvider = ExternalCoverageProvider(1_000.seconds)
         val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 
         val server = TcpTgaServer(serverPort)
@@ -76,12 +64,11 @@ class TgaRunner(
 
                         val testSuite = (result as SuccessfulGenerationResult).testSuite
 
-                        log.debug("Computing metrics")
+                        log.debug("Computing coverage")
                         val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
-                        val metrics = metricsProvider.getMetrics(benchmark)
                         log.debug(coverage)
 
-                        add(ToolResults(benchmark, result.generationTime, coverage, metrics))
+                        add(ToolResults(benchmark, result.generationTime, coverage))
                         resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(this))
                     }
                 }

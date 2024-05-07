@@ -9,7 +9,10 @@ sealed class CoverageInfo<T: Any> {
     abstract val total: UInt
 
     @Required
-    val ratio: Double get() = covered.toDouble() / total.toDouble()
+    val ratio: Double get() = when {
+        total != 0U -> covered.toDouble() / total.toDouble()
+        else -> 0.0
+    }
 }
 
 @Serializable

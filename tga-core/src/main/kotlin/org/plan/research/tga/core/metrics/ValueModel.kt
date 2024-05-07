@@ -1,4 +1,4 @@
-package org.plan.research.tga.runner.metrics
+package org.plan.research.tga.core.metrics
 
 import kotlinx.serialization.Serializable
 import org.vorpal.research.kthelper.assert.unreachable

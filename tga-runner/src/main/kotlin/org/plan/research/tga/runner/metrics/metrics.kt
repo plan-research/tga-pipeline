@@ -1,12 +1,12 @@
 package org.plan.research.tga.runner.metrics
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
-import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.MethodId
+import org.plan.research.tga.core.metrics.ClassMetrics
+import org.plan.research.tga.core.metrics.MethodMetrics
 import org.plan.research.tga.runner.coverage.jacoco.asmString
 import org.vorpal.research.kfg.ClassManager
 import org.vorpal.research.kfg.KfgConfig
@@ -23,20 +23,6 @@ import kotlin.io.path.writeText
 val Class.id get() = ClassId(this.fullName)
 val Method.id get() = MethodId(this.name, this.asmDesc)
 val Method.fullId: Pair<ClassId, MethodId> get() = klass.id to this.id
-
-@Serializable
-data class ClassMetrics(
-    val klassId: ClassId,
-    val methods: Set<MethodMetrics>
-)
-
-@Serializable
-data class MethodMetrics(
-    val methodId: MethodId,
-    val complexity: UInt,
-    val branches: Map<BranchId, ValueModel>
-)
-
 
 class MetricsProvider(private val metricsFile: Path) {
     private val metrics = mutableMapOf<String, ClassMetrics>()

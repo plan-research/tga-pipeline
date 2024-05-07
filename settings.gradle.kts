@@ -7,3 +7,4 @@ rootProject.name = "tga-pipeline"
 include("tga-core")
 include("tga-tool")
 include("tga-runner")
+include("tga-analysis")
