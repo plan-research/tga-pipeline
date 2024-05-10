@@ -160,11 +160,15 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("TestSpark was interrupted on target $target")
         } finally {
-            log.debug(process?.inputStream?.bufferedReader()?.readText())
-            process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
+            try {
+                log.debug(process?.inputStream?.bufferedReader()?.readText())
+                process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
 
-            // stop gradle daemon so that it does not interfere with the following executions
-            executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
+                // stop gradle daemon so that it does not interfere with the following executions
+                executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
+            } catch (e: InterruptedException) {
+                log.debug("TestSpark interrupted during cleanup")
+            }
         }
     }
 
