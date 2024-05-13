@@ -1,6 +1,9 @@
 name: Docker publish
 
 on:
+  # temp for debugging
+  push:
+    branches: [ "main" ]
   release:
     types: [ published ]
 
