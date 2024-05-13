@@ -3,11 +3,6 @@ MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.5
 
-# install additional dependencies
-RUN apt-get -y install \
-	wget \
-	unzip
-
 # make tools dir
 USER root
 RUN mkdir /var/tools

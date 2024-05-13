@@ -1,7 +1,7 @@
 
 .PHONY: all
 
-all: runner tools
+all: benchmarks runner tools
 
 benchmarks:
 	docker build -f dockerfiles/benchmarks.docker -t abdullin/tga-benchmarks:latest .

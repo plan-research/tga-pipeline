@@ -1,7 +1,17 @@
 FROM abdullin/tga-benchmarks:latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
+ARG PIPELINE_VERSION=0.0.1
+
+# install additional dependencies
+RUN apt-get -y install \
+	wget \
+	unzip
+
 # install pipeline
 USER root
 WORKDIR /
-RUN git clone https://github.com/plan-research/tga-pipeline.git
+RUN mkdir tga-pipeline
+WORKDIR /tga-pipeline
+RUN wget https://github.com/plan-research/tga-pipeline/releases/download/$PIPELINE_VERSION/tga-pipeline-$PIPELINE_VERSION.zip
+RUN unzip tga-pipeline-$PIPELINE_VERSION.zip
