@@ -7,20 +7,35 @@ Pipeline for automatic test generation assessment.
 Currently, we use [GitBug](https://github.com/gitbugactions/gitbug-java) benchmarks.
 `./scripts` directory provides scripts for downloading and building the benchmarks.
 
-Note: docker image uses OpenJDK 17. Some of the GitBug projects require specific Java
-versions and may fail, it is an expected behaviour. In total, the scripts should produce
-176 benchmarks.
+There is a Docker image containing pre-build benchmarks, it can be obtained using:
+
+```shell
+docker pull abdullin/tga-pipeline:benchmarks-latest 
+# or a specific version, e.g. `benchmarks-0.0.5`
+```
+
+One can also build that Docker image locally if necessary:
+
+```shell
+docker build -f dockerfiles/benchmarks.docker -t tga-pipeline:benchmarks-latest . 
+```
+
+Note: Docker image uses OpenJDK 11.
+Some of the GitBug projects require specific Java
+versions and may fail, it is an expected behavior.
+In total, the scripts should produce 160 benchmarks.
 
 ## Build and run
 
-Pipeline consists of several docker images that run via docker compose. 
+The Pipeline consists of several Docker images that run via Docker Compose.
 
 Docker images are build via simple make command:
+
 ```bash
 make all
 ```
 
-To start the pipeline one can run the following command:
+To start the pipeline, one can run the following command:
 
 ```bash
 docker compose --env-file tool-configs/kex-config.env up
@@ -28,16 +43,18 @@ docker compose --env-file tool-configs/kex-config.env up
 
 ## Configuration
 
-The pipeline configuration is done via the [pipeline-config.env](tool-configs/kex-config.env), where
-you can specify arguments for each of the docker containers being executed.
+The pipeline configuration is done via the Compose environment file
+(e.g. [kex-config.env](tool-configs/kex-config.env)), where
+you can specify arguments for each of the Docker containers being executed.
 
 The pipeline currently consists of two containers: *runner* and *tools*.
 
-### Runner 
+### Runner
+
 *Runner* is a container that runs the server part of the pipeline.
-It controls 
-the whole execution: running the tool, computing metrics, computing coverage, etc.
-Current configuration options are:
+It controls the whole execution: running the tool, computing coverage, etc.
+Current configuration options include:
+
 ```
  -c,--config <arg>    configuration file
  -h,--help            print this help and quit
@@ -48,36 +65,39 @@ Current configuration options are:
  ```
 
 ### Tools
+
 *Tools* is a container that controls the test generation tool and controls the interactions
 between a tool and a *runner*.
-Currently, the pipeline supports two tools: [Kex](https://github.com/vorpal-research/kex)
-and [TestSpark](https://github.com/JetBrains-Research/TestSpark).
+Currently, the pipeline supports three tools: [Kex](https://github.com/vorpal-research/kex),
+[EvoSuite](https://github.com/EvoSuite/evosuite) and [TestSpark](https://github.com/JetBrains-Research/TestSpark).
 
-You can choose between these tools by modifying parameters for *tools* container in the [pipeline-config.env](tool-configs/kex-config.env):
+You can choose between these tools by providing different [compose environment files](tool-configs).
+In general, each environment file should contain definitions of three variables:
+
+```shell
+TGA_OUTPUT_DIR=*path* # local path to store the execution results
+TGA_TOOL_NAME=*name* # name of the tool to be used in generation "kex", "EvoSuite" or "TestSpark"
+TGA_TOOL_ARGS= # arguments that are specific for each tool, may be empty (e.g. for EvoSuite and Kex)
 ```
- -h,--help             print this help and quit
- -i,--ip <arg>         tga server address
- -p,--port <arg>       tga server port
- -t,--tool <arg>       tool name
-    --toolArgs <arg>   additional tool arguments
-```
 
-Note that each tool may require you to also provide additional arguments and/or environment variables. The requirements of
-each supported tool are described further.
+Note that each tool may require you to also provide additional arguments and/or environment variables.
+The requirements of each supported tool are described further.
 
-To add support of the new tool one is required to:
-* Add an implementation of [`TestGenerationTool`](tga-core/src/main/kotlin/org/plan/research/tga/core/tool/TestGenerationTool.kt) interface
-for your tool into the `tga-tool` project
-* Install your tool in the `tga-tools` docker image by modifying [`tools.docker`](dockerfiles/tools.docker) dockerfile
+To add support for the new tool, one is required to:
+
+* Add an implementation
+  of [`TestGenerationTool`](tga-core/src/main/kotlin/org/plan/research/tga/core/tool/TestGenerationTool.kt) interface
+  for your tool into the `tga-tool` project
+* Install your tool in the `tga-tools` Docker image by modifying [`tools.docker`](dockerfiles/tools.docker) dockerfile
 
 #### Kex
 
 [Kex](https://github.com/vorpal-research/kex) is an automatic test generation tool based on symbolic execution.
 By default, currently we use concolic mode of Kex.
-However, you may change that by providing additional arguments to Kex via the `--toolArgs` option. 
+However, you may change that by providing additional arguments to Kex via the `--toolArgs` option.
 Otherwise, Kex does not require any additional arguments to be passed.
 
-Additionally, if you are trying to run the pipeline outside of docker images, Kex also requires you
+Additionally, if you are trying to run the pipeline outside of Docker images, Kex also requires you
 to specify `KEX_HOME` environment variable with the path to Kex installation.
 
 #### TestSpark
@@ -86,6 +106,7 @@ to specify `KEX_HOME` environment variable with the path to Kex installation.
 TestSpark natively integrates different test generation tools and techniques in the IDE.
 Currently, we use TestSpark for LLM-based test generation by running it in the headless mode of IDEA.
 TestSpark requires you to provide additional arguments:
+
 ```
  -h,--help               print this help and quit
     --llm <arg>          llm for test generation
@@ -95,5 +116,19 @@ TestSpark requires you to provide additional arguments:
     --spaceUser <arg>    Space user name
 ```
 
-Additionally, if you are trying to run the pipeline outside of docker images, TestSpark also requires you
+Additionally, if you are trying to run the pipeline outside of Docker images, TestSpark also requires you
 to specify `TEST_SPARK_HOME` environment variable with the path to TestSpark installation.
+
+### EvoSuite
+
+[EvoSuite](https://github.com/EvoSuite/evosuite) automatically generates JUnit test suites for Java classes,
+targeting code coverage criteria such as branch coverage.
+It uses an evolutionary approach based on a genetic algorithm to derive test suites.
+To improve readability, the generated unit tests are minimized,
+and regression assertions that capture the current behavior of the tested classes are added to the tests.
+
+Currently, the pipeline uses a pre-build version of [EvoSuite-1.0.5](lib/evosuite-1.0.5.jar),
+which forces us to use JDK 11 for the experiments, as it fails on the newer versions.
+
+Running EvoSuite does not require any additional arguments, one can just use
+the provided [evosuite-config.env](tool-configs/evosuite-config.env) environment file.
