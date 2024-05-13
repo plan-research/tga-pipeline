@@ -160,19 +160,14 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
         } catch (e: InterruptedException) {
             log.error("TestSpark was interrupted on target $target")
         } finally {
-            try {
-                log.debug(process?.inputStream?.bufferedReader()?.readText())
-                process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
-
-                // stop gradle daemon so that it does not interfere with the following executions
-                executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
-            } catch (e: InterruptedException) {
-                log.debug("TestSpark interrupted during cleanup")
-            }
+            log.debug(process?.inputStream?.bufferedReader()?.readText())
+            process?.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
         }
     }
 
     override fun report(): TestSuite {
+        // first of all, kill any running Gradle daemons left from the execution
+        executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
         /**
          * TestSpark may generate non-compilable test cases together with those that compile (99% it is the case!),
          * thus it is important to sieve out the non-compilable test cases,
