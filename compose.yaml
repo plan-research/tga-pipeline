@@ -1,18 +1,20 @@
 services:
   runner:
-    image: "abdullin/tga-runner:latest"
+    image: "abdullin/tga-pipeline:runner-latest"
     command: --args="-p 10000 -c /var/benchmarks/gitbug/benchmarks.json -t 120 -o /var/results --runs 1"
     networks:
       - shared-network
     volumes:
+      - ./benchmarks:/var/benchmarks
       - ${TGA_OUTPUT_DIR}:/var/results
 
   tools:
-    image: "abdullin/tga-tools:latest"
+    image: "abdullin/tga-pipeline:tools-latest"
     command: --args="--ip runner --port 10000 --tool ${TGA_TOOL_NAME} --toolArgs='${TGA_TOOL_ARGS}'"
     networks:
       - shared-network
     volumes:
+      - ./benchmarks:/var/benchmarks
       - ${TGA_OUTPUT_DIR}:/var/results
 
 volumes:

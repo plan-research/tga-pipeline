@@ -29,21 +29,6 @@ jobs:
       - name: Build the Docker images
         run: make all
 
-      - name: Tag all the images
-        run: docker tag abdullin/tga-benchmarks:latest abdullin/tga-benchmarks:${{ github.event.release.tag_name }} &&
-          docker tag abdullin/tga-pipeline:latest abdullin/tga-pipeline:${{ github.event.release.tag_name }} &&
-          docker tag abdullin/tga-tools:latest abdullin/tga-tools:${{ github.event.release.tag_name }} &&
-          docker tag abdullin/tga-runner:latest abdullin/tga-runner:${{ github.event.release.tag_name }}
-
-      - name: Push benchmarks
-        run: docker push abdullin/tga-benchmarks:latest && docker push abdullin/tga-benchmarks:${{ github.event.release.tag_name }}
-
-      - name: Push pipeline
-        run: docker push abdullin/tga-pipeline:latest && docker push abdullin/tga-pipeline:${{ github.event.release.tag_name }}
-
-      - name: Push tools
-        run: docker push abdullin/tga-tools:latest && docker push abdullin/tga-tools:${{ github.event.release.tag_name }}
-
-      - name: Push runner
-        run: docker push abdullin/tga-runner:latest && docker push abdullin/tga-runner:${{ github.event.release.tag_name }}
+      - name: Publish the Docker images
+        run: make publish
 
