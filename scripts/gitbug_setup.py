@@ -238,8 +238,7 @@ def main():
 
 	output_file_path = os.path.join(output_dir, 'benchmarks.json')
 	output_file = open(output_file_path, "w")
-	benchmarksStr = json.dumps(benchmarks, indent = 2).replace(output_dir.removesuffix('/'), '/var/benchmarks')
-	output_file.write(benchmarksStr)
+	output_file.write(json.dumps(benchmarks, indent = 2))
 	output_file.close()
 
 

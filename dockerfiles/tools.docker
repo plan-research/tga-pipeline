@@ -1,4 +1,4 @@
-FROM abdullin/tga-pipeline:latest
+FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.5

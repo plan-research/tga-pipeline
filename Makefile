@@ -5,6 +5,13 @@ VERSION = 0.0.5
 
 all: runner tools
 
+benchmarks:
+	docker build -f dockerfiles/benchmarks.docker -t abdullin/tga-pipeline:benchmarks-latest .
+	docker tag abdullin/tga-pipeline:benchmarks-latest abdullin/tga-pipeline:benchmarks-${VERSION}
+
+	docker push abdullin/tga-pipeline:benchmarks-latest
+	docker push abdullin/tga-pipeline:benchmarks-${VERSION}
+
 pipeline:
 	docker build -f dockerfiles/pipeline.docker -t abdullin/tga-pipeline:base-latest . --no-cache
 	docker tag abdullin/tga-pipeline:base-latest abdullin/tga-pipeline:base-${VERSION}

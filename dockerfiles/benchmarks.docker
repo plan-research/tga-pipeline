@@ -1,0 +1,21 @@
+FROM ubuntu:latest
+MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+
+# install required packages
+USER root
+RUN apt-get -y update
+RUN apt-get -y install \
+	openjdk-11-jdk \
+	maven \
+	gradle \
+	python3 \
+	git
+
+# clone gitbug repo
+RUN git clone https://github.com/gitbugactions/gitbug-java.git /root/gitbug-java
+
+# add scripts to container
+ADD ./scripts /var/scripts
+
+# run scripts and build benchmarks
+RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug

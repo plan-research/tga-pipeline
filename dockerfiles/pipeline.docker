@@ -1,17 +1,11 @@
-FROM ubuntu:latest
+FROM abdullin/tga-pipeline:benchmarks-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG PIPELINE_VERSION=0.0.5
 
-# install required packages
+# install additional packages
 USER root
-RUN apt-get -y update
 RUN apt-get -y install \
-	openjdk-11-jdk \
-	maven \
-	gradle \
-	python3 \
-	git \
 	wget \
 	unzip
 
