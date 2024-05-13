@@ -13,7 +13,6 @@ import org.vorpal.research.kthelper.logging.log
 fun main(args: Array<String>) {
     val config = TgaToolConfig(args)
 
-
     val serverAddress = config.getCmdValue("ip")!!
     val serverPort = config.getCmdValue("port")!!.toUInt()
     val connection = run {

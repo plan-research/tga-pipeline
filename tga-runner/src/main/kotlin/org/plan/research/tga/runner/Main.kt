@@ -1,5 +1,6 @@
 package org.plan.research.tga.runner
 
+import org.plan.research.tga.core.util.initLog
 import org.plan.research.tga.runner.config.TgaRunnerConfig
 import java.nio.file.Paths
 import kotlin.time.DurationUnit
@@ -12,6 +13,8 @@ fun main(args: Array<String>) {
     val benchmarks = Paths.get(config.getCmdValue("config")!!)
     val timeLimit = config.getCmdValue("timeout")!!.toInt().toDuration(DurationUnit.SECONDS)
     val outputDirectory = Paths.get(config.getCmdValue("output")!!)
+
+    initLog(outputDirectory, "tga-runner.log")
 
     val n = config.getCmdValue("runs")!!.toInt()
 
