@@ -24,7 +24,7 @@ runner: pipeline
 	docker build -f dockerfiles/runner.docker -t abdullin/tga-pipeline:runner-latest . --no-cache
 	docker tag abdullin/tga-pipeline:runner-latest abdullin/tga-pipeline:runner-${VERSION}
 
-publish:
+publish: pipeline runner tools
     docker push abdullin/tga-pipeline:base-latest
     docker push abdullin/tga-pipeline:base-${VERSION}
 
