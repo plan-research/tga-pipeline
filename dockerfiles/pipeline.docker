@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
-ARG PIPELINE_VERSION=0.0.4
+ARG PIPELINE_VERSION=0.0.5
 
 # install required packages
 USER root
