@@ -9,5 +9,6 @@ import kotlin.time.Duration
 data class ToolResults(
     val benchmark: Benchmark,
     val generationTime: Duration,
+    val testSuite: TestSuite,
     val coverage: ClassCoverageInfo,
 )

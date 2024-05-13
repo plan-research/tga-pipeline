@@ -68,7 +68,7 @@ class TgaRunner(
                         val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
                         log.debug(coverage)
 
-                        add(ToolResults(benchmark, result.generationTime, coverage))
+                        add(ToolResults(benchmark, result.generationTime, result.testSuite, coverage))
                         resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(this))
                     }
                 }
