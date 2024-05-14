@@ -1,7 +1,7 @@
 
 VERSION = 0.0.5
 
-.PHONY: all
+.PHONY: all publish
 
 all: runner tools
 
@@ -25,8 +25,8 @@ runner: pipeline
 	docker tag abdullin/tga-pipeline:runner-latest abdullin/tga-pipeline:runner-${VERSION}
 
 publish: pipeline runner tools
-    docker push abdullin/tga-pipeline:base-latest
-    docker push abdullin/tga-pipeline:base-${VERSION}
+	docker push abdullin/tga-pipeline:base-latest
+	docker push abdullin/tga-pipeline:base-${VERSION}
 
 	docker push abdullin/tga-pipeline:tools-latest
 	docker push abdullin/tga-pipeline:tools-${VERSION}
