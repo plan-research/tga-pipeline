@@ -22,7 +22,8 @@ class TgaRunner(
     private val configFile: Path,
     private val timeLimit: Duration,
     private val outputDirectory: Path,
-    private val n: Int,
+    private val baseRunName: String,
+    private val runIds: IntRange,
 ) {
     fun run() {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
@@ -40,8 +41,8 @@ class TgaRunner(
 
             val baseDir = outputDirectory.resolve(name)
 
-            for (run in 0 until n) {
-                val runDir = baseDir.resolve("$run")
+            for (run in runIds) {
+                val runDir = baseDir.resolve("$baseRunName-$run")
                 val resultFile = runDir.resolve("results.json").also {
                     it.parent?.toFile()?.mkdirs()
                 }

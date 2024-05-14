@@ -2,7 +2,9 @@ package org.plan.research.tga.runner
 
 import org.plan.research.tga.core.util.initLog
 import org.plan.research.tga.runner.config.TgaRunnerConfig
+import org.vorpal.research.kthelper.logging.log
 import java.nio.file.Paths
+import kotlin.system.exitProcess
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -16,8 +18,29 @@ fun main(args: Array<String>) {
 
     initLog(outputDirectory, "tga-runner.log")
 
-    val n = config.getCmdValue("runs")!!.toInt()
+    val baseRunName = config.getCmdValue("runName", "run")
+    val runIds = try {
+        config.getCmdValue("runs")!!.let { str ->
+            when {
+                ".." in str -> {
+                    val nums = str.split("..")
+                    IntRange(nums[0].toInt(), nums[1].toInt())
+                }
 
-    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory, n)
+                else -> IntRange(str.toInt(), str.toInt())
+            }
+        }
+    } catch (e: NumberFormatException) {
+        log.error("Could not parse run command line argument, ", e)
+        config.printHelp()
+        exitProcess(1)
+    }
+    if (runIds.isEmpty()) {
+        log.error("Run ids interval cannot be empty")
+        config.printHelp()
+        exitProcess(1)
+    }
+
+    val runner = TgaRunner(port, benchmarks, timeLimit, outputDirectory, baseRunName, runIds)
     runner.run()
 }

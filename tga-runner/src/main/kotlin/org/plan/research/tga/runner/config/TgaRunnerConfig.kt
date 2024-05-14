@@ -35,7 +35,14 @@ class TgaRunnerConfig(args: Array<String>) : TgaConfig("tga-runner", options, ar
             )
 
             addOption(
-                Option("n", "runs", true, "number of runs")
+                Option(null, "runName", true, "base run name, default is 'run'")
+                    .also { it.isRequired = false }
+            )
+
+            addOption(
+                Option(null, "runs", true, "number of runs," +
+                        " just *n* for a single run with id *n*" +
+                        " or an int range in format *n..m* for *m - n* runs with ids from n to m")
                     .also { it.isRequired = true }
             )
         }
