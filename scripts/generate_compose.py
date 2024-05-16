@@ -1,13 +1,50 @@
-#!/bin/python
-
-import argparse
 from collections.abc import Iterable
+from enum import Enum
 
-RUNNER_IMAGE = "abdullin/tga-pipeline:runner-latest"
-TOOL_IMAGE = "abdullin/tga-pipeline:tools-latest"
 
-DOCKER_BENCHMARKS = "/var/benchmarks/gitbug/benchmarks.json"
-DOCKER_RESULTS_DIR = "/var/results"
+class Tool(Enum):
+    kex = 1
+    EvoSuite = 2
+    TestSpark = 3
+
+
+class ToolArgs:
+    pass
+
+
+class KexArgs(ToolArgs):
+    def __init__(self, options: dict[str, str]):
+        self.options = options
+
+    def __str__(self):
+        return ' '.join(f'--option {option}:{self.options[option]}' for option in self.options)
+
+
+class EvoSuiteArgs(ToolArgs):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return ''
+
+
+class TestSparkArgs(ToolArgs):
+    def __init__(self, model_name: str, model_token: str, space_user: str, space_token: str, prompt: str = None):
+        self.model_name = model_name
+        self.model_token = model_token
+        self.space_user = space_user
+        self.space_token = space_token
+        self.prompt = prompt
+
+    def __str__(self):
+        cmd = (f'--llm {self.model_name} '
+               f'--llmToken {self.model_token} '
+               f'--spaceUser {self.space_user} '
+               f'--spaceToken {self.space_token}')
+        if self.prompt is not None:
+            cmd += f' --prompt \"{self.prompt}\"'
+
+        return cmd
 
 
 def make_indent(indentation: int) -> str:
@@ -118,54 +155,16 @@ class IntRange(Iterable[int]):
         return iter([f'[{self.start}..{self.end}]'])
 
 
-def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        prog='generate_compose.py',
-        description='Generate a compose file for running tga-pipeline experiment',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    parser.add_argument(
-        '-o', '--output', type=str,
-        default='compose.yaml',
-        required=False,
-        help='Path to write the compose file',
-    )
-    parser.add_argument(
-        '--tool', type=str, choices=['kex', 'EvoSuite', 'TestSpark'],
-        required=True,
-        help='The tool to run'
-    )
-    parser.add_argument(
-        '--runs', type=int, choices=IntRange(1, 100),
-        required=True,
-        help='Number of runs'
-    )
-    parser.add_argument(
-        '--timeout', type=int, choices=IntRange(1, 100_000),
-        default=120,
-        required=False,
-        help='Timeout for each benchmark, in seconds'
-    )
-    parser.add_argument(
-        '--threads', type=int, choices=IntRange(1, 100),
-        default=1,
-        required=False,
-        help='Number of parallel threads'
-    )
-    parser.add_argument(
-        '--results', type=str,
-        required=True,
-        help='Path to directory to write results'
-    )
-    return parser.parse_args()
-
-
 def generate_compose(
-        tool_name: str,
+        tool: Tool,
+        tool_args: ToolArgs,
         runs: int,
         timeout: int,
         threads: int,
         results_path: str,
+        runner_image: str,
+        tool_image: str,
+        benchmarks_path: str
 ) -> ComposeFile:
     result = ComposeFile()
 
@@ -182,48 +181,28 @@ def generate_compose(
             thread_runs += 1
             leftover -= 1
 
-        network = Network(f'network-{tool_name}-{thread}')
+        network = Network(f'network-{tool.name}-{thread}')
         result.add_network(network)
 
         runner_service = Service(
-            name=f'runner-{tool_name}-{thread}',
-            image=RUNNER_IMAGE,
-            command=f'--args="-p 10000 -c {DOCKER_BENCHMARKS} -t {timeout} -o {DOCKER_RESULTS_DIR} '
+            name=f'runner-{tool.name}-{thread}',
+            image=runner_image,
+            command=f'--args="-p 10000 -c {benchmarks_path} -t {timeout} -o /var/results '
                     f'--runs {starting_run}..{starting_run + thread_runs - 1}"'
         )
         runner_service.add_network(network)
-        runner_service.add_volume(result_volume, DOCKER_RESULTS_DIR)
+        runner_service.add_volume(result_volume, '/var/results')
 
         tool_service = Service(
-            name=f'tool-{tool_name}-{thread}',
-            image=TOOL_IMAGE,
-            command=f'--args="--ip {runner_service.name} --port 10000 --tool {tool_name} --toolArgs=''"'
+            name=f'tool-{tool.name}-{thread}',
+            image=tool_image,
+            command=f'--args="--ip {runner_service.name} --port 10000 --tool {tool.name} --toolArgs=\'{tool_args}\'"'
         )
         tool_service.add_network(network)
-        tool_service.add_volume(result_volume, DOCKER_RESULTS_DIR)
+        tool_service.add_volume(result_volume, '/var/results')
 
         result.add_service(runner_service)
         result.add_service(tool_service)
         starting_run += thread_runs
 
     return result
-
-
-def main():
-    args = parse_arguments()
-
-    output_path = args.output
-    tool_name = args.tool
-    runs = args.runs
-    timeout = args.timeout
-    threads = args.threads
-    results_path = args.results
-
-    compose_file = generate_compose(tool_name, runs, timeout, threads, results_path)
-    with open(output_path, 'w') as file:
-        print(compose_file)
-        file.write(str(compose_file))
-
-
-if __name__ == '__main__':
-    main()
