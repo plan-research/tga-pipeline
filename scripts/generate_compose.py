@@ -158,6 +158,7 @@ class IntRange(Iterable[int]):
 def generate_compose(
         tool: Tool,
         tool_args: ToolArgs,
+        run_name: str,
         runs: int,
         timeout: int,
         threads: int,
@@ -188,7 +189,7 @@ def generate_compose(
             name=f'runner-{tool.name}-{thread}',
             image=runner_image,
             command=f'--args="-p 10000 -c {benchmarks_path} -t {timeout} -o /var/results '
-                    f'--runs {starting_run}..{starting_run + thread_runs - 1}"'
+                    f'--runName {run_name} --runs {starting_run}..{starting_run + thread_runs - 1}"'
         )
         runner_service.add_network(network)
         runner_service.add_volume(result_volume, '/var/results')
