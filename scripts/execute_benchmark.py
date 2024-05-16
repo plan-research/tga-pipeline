@@ -13,14 +13,16 @@ BENCHMARKS_FILE = "/var/benchmarks/gitbug/benchmarks.json"
 # Run-specific parameters
 TOOL = Tool.kex
 TOOL_ARGS = KexArgs({})
-RUNS = 2
-TIMEOUT = 2 * 60  # in seconds
-THREADS = 2
-RESULTS_DIR = "./results"
+RUN_NAME = "run"  # name of the run/experiment
+RUNS = 2  # number of repeated executions
+TIMEOUT = 2 * 60  # timeout for each benchmark, in seconds
+THREADS = 2  # number of parallel executions that will be started
+RESULTS_DIR = "./results"  # path to the directory with the results
 
 
 def main():
-    compose_file = generate_compose(TOOL, TOOL_ARGS, RUNS, TIMEOUT, THREADS, RESULTS_DIR,
+    compose_file = generate_compose(TOOL, TOOL_ARGS,
+                                    RUN_NAME, RUNS, TIMEOUT, THREADS, RESULTS_DIR,
                                     RUNNER_IMAGE, TOOL_IMAGE, BENCHMARKS_FILE)
 
     tmp = tempfile.NamedTemporaryFile()
