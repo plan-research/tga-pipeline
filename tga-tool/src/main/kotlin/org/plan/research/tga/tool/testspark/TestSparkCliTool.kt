@@ -14,7 +14,6 @@ import org.vorpal.research.kthelper.terminateOrKill
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -48,7 +47,7 @@ private class TestSparkCliParser(args: List<String>) : TgaConfig("TestSpark", op
             )
 
             addOption(
-                Option(null, "prompt", true, "path to a file with a prompt to use for test generation")
+                Option(null, "prompt", true, "prompt to use for test generation, as a string")
                     .also { it.isRequired = false }
             )
 
@@ -70,19 +69,8 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
 
     private val argParser = TestSparkCliParser(args)
     private val promptFile = Files.createTempFile("prompt", ".txt")!!.also {
-        val promptFilepath = argParser.getCmdValue("prompt")
-
-        val promptContent = if (promptFilepath == null) {
-            log.debug("No prompt filepath provided, using default prompt")
-            DEFAULT_PROMPT
-        } else {
-            log.debug("Provided prompt filepath: '$promptFilepath'")
-            Files.readAllLines(Paths.get(promptFilepath), StandardCharsets.UTF_8)
-                .joinToString(separator = "\n", postfix = "\n")
-        }
-
+        val promptContent = argParser.getCmdValue("prompt") ?: DEFAULT_PROMPT
         log.debug("promptContent: '$promptContent'")
-
         log.debug("Temp file where prompt is saved: '${it.absolutePathString()}'")
         it.writeText(promptContent)
     }
