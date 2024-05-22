@@ -13,6 +13,7 @@ import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
+import org.plan.research.tga.core.util.asmString
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kthelper.assert.ktassert
 import org.vorpal.research.kthelper.collection.mapToArray

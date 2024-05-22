@@ -1,4 +1,4 @@
-package org.plan.research.tga.runner.metrics
+package org.plan.research.tga.analysis.metrics
 
 import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassId
@@ -41,6 +41,7 @@ import org.vorpal.research.kfg.ir.value.instruction.EnterMonitorInst
 import org.vorpal.research.kfg.ir.value.instruction.ExitMonitorInst
 import org.vorpal.research.kfg.ir.value.instruction.FieldLoadInst
 import org.vorpal.research.kfg.ir.value.instruction.FieldStoreInst
+import org.vorpal.research.kfg.ir.value.instruction.HandleBsmArgument
 import org.vorpal.research.kfg.ir.value.instruction.InstanceOfInst
 import org.vorpal.research.kfg.ir.value.instruction.InvokeDynamicInst
 import org.vorpal.research.kfg.ir.value.instruction.JumpInst
@@ -91,6 +92,7 @@ class ConditionTypeDfa(
             "java/util/Iterator"
         )
 
+        private val ids = mutableMapOf<Location, UInt>()
         private val methodMetrics = mutableMapOf<Pair<ClassId, MethodId>, MutableMap<BranchId, ValueModel>>()
 
         fun getMetrics(method: Pair<ClassId, MethodId>): Map<BranchId, ValueModel> =
@@ -121,6 +123,8 @@ class ConditionTypeDfa(
 
     override fun visit(method: Method) {
         if (!method.hasBody) return
+        if (method.fullId in methodMetrics) return
+        val metrics = methodMetrics.getOrPut(method.fullId, ::mutableMapOf)
         log.error("Analyzing method $method")
 
         val entryMap = ValueModelMap()
@@ -171,19 +175,18 @@ class ConditionTypeDfa(
             }
         }
 
-        val ids = mutableMapOf<Location, UInt>()
-        val metrics = mutableMapOf<BranchId, ValueModel>()
         for (block in method.body) {
             val terminator = block.terminator
             val location = terminator.location
             val lineId = LineId(location.file, location.line.toUInt())
-            val branchId = ids.getOrDefault(location, 0U)
-            if (terminator in blockExits[block]!!) {
-                metrics[BranchId(lineId, branchId)] = blockExits[block]!![terminator]!!
+
+            val terminatorValueType = blockExits[block]!![terminator] ?: continue
+            for (successor in terminator.successors) {
+                val branchId = ids.getOrDefault(location, 0U)
+                metrics[BranchId(lineId, branchId)] = terminatorValueType
                 ids[location] = branchId + 1U
             }
         }
-        methodMetrics[method.fullId] = metrics
     }
 
     override fun visitArrayLoadInst(inst: ArrayLoadInst) {
@@ -255,6 +258,13 @@ class ConditionTypeDfa(
     }
 
     override fun visitInvokeDynamicInst(inst: InvokeDynamicInst) {
+        // fucked up for now
+        for (handle in inst.bootstrapMethodArgs.filterIsInstance<HandleBsmArgument>()) {
+            visit(handle.handle.method)
+            methodMetrics[handle.handle.method.fullId]?.let {
+                methodMetrics[inst.parent.method.fullId]!!.putAll(it)
+            }
+        }
         valueDomains[inst] = LambdaModel
     }
 

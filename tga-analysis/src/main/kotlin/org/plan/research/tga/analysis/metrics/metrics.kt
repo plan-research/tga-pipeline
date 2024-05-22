@@ -1,4 +1,4 @@
-package org.plan.research.tga.runner.metrics
+package org.plan.research.tga.analysis.metrics
 
 import kotlinx.serialization.encodeToString
 import org.plan.research.tga.core.benchmark.Benchmark
@@ -7,7 +7,7 @@ import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.metrics.ClassMetrics
 import org.plan.research.tga.core.metrics.MethodMetrics
-import org.plan.research.tga.runner.coverage.jacoco.asmString
+import org.plan.research.tga.core.util.asmString
 import org.vorpal.research.kfg.ClassManager
 import org.vorpal.research.kfg.KfgConfig
 import org.vorpal.research.kfg.container.asContainer
@@ -15,6 +15,7 @@ import org.vorpal.research.kfg.ir.Class
 import org.vorpal.research.kfg.ir.Method
 import org.vorpal.research.kfg.util.Flags
 import org.vorpal.research.kfg.visitor.executeClassPipeline
+import org.vorpal.research.kthelper.tryOrNull
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
@@ -58,7 +59,7 @@ private fun computeMetrics(benchmark: Benchmark): ClassMetrics {
     )
 
     classManager.initialize(benchmark.classPath.mapNotNull {
-        it.asContainer()
+        tryOrNull { it.asContainer() }
     })
 
     val target = classManager[benchmark.klass.asmString]

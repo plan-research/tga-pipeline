@@ -22,23 +22,19 @@ import org.plan.research.tga.core.coverage.MethodCoverageInfo
 import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
+import org.plan.research.tga.core.util.asArray
+import org.plan.research.tga.core.util.asmString
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
-import org.vorpal.research.kfg.Package
 import org.vorpal.research.kthelper.deleteOnExit
 import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
-import java.lang.reflect.Array
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readBytes
-
-val String.asmString get() = replace(Package.CANONICAL_SEPARATOR, Package.SEPARATOR)
-
-fun Class<*>.asArray(): Class<*> = Array.newInstance(this, 0).javaClass
 
 fun ExecutionDataStore.deepCopy(): ExecutionDataStore {
     val executionDataCopy = ExecutionDataStore()

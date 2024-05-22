@@ -8,7 +8,6 @@ import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
 import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
 import org.plan.research.tga.runner.coverage.ExternalCoverageProvider
-import org.plan.research.tga.runner.metrics.MetricsProvider
 import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.log
@@ -28,7 +27,6 @@ class TgaRunner(
     fun run() {
         val benchmarkProvider = JsonBenchmarkProvider(configFile)
         val coverageProvider = ExternalCoverageProvider(600.seconds)
-        val metricsProvider = MetricsProvider(configFile.parent.resolve("metrics.json"))
 
         val server = TcpTgaServer(serverPort)
         log.debug("Started server, awaiting for tool connection")
@@ -76,8 +74,6 @@ class TgaRunner(
 
                 resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(results))
             }
-
-            metricsProvider.save()
         }
     }
 }
