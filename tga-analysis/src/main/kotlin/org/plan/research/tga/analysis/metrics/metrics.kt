@@ -26,28 +26,35 @@ val Method.id get() = MethodId(this.name, this.asmDesc)
 val Method.fullId: Pair<ClassId, MethodId> get() = klass.id to this.id
 
 class MetricsProvider(private val metricsFile: Path) {
-    private val metrics = mutableMapOf<String, ClassMetrics>()
+    private val metrics = mutableMapOf<Pair<String, ClassId>, ClassMetrics>()
 
     init {
         if (metricsFile.exists()) {
             val precomputedMetrics = getJsonSerializer(pretty = true)
-                .decodeFromString<Set<ClassMetrics>>(metricsFile.readText())
+                .decodeFromString<List<Pair<Pair<String, ClassId>, ClassMetrics>>>(metricsFile.readText())
             for (metric in precomputedMetrics) {
-                metrics[metric.klassId.name] = metric
+                metrics[metric.first] = metric.second
             }
         }
     }
 
-    fun getMetrics(benchmark: Benchmark) = metrics.getOrPut(benchmark.klass) { computeMetrics(benchmark) }
+    fun getMetrics(benchmark: Benchmark) =
+        metrics.getOrPut(benchmark.buildId to ClassId(benchmark.klass)) { computeMetrics(benchmark) }
 
     fun save() {
         metricsFile.writeText(
-            getJsonSerializer(pretty = true).encodeToString(metrics.values.toList())
+            getJsonSerializer(pretty = true).encodeToString(metrics.toList())
         )
     }
 }
 
 private fun computeMetrics(benchmark: Benchmark): ClassMetrics {
+    // TODO: refactor this
+    // currently we need to manually clear the visitor's global state after each run,
+    // because some of the benchmarks may contain different versions of the same classes
+    ConditionTypeDfa.reset()
+    CyclomaticComplexityCounter.reset()
+
     val classManager = ClassManager(
         KfgConfig(
             Flags.readAll,

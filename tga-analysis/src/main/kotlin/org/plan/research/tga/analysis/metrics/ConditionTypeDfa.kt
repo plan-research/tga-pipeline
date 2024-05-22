@@ -97,6 +97,11 @@ class ConditionTypeDfa(
 
         fun getMetrics(method: Pair<ClassId, MethodId>): Map<BranchId, ValueModel> =
             methodMetrics.getOrDefault(method, emptyMap())
+
+        fun reset() {
+            ids.clear()
+            methodMetrics.clear()
+        }
     }
 
     private fun convert(type: Type): ValueModel = when {
@@ -125,7 +130,7 @@ class ConditionTypeDfa(
         if (!method.hasBody) return
         if (method.fullId in methodMetrics) return
         val metrics = methodMetrics.getOrPut(method.fullId, ::mutableMapOf)
-        log.error("Analyzing method $method")
+        log.debug("Analyzing method {}", method)
 
         val entryMap = ValueModelMap()
         valueDomains = entryMap

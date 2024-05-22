@@ -16,12 +16,16 @@ class CyclomaticComplexityCounter(
         private val complexity = mutableMapOf<Pair<ClassId, MethodId>, UInt>()
 
         fun getComplexity(method: Pair<ClassId, MethodId>) = complexity.getOrDefault(method, UInt.MAX_VALUE)
+        fun reset() {
+            complexity.clear()
+        }
     }
 
     override fun cleanup() {}
 
     override fun visit(method: Method) {
         if (method.fullId in complexity) return
+        complexity[method.fullId] = 1U
 
         var e = 0U
         val n = method.body.basicBlocks.size.toUInt()
