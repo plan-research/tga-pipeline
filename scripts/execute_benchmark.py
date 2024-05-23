@@ -1,3 +1,4 @@
+import os
 import subprocess
 import tempfile
 
@@ -17,7 +18,7 @@ RUN_NAME = "run"  # name of the run/experiment
 RUNS = 10  # number of repeated executions
 TIMEOUT = 5 * 60  # timeout for each benchmark, in seconds
 THREADS = 5  # number of parallel executions that will be started
-RESULTS_DIR = "./results"  # path to the directory with the results
+RESULTS_DIR = os.path.join(os.getcwd(), "results")  # path to the directory with the results
 
 
 def main():

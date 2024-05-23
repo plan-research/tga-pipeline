@@ -42,7 +42,7 @@ challenging. That is why we provide a set of Python scripts for pipeline configu
 pipeline in default configuration is pretty simple:
 
 ```shell
-./scripts/execute_benchmark.py
+python3 ./scripts/execute_benchmark.py
 ```
 
 This script will generate a Compose file with default parameters and execute the pipeline.
