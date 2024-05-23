@@ -14,9 +14,9 @@ BENCHMARKS_FILE = "/var/benchmarks/gitbug/benchmarks.json"
 TOOL = Tool.kex
 TOOL_ARGS = KexArgs({})
 RUN_NAME = "run"  # name of the run/experiment
-RUNS = 2  # number of repeated executions
-TIMEOUT = 2 * 60  # timeout for each benchmark, in seconds
-THREADS = 2  # number of parallel executions that will be started
+RUNS = 10  # number of repeated executions
+TIMEOUT = 5 * 60  # timeout for each benchmark, in seconds
+THREADS = 5  # number of parallel executions that will be started
 RESULTS_DIR = "./results"  # path to the directory with the results
 
 
