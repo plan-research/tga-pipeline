@@ -29,7 +29,8 @@ fun main(args: Array<String>) {
     log.debug(metrics.size)
 
     for ((tool, results) in data) {
-        val resultsBranches = results.filter { it.coverage.branches.total > 0U }
+        val resultsBranches =
+            results.filter { it.coverage.instructions.covered > 0U }.filter { it.coverage.branches.total > 0U }
 
         log.debug(
             "$tool: Average coverage: {} {}",
@@ -73,6 +74,17 @@ fun main(args: Array<String>) {
                 }
             }
         }
-        log.debug(distribution)
+        log.debug(
+            distribution.toList()
+                .joinToString("\n") {
+                    String.format(
+                        "%s: %d / %d -> %.2f",
+                        it.first,
+                        it.second.first,
+                        it.second.second,
+                        it.second.first.toDouble() / (it.second.first + it.second.second)
+                    )
+                }
+        )
     }
 }
