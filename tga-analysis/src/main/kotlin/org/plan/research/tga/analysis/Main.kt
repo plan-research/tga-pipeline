@@ -48,22 +48,20 @@ fun main(args: Array<String>) {
 
     for ((tool, results) in data) {
         log.debug("Distribution of $tool")
-        var notFoundMethod = 0
-        var notFoundBranch = 0
         val distribution = mutableMapOf<ValueModel, Pair<Int, Int>>()
         for (toolResult in results) {
             val benchmarkMetrics = metrics[toolResult.benchmark.buildId] ?: continue
-            for (methodCoverage in toolResult.coverage.methods) {
+            label@ for (methodCoverage in toolResult.coverage.methods) {
                 if (methodCoverage.methodId.name == "<clinit>") continue
                 for ((branch, covered) in methodCoverage.branches.coverage) {
                     val methodMetrics = benchmarkMetrics.methods.firstOrNull { it.methodId == methodCoverage.methodId }
                     if (methodMetrics == null) {
-                        notFoundMethod++
-                        continue
+                        log.error("${toolResult.benchmark.buildId}:${methodCoverage.methodId} not found")
+                        break@label
                     }
                     val valueModel = methodMetrics.branches[branch]
                     if (valueModel == null) {
-                        notFoundBranch++
+                        log.error("${toolResult.benchmark.buildId}:${methodCoverage.methodId}:$branch not found")
                         continue
                     }
 
@@ -75,7 +73,6 @@ fun main(args: Array<String>) {
                 }
             }
         }
-        log.debug("Not found methods $notFoundMethod, not found branches $notFoundBranch")
         log.debug(distribution)
     }
 }
