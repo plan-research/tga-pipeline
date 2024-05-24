@@ -39,13 +39,42 @@ However, all the images are also available through [Docker Hub](https://hub.dock
 
 Pipeline has a log of configuration parameters, therefore manually writing and configuring Compose file may be
 challenging. That is why we provide a set of Python scripts for pipeline configuration and execution. Running the
-pipeline in default configuration is pretty simple:
+pipeline is pretty simple:
 
 ```shell
-python3 ./scripts/execute_benchmark.py
+python3 ./scripts/execute_benchmark.py -h
+usage: execute_benchmark.py [-h] --tool {Tool.kex,Tool.EvoSuite,Tool.TestSpark} --runName RUNNAME --runs {[0..100000]} --timeout TIMEOUT --workers WORKERS --output OUTPUT
+                            [--kexOption KEXOPTION [KEXOPTION ...]] [--llm LLM] [--llmToken LLMTOKEN] [--spaceUser SPACEUSER] [--spaceToken SPACETOKEN] [--prompt PROMPT]
+
+TGA pipeline executor
+
+options:
+  -h, --help            show this help message and exit
+  --tool {Tool.kex,Tool.EvoSuite,Tool.TestSpark}
+                        Name of tool
+  --runName RUNNAME     Name of the experiment
+  --runs {[0..100000]}  Number of total runs
+  --timeout TIMEOUT     Timeout in seconds
+  --workers WORKERS     Number of parallel workers
+  --output OUTPUT       Path to folder with output
+  --kexOption KEXOPTION [KEXOPTION ...]
+                        Additional kex options, optional for kex
+  --llm LLM             LLM to use, required for TestSpark
+  --llmToken LLMTOKEN   Grazie token, required for TestSpark
+  --spaceUser SPACEUSER
+                        Space user name, required for TestSpark
+  --spaceToken SPACETOKEN
+                        Space token, required for TestSpark
+  --prompt PROMPT       LLM prompt for test generation, optional for TestSpark
 ```
 
-This script will generate a Compose file with default parameters and execute the pipeline.
+Example:
+
+```shell
+python3 ./scripts/execute_benchmark.py --tool kex --runName test --runs 10 --workers 1 --timeout 120 --output /home/kex-results
+```
+
+The script will generate a Compose file with specified parameters and execute the pipeline.
 
 ## Configuration
 
@@ -59,33 +88,22 @@ Pipeline has two different types of parameters: run specific and tool specific.
 
 These parameters determine the global execution configuration:
 
-* `RUN_NAME` &mdash; Name of the current experiment;
-* `RUNS` &mdash; Number of repeated executions of the benchmark;
-* `TIMEOUT` &mdash; Timeout, is seconds, for each execution of test generation tool (i.e. it is a timeout for test
+* `tool` &mdash; an instance of enum class `Tool` that will determine the tool for test generation
+* `runName` &mdash; Name of the current experiment;
+* `runs` &mdash; Number of repeated executions of the benchmark;
+* `timeout` &mdash; Timeout, is seconds, for each execution of test generation tool (i.e. it is a timeout for test
   generation for a single class);
-* `THREADS` &mdash; Number of parallel executions that will be started; parallelization is currently performed on the
-  benchmark level. E.g. if `THREADS = 2` and `RUNS = 10`, the pipeline will start two parallel pipelines, the first one
+* `workers` &mdash; Number of parallel workers that will be started; parallelization is currently performed on the
+  benchmark level. E.g. if `workers = 2` and `runs = 10`, the pipeline will start two parallel workers, the first one
   will execute runs 0&ndash;4, the second one &mdash; 5&ndash;9;
-* `RESULTS_DIR` &mdash; path to the folder where the pipeline will write all the execution results.
+* `output` &mdash; path to the folder where the pipeline will write all the execution results.
 
-### Tools and tool specific parameters
+### Tools and tool-specific parameters
 
 Currently, the pipeline supports three tools: [Kex](https://github.com/vorpal-research/kex),
 [EvoSuite](https://github.com/EvoSuite/evosuite) and [TestSpark](https://github.com/JetBrains-Research/TestSpark).
 
-The pipeline expects two tool specific parameters:
-
-* `TOOL` &mdash; an instance of enum class `Tool` that will determine the tool for test generation;
-* `TOOL_ARGS` &mdash; an instance of class `ToolArgs` that will allow you to pass necessary or additional parameters to
-  the selected tool.
-
-To add support for the new tool, you need to:
-
-* Add an implementation
-  of [`TestGenerationTool`](tga-core/src/main/kotlin/org/plan/research/tga/core/tool/TestGenerationTool.kt) interface
-  for your tool into the `tga-tool` project;
-* Install your tool in the `tga-tools` Docker image by modifying [`tools.docker`](dockerfiles/tools.docker) dockerfile;
-* Implement the necessary utility classes in [generate_compose.py](scripts/generate_compose.py) script.
+Depending on the chosen tool, the pipeline expects different sets of tool-specific parameters.
 
 #### Kex
 
@@ -120,3 +138,14 @@ Currently, the pipeline uses a pre-build version of [EvoSuite-1.0.5](lib/evosuit
 which forces us to use JDK 11 for the experiments, as it fails on the newer versions.
 
 Running EvoSuite does not require any additional arguments, one can just pass an empty instance of `EvoSuiteArgs`.
+
+## Extending the pipeline
+
+To add support for the new tool, you need to:
+
+* Add an implementation
+  of [`TestGenerationTool`](tga-core/src/main/kotlin/org/plan/research/tga/core/tool/TestGenerationTool.kt) interface
+  for your tool into the `tga-tool` project;
+* Install your tool in the `tga-tools` Docker image by modifying [`tools.docker`](dockerfiles/tools.docker) dockerfile;
+* Implement the necessary utility classes in [generate_compose.py](scripts/generate_compose.py) script;
+* Add the necessary tool-specific parameters in [execute_benchmark.py](./scripts/execute_benchmark.py) script.

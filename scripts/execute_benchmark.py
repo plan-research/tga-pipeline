@@ -40,15 +40,17 @@ def main():
     parser.add_argument("--output", type=str, help="Path to folder with output", required=True)
 
     # kex args
-    parser.add_argument("--kexOption", type=str, action='append', nargs='+', help="Additional kex options",
+    parser.add_argument("--kexOption", type=str, action='append', nargs='+',
+                        help="Additional kex options, optional for kex",
                         required=False)
 
     # test spark args
-    parser.add_argument("--llm", type=str, help="LLM to use", required=False)
-    parser.add_argument("--llmToken", type=str, help="Grazie token", required=False)
-    parser.add_argument("--spaceUser", type=str, help="Space user name", required=False)
-    parser.add_argument("--spaceToken", type=str, help="Space token", required=False)
-    parser.add_argument("--prompt", type=str, help="LLM prompt for test generation", required=False)
+    parser.add_argument("--llm", type=str, help="LLM to use, required for TestSpark", required=False)
+    parser.add_argument("--llmToken", type=str, help="Grazie token, required for TestSpark", required=False)
+    parser.add_argument("--spaceUser", type=str, help="Space user name, required for TestSpark", required=False)
+    parser.add_argument("--spaceToken", type=str, help="Space token, required for TestSpark", required=False)
+    parser.add_argument("--prompt", type=str, help="LLM prompt for test generation, optional for TestSpark",
+                        required=False)
     args = parser.parse_args()
     print(args)
     print(args.tool)
