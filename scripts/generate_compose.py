@@ -3,9 +3,9 @@ from enum import Enum
 
 
 class Tool(Enum):
-    kex = 1
-    EvoSuite = 2
-    TestSpark = 3
+    kex = 'kex'
+    EvoSuite = 'EvoSuite'
+    TestSpark = 'TestSpark'
 
 
 class ToolArgs:
@@ -13,11 +13,11 @@ class ToolArgs:
 
 
 class KexArgs(ToolArgs):
-    def __init__(self, options: dict[str, str]):
+    def __init__(self, options: list[str]):
         self.options = options
 
     def __str__(self):
-        return ' '.join(f'--option {option}:{self.options[option]}' for option in self.options)
+        return ' '.join(f'--option {option}' for option in self.options)
 
 
 class EvoSuiteArgs(ToolArgs):
@@ -161,7 +161,7 @@ def generate_compose(
         run_name: str,
         runs: int,
         timeout: int,
-        threads: int,
+        workers: int,
         results_path: str,
         runner_image: str,
         tool_image: str,
@@ -169,14 +169,14 @@ def generate_compose(
 ) -> ComposeFile:
     result = ComposeFile()
 
-    runs_per_thread = runs // threads
-    leftover = runs % threads
+    runs_per_thread = runs // workers
+    leftover = runs % workers
     starting_run = 0
 
     result_volume = Volume(results_path, is_external=False)
     result.add_volume(result_volume)
 
-    for thread in range(threads):
+    for thread in range(workers):
         thread_runs = runs_per_thread
         if leftover > 0:
             thread_runs += 1

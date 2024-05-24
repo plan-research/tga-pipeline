@@ -29,22 +29,30 @@ fun main(args: Array<String>) {
     log.debug(metrics.size)
 
     for ((tool, results) in data) {
-        val resultsBranches =
-            results.filter { it.coverage.instructions.covered > 0U }.filter { it.coverage.branches.total > 0U }
+        val resultsBranches = results
+            .filter { it.coverage.instructions.covered > 0U }
+            .filter { it.coverage.branches.total > 0U }
 
         log.debug(
-            "$tool: Average coverage: {} {}",
-            results.sumOf { it.coverage.lines.ratio } / results.size,
-            resultsBranches.sumOf { it.coverage.branches.ratio } / resultsBranches.size
+            String.format(
+                "$tool: Average coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
+                100.0 * results.sumOf { it.coverage.lines.ratio } / results.size,
+                100.0 * resultsBranches.sumOf { it.coverage.branches.ratio } / resultsBranches.size,
+                results.size
+            )
         )
 
         val filteredLines = results.filter { it.coverage.lines.ratio > 0.0 }
         val filteredBranches = resultsBranches.filter { it.coverage.branches.ratio > 0.0 }
         log.debug(
-            "$tool: Average filtered coverage: {} {}",
-            filteredLines.sumOf { it.coverage.lines.ratio } / filteredLines.size,
-            filteredBranches.sumOf { it.coverage.branches.ratio } / filteredBranches.size
+            String.format(
+                "$tool: Average filtered coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
+                100.0 * filteredLines.sumOf { it.coverage.lines.ratio } / filteredLines.size,
+                100.0 * filteredBranches.sumOf { it.coverage.branches.ratio } / filteredBranches.size,
+                filteredLines.size
+            )
         )
+        log.debug("$tool: no coverage for ${results.size - filteredLines.size} benchmarks")
     }
 
     for ((tool, results) in data) {
