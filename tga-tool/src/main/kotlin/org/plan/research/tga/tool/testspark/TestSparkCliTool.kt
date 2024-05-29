@@ -80,18 +80,25 @@ class TestSparkCliTool(args: List<String>) : TestGenerationTool {
             ?: unreachable { log.error("No \$TEST_SPARK_HOME environment variable") }
 
         private const val DEFAULT_LLM = "GPT-4"
+        private const val LANGUAGE = "\$LANGUAGE"
+        private const val NAME = "\$NAME"
+        private const val TESTING_PLATFORM = "\$TESTING_PLATFORM"
+        private const val MOCKING_FRAMEWORK = "\$MOCKING_FRAMEWORK"
+        private const val CODE = "\$CODE"
+        private const val METHODS = "\$METHODS"
+        private const val POLYMORPHISM = "\$POLYMORPHISM"
         private const val DEFAULT_PROMPT =
-            "Generate unit tests in \$LANGUAGE for \$NAME to achieve 100% line coverage for this class.\\n" +
-                    "Dont use @Before and @After test methods.\\n" +
-                    "Make tests as atomic as possible.\\n" +
-                    "All tests should be for \$TESTING_PLATFORM.\\n" +
-                    "In case of mocking, use \$MOCKING_FRAMEWORK. But, do not use mocking for all tests.\\n" +
-                    "Name all methods according to the template - [MethodUnderTest][Scenario]Test, and use only English letters.\\n" +
-                    "The source code of class under test is as follows:\\n" +
-                    "\$CODE\\n" +
-                    "Here are some information about other methods and classes used by the class under test. Only use them for creating objects, not your own ideas.\\n" +
-                    "\$METHODS\\n" +
-                    "\$POLYMORPHISM"
+            """Generate unit tests in $LANGUAGE for $NAME to achieve 100% line coverage for this class.
+Dont use @Before and @After test methods.
+Make tests as atomic as possible.
+All tests should be for $TESTING_PLATFORM.
+In case of mocking, use $MOCKING_FRAMEWORK. But, do not use mocking for all tests.
+Name all methods according to the template - [MethodUnderTest][Scenario]Test, and use only English letters.
+The source code of class under test is as follows:
+$CODE
+Here are some information about other methods and classes used by the class under test. Only use them for creating objects, not your own ideas.
+$METHODS
+$POLYMORPHISM"""
 
         private const val TEST_SPARK_LOG = "test-spark.log"
     }
