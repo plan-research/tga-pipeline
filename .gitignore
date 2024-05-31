@@ -48,6 +48,7 @@ benchmarks/
 results/
 
 benchmarks-11/
+*-benchmarks-*/**
 /.idea/
 /tool-configs/test-spark-config.env
 

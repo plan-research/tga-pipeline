@@ -3,6 +3,7 @@ package org.plan.research.tga.tool.kex
 import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
+import org.plan.research.tga.core.util.javaString
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.logging.log
@@ -61,18 +62,19 @@ class KexCliTool(private val args: List<String>) : TestGenerationTool {
 
     override fun report(): TestSuite {
         val testSrcPath = outputDirectory.resolve("tests")
-        val tests = when {
+        val javaFiles = when {
             testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
-                .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
+                .map { testSrcPath.relativize(it).toString().javaString.removeSuffix(".java") }
                 .toList()
 
             else -> emptyList()
         }
+        val testSources = javaFiles.filterNot { it.endsWith("Utils") }
+        val testDependencies = javaFiles.filter { it.endsWith("Utils") }
         return TestSuite(
             testSrcPath,
-            tests,
-            emptyList(),
-            "",
+            testSources,
+            testDependencies,
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
                 Dependency("org.mockito", "mockito-core", "4.11.0"),

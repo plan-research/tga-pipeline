@@ -28,6 +28,6 @@ class StubTool : TestGenerationTool {
     }
 
     override fun report(): TestSuite {
-        return TestSuite(testDir, emptyList(), emptyList(), "", emptyList())
+        return TestSuite(testDir, emptyList(), emptyList(), emptyList())
     }
 }

@@ -6,6 +6,7 @@ import org.plan.research.tga.core.config.buildOptions
 import org.plan.research.tga.core.dependency.Dependency
 import org.plan.research.tga.core.tool.TestGenerationTool
 import org.plan.research.tga.core.tool.TestSuite
+import org.plan.research.tga.core.util.javaString
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.executeProcess
@@ -17,10 +18,8 @@ import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedWriter
-import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.streams.toList
 import kotlin.time.Duration
@@ -163,29 +162,13 @@ $POLYMORPHISM"""
     override fun report(): TestSuite {
         // first of all, kill any running Gradle daemons left from the execution
         executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
-        /**
-         * TestSpark may generate non-compilable test cases together with those that compile (99% it is the case!),
-         * thus it is important to sieve out the non-compilable test cases,
-         * since thereafter the pipeline tries to compile the set of provided test files:
-         * if any of them is non-compilable, the coverage may not be generated.
-         *
-         * TestSpark insures that the test suite file named `GeneratedTest.java` will always contain only
-         * compilable test cases, thus it is safe to use it to get a set of compilable test cases.
-         */
+
         val testSrcPath = outputDirectory
-        val tests = getCompilableTestCases(testSrcPath)
-        val testCasesOnly = tests.filter { test -> !test.endsWith("GeneratedTest") }
-        val testSuite = tests.firstOrNull { test -> test.endsWith("GeneratedTest") } ?: ""
-
-        log.debug("Compilable tests {}: {}", tests.size, tests)
-        log.debug("Compilable test cases {}: {}", testCasesOnly.size, testCasesOnly)
-        log.debug("Test suite: {}", testSuite)
-
+        val tests = getTestCasesFromSrcPath(testSrcPath)
         return TestSuite(
             testSrcPath,
             tests,
-            testCasesOnly,
-            testSuite,
+            emptyList(),
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
                 Dependency("org.mockito", "mockito-junit-jupiter", "5.11.0")
@@ -193,79 +176,14 @@ $POLYMORPHISM"""
         )
     }
 
-    private fun getCompilableTestCases(testSrcPath: Path): List<String> {
-        val testSuiteFilepath = Files.walk(testSrcPath)
-            .filter { path -> path.toString().endsWith("GeneratedTest.java") }
-            .findFirst()
-
-        log.debug("testSrcPath='{}'", testSrcPath)
-        if (testSuiteFilepath.isPresent) {
-            log.debug("testSuiteFilepath={}", testSuiteFilepath.get())
-        } else {
-            log.debug("testSuiteFilepath is empty")
-        }
-
-        if (testSuiteFilepath.isEmpty) {
-            /**
-             * If the test suite file is not found, then return all the files present in the directory
-             */
-            val tests = when {
-                testSrcPath.exists() -> Files.walk(testSrcPath)
-                    .filter { it.fileName.toString().endsWith(".java") }
-                    .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
-                    .toList()
-
-                else -> emptyList()
-            }
-            return tests
-        } else {
-            val testSuiteFilename = testSuiteFilepath.get().fileName.toString().removeSuffix(".java")
-
-            val tests = when {
-                testSrcPath.exists() -> Files.walk(testSrcPath)
-                    .toList()
-                    .filter { it.fileName.toString().endsWith(".java") }
-                    .map {
-                        testSrcPath.relativize(it).toString()
-                            .replace('/', '.')
-                            .removeSuffix(".java")
-                    }
-                    /** filtering out non-compilable test cases **/
-                    .filter {
-                        /**
-                         * Current test is either a test suite or a test case which is contained inside the test suite.
-                         * The test suite is supposed to contain only compilable test cases, thus such a condition
-                         * insures successful compilation.
-                         */
-                        val testCaseName = it.split(".").last()
-                        log.debug("Current test case fully qualified name: '{}', filename: '{}'", it, testCaseName)
-                        (testCaseName == testSuiteFilename) || (isTestCaseUsedInTestSuite(
-                            testCaseName,
-                            testSuiteFilepath.get()
-                        ))
-                    }
-                    .toList()
-
-                else -> emptyList()
-            }
-            val compilableTestCasesCount = Files.lines(testSuiteFilepath.get())
-                .filter { line -> line.contains("@Test") }
-                .count()
-            assert(tests.size.toLong() == 1 + compilableTestCasesCount)
-            return tests
-        }
-    }
-
-    private fun isTestCaseUsedInTestSuite(testCaseName: String, testSuiteFilepath: Path): Boolean {
-        // some test cases may start with an uppercase letter (e.g., `DBAppConstructorTest`)
-        val requiredFunctionNameCapitalized = testCaseName.removePrefix("Generated")
-        val requiredFunctionNameLowerCased = requiredFunctionNameCapitalized
-            .replaceFirstChar { if (it.isUpperCase()) it.lowercase(Locale.getDefault()) else it.toString() }
-
-        val result = Files.lines(testSuiteFilepath).anyMatch { line ->
-            line.contains(requiredFunctionNameCapitalized) ||
-                    line.contains(requiredFunctionNameLowerCased)
-        }
-        return result
+    private fun getTestCasesFromSrcPath(testSrcPath: Path): List<String> {
+        // collect only individual test cases, so that we are able to compute the compilation rate later
+        val individualTestCases = Files.walk(testSrcPath)
+            .filter { it.fileName.toString().endsWith(".java") }
+            .filter { !it.fileName.toString().endsWith("GeneratedTest.java") }
+            .map { testSrcPath.relativize(it).toString().javaString.removeSuffix(".java") }
+            .toList()
+        log.debug("TestSpark generated test cases: {}", individualTestCases)
+        return individualTestCases
     }
 }

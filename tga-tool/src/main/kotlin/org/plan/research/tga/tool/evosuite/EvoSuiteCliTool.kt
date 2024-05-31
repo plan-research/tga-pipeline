@@ -95,7 +95,6 @@ class EvoSuiteCliTool : TestGenerationTool {
             testSrcPath,
             tests,
             emptyList(),
-            "",
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
                 Dependency("org.evosuite", "evosuite-master", EVOSUITE_DEPENDENCY_VERSION),

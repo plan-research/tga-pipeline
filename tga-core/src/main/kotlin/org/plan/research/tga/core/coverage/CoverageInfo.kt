@@ -4,6 +4,11 @@ import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class Fraction(val numerator: Int, val denominator: Int) {
+    val ratio: Double = numerator.toDouble() / denominator.toDouble()
+}
+
+@Serializable
 sealed class CoverageInfo<T: Any> {
     abstract val covered: UInt
     abstract val total: UInt
@@ -88,3 +93,9 @@ data class ClassCoverageInfo(
 
     override fun toString(): String = "Class $klassId coverage: ${print()}"
 }
+
+@Serializable
+data class TestSuiteCoverage(
+    val compilationRate: Fraction,
+    val coverage: Set<ClassCoverageInfo>
+)

@@ -16,15 +16,18 @@ import org.plan.research.tga.core.coverage.ClassCoverageInfo
 import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.CoverageProvider
 import org.plan.research.tga.core.coverage.ExtendedCoverageInfo
+import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.coverage.InstructionId
 import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodCoverageInfo
 import org.plan.research.tga.core.coverage.MethodId
+import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.asArray
 import org.plan.research.tga.core.util.asmString
 import org.plan.research.tga.runner.compiler.SystemJavaCompiler
+import org.vorpal.research.kthelper.collection.mapToArray
 import org.vorpal.research.kthelper.deleteOnExit
 import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
@@ -55,62 +58,35 @@ class JacocoCoverageProvider(
         it.toFile().mkdirs()
     }
 
-    // TODO: rewrite this after fixing TestSpark
-    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo {
+    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): TestSuiteCoverage {
         log.debug("Computing coverage: compiledDir='{}'", compiledDir)
-
-        // set of sources containing both test cases and the test suite
-        val allTests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-        // set of sources containing the single test suite
-        val testSuiteOnly = if (testSuite.testSuiteQualifiedName.isNotEmpty()) {
-                testSuite.testSuiteQualifiedName.let { testSuiteName ->
-                    listOf(testSuiteName).associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-                }
-            } else {
-                null
-            }
-        // set of sources containing only test cases without the test suite
-        val testCasesOnly = if (testSuite.testCasesOnly.isNotEmpty()) {
-                testSuite.testCasesOnly.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-            } else {
-                null
-            }
-
-        /**
-         * Provide up to three sets of source files suitable for compilation and
-         * try to collect coverage for at least one of them since all 3 represent
-         * the same coverage set:
-         * 1. All the compilable test cases and the test suite (test suite contains only compilable test cases).
-         * 2. All the compilable test cases alone.
-         * 3. The test suite alone.
-         */
-        val compilationAttempts = mutableListOf(allTests)
-        testSuiteOnly?.also { compilationAttempts.add(it) }
-        testCasesOnly?.also { compilationAttempts.add(it) }
+        val tests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
+        val testDependencies =
+            testSuite.testSrcDependencies.mapToArray { testSuite.testSrcPath.resolve(it.asmString + ".java") }
 
         val classPath = benchmark.classPath + testSuite.dependencies.flatMap { dependencyManager.findDependency(it) }
         val compiler = SystemJavaCompiler(classPath)
 
-        var selectedTestSet: Map<String, Path> = emptyMap()
+        val compilableTestCases = mutableMapOf<String, Path>()
 
-        for ((index, attempt) in compilationAttempts.withIndex()) {
-            log.debug(
-                "Attempting to compile {}-th set of tests: [\n{}\n\t]",
-                index,
-                attempt.keys.joinToString(separator = "\n") { "\t\t$it," },
-            )
+        for ((name, path) in tests) {
+            log.debug("Attempting to compile test {}", name)
 
             try {
-                val result = compiler.compile(attempt.values.toList(), compiledDir)
-                selectedTestSet = attempt
+                val result = compiler.compile(listOf(path, *testDependencies), compiledDir)
+                compilableTestCases[name] = path
                 log.debug("Compilation succeeded with result: {}", result)
-                break
-            }
-            catch (e: Throwable) {
+            } catch (e: Throwable) {
                 log.error(e)
-                // TODO: should compiledDir be cleaned up before next attempt?
             }
         }
+        val compilationRate = Fraction(compilableTestCases.size, tests.size)
+        log.debug(
+            "{} tests of {} are successfully compiled, compilation rate {}%",
+            tests.size,
+            compilableTestCases.size,
+            "%.2f".format(100.0 * compilationRate.ratio)
+        )
 
         val runtime = LoggerRuntime()
         val classLoader = InstrumentingPathClassLoader(
@@ -123,7 +99,7 @@ class JacocoCoverageProvider(
         val data = RuntimeData()
         runtime.startup(data)
 
-        for ((testName, testPath) in selectedTestSet/*allTests*/) {
+        for ((testName, testPath) in compilableTestCases) {
             try {
                 val testClass = classLoader.loadClass(testName)
                 val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
@@ -147,7 +123,7 @@ class JacocoCoverageProvider(
         runtime.shutdown()
 
         val mergedExecutionData = ExecutionDataStore()
-        for ((_, testPath) in selectedTestSet/*allTests*/) {
+        for ((_, testPath) in compilableTestCases) {
             val executions = datum[testPath] ?: continue
             for (d in executions.contents) {
                 mergedExecutionData.put(d)
@@ -204,9 +180,12 @@ class JacocoCoverageProvider(
                     ExtendedCoverageInfo(branches)
                 )
             }
-        }.firstOrNull() ?: return ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
+        }.firstOrNull() ?: return TestSuiteCoverage(compilationRate, emptySet())
 
-        return ClassCoverageInfo(ClassId(benchmark.klass), methods)
+        return TestSuiteCoverage(
+            compilationRate,
+            setOf(ClassCoverageInfo(ClassId(benchmark.klass), methods))
+        )
     }
 
     class InstrumentingPathClassLoader(

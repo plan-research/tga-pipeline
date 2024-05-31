@@ -15,6 +15,7 @@ fun initLog(outputDirectory: Path, filename: String) {
 }
 
 val String.asmString get() = replace(Package.CANONICAL_SEPARATOR, Package.SEPARATOR)
+val String.javaString get() = replace(Package.SEPARATOR, Package.CANONICAL_SEPARATOR)
 
 fun Class<*>.asArray(): Class<*> = Array.newInstance(this, 0).javaClass
 

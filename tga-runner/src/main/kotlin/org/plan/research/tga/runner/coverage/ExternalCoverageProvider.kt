@@ -3,9 +3,9 @@ package org.plan.research.tga.runner.coverage
 import kotlinx.serialization.encodeToString
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
-import org.plan.research.tga.core.coverage.ClassCoverageInfo
-import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.CoverageProvider
+import org.plan.research.tga.core.coverage.Fraction
+import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
 import org.vorpal.research.kthelper.logging.log
@@ -19,7 +19,7 @@ import kotlin.time.Duration
 class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvider {
     private val json = getJsonSerializer(pretty = false)
 
-    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): ClassCoverageInfo = try {
+    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): TestSuiteCoverage = try {
         val benchmarkStr = json.encodeToString(benchmark)
         val testSuiteStr = json.encodeToString(testSuite)
         val benchmarkPath = testSuite.testSrcPath.resolve("benchmark.json").also {
@@ -37,15 +37,15 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
         log.debug("'coverage.json' exists: ${output.exists()}")
 
         when {
-            output.exists() -> json.decodeFromString<ClassCoverageInfo>(output.readText())
-            else -> ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
+            output.exists() -> json.decodeFromString<TestSuiteCoverage>(output.readText())
+            else -> TestSuiteCoverage(Fraction(0, testSuite.tests.size), emptySet())
         }
     } catch (err: Exception) {
         log.error(
             "Execution of ExternalCoverageProvider.computeCoverage function failed due to the error: ${err.message}",
             err
         )
-        ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
+        TestSuiteCoverage(Fraction(0, testSuite.tests.size), emptySet())
     }
 
     private fun runExternalCoverage(benchmark: Path, testSuite: Path, output: Path) {
