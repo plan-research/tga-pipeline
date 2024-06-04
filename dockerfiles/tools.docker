@@ -1,7 +1,7 @@
 FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
-ARG KEX_VERSION=0.0.5
+ARG KEX_VERSION=0.0.7
 
 # make tools dir
 USER root
