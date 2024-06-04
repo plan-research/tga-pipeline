@@ -2,6 +2,7 @@ FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.7
+ARG TEST_SPARK_COMMIT=b058fd4db92598492d9dce3d63bcd43674a80a12
 
 # make tools dir
 USER root
@@ -21,7 +22,7 @@ USER root
 WORKDIR /var/tools
 RUN git clone https://github.com/JetBrains-Research/TestSpark.git
 WORKDIR /var/tools/TestSpark
-RUN git switch pderakhshanfar/improvements/headless-mode
+RUN git checkout $TEST_SPARK_COMMIT
 ## try to prebuild TestSpark
 RUN ./gradlew runide || true
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
