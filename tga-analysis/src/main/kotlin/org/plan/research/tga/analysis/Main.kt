@@ -30,25 +30,26 @@ fun main(args: Array<String>) {
 
     for ((tool, results) in data) {
         val resultsBranches = results
-            .filter { it.coverage.instructions.covered > 0U }
-            .filter { it.coverage.branches.total > 0U }
+            .filterNot { it.coverage.coverage.singleOrNull() != null }
+            .filter { it.coverage.coverage.first().instructions.covered > 0U }
+            .filter { it.coverage.coverage.first().branches.total > 0U }
 
         log.debug(
             String.format(
                 "$tool: Average coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
-                100.0 * results.sumOf { it.coverage.lines.ratio } / results.size,
-                100.0 * resultsBranches.sumOf { it.coverage.branches.ratio } / resultsBranches.size,
+                100.0 * results.sumOf { it.coverage.coverage.first().lines.ratio } / results.size,
+                100.0 * resultsBranches.sumOf { it.coverage.coverage.first().branches.ratio } / resultsBranches.size,
                 results.size
             )
         )
 
-        val filteredLines = results.filter { it.coverage.lines.ratio > 0.0 }
-        val filteredBranches = resultsBranches.filter { it.coverage.branches.ratio > 0.0 }
+        val filteredLines = results.filter { it.coverage.coverage.first().lines.ratio > 0.0 }
+        val filteredBranches = resultsBranches.filter { it.coverage.coverage.first().branches.ratio > 0.0 }
         log.debug(
             String.format(
                 "$tool: Average filtered coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
-                100.0 * filteredLines.sumOf { it.coverage.lines.ratio } / filteredLines.size,
-                100.0 * filteredBranches.sumOf { it.coverage.branches.ratio } / filteredBranches.size,
+                100.0 * filteredLines.sumOf { it.coverage.coverage.first().lines.ratio } / filteredLines.size,
+                100.0 * filteredBranches.sumOf { it.coverage.coverage.first().branches.ratio } / filteredBranches.size,
                 filteredLines.size
             )
         )
@@ -60,7 +61,7 @@ fun main(args: Array<String>) {
         val distribution = mutableMapOf<ValueModel, Pair<Int, Int>>()
         for (toolResult in results) {
             val benchmarkMetrics = metrics[toolResult.benchmark.buildId] ?: continue
-            label@ for (methodCoverage in toolResult.coverage.methods) {
+            label@ for (methodCoverage in toolResult.coverage.coverage.first().methods) {
                 if (methodCoverage.methodId.name == "<clinit>") continue
                 for ((branch, covered) in methodCoverage.branches.coverage) {
                     val methodMetrics = benchmarkMetrics.methods.firstOrNull { it.methodId == methodCoverage.methodId }
