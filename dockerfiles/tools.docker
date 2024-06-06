@@ -2,7 +2,7 @@ FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.7
-ARG TEST_SPARK_COMMIT=b058fd4db92598492d9dce3d63bcd43674a80a12
+ARG TEST_SPARK_COMMIT=40d35b01d7a7227d2b7f3445f70b872b51a0b671
 
 # make tools dir
 USER root
