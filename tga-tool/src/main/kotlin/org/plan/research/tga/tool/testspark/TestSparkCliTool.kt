@@ -118,7 +118,7 @@ $POLYMORPHISM"""
         var process: Process? = null
         try {
             process = buildProcess(
-                "/bin/bash", "${TEST_SPARK_HOME.resolve("runTestSpark.sh")}",
+                "/bin/bash", "${TEST_SPARK_HOME.resolve("runTestSparkHeadless.sh")}",
                 "${root.toAbsolutePath()}", // path to project root
                 "src/main/java/${
                     target.replace(
@@ -128,6 +128,7 @@ $POLYMORPHISM"""
                 }.java", // path to target source file relative to the project root
                 target, // fully qualified name of the target
                 classPath.joinToString(File.pathSeparator!!), // class path
+                "4", // JUnit version
                 argParser.getCmdValue("llm", DEFAULT_LLM), // LLM to use
                 argParser.getCmdValue("llmToken")!!, // token to access chosen LLM
                 "${promptFile.toAbsolutePath()}", // path to prompt file

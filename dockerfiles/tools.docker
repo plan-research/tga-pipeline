@@ -2,7 +2,7 @@ FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.7
-ARG TEST_SPARK_COMMIT=40d35b01d7a7227d2b7f3445f70b872b51a0b671
+ARG TEST_SPARK_COMMIT=5904ab1ca5400a147080fb327b56b478b4b90c97
 
 # make tools dir
 USER root
@@ -23,10 +23,8 @@ WORKDIR /var/tools
 RUN git clone https://github.com/JetBrains-Research/TestSpark.git
 WORKDIR /var/tools/TestSpark
 RUN git checkout $TEST_SPARK_COMMIT
-## This is a horrible way to make TestSpark compilable on JDK 11
-RUN sed -i '2s/^/import kotlin.streams.* /' src/main/kotlin/org/jetbrains/research/testspark/services/CoverageVisualisationService.kt
 ## try to prebuild TestSpark
-RUN ./gradlew runide || true
+RUN ./gradlew buildPlugin
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
 
 # run tool

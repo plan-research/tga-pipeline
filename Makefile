@@ -27,9 +27,7 @@ runner: pipeline
 publish: pipeline runner tools
 	docker push abdullin/tga-pipeline:base-latest
 	docker push abdullin/tga-pipeline:base-${VERSION}
-
 	docker push abdullin/tga-pipeline:tools-latest
 	docker push abdullin/tga-pipeline:tools-${VERSION}
-
 	docker push abdullin/tga-pipeline:runner-latest
 	docker push abdullin/tga-pipeline:runner-${VERSION}
