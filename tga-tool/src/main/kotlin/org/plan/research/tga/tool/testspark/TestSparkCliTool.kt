@@ -133,6 +133,7 @@ $POLYMORPHISM"""
                 argParser.getCmdValue("llmToken")!!, // token to access chosen LLM
                 "${promptFile.toAbsolutePath()}", // path to prompt file
                 "${outputDirectory.toAbsolutePath()}", // path to output directory
+                System.getProperty("java.home"), // path to JDK
                 argParser.getCmdValue("spaceUser")!!, // Space username
                 argParser.getCmdValue("spaceToken")!!, // token for accessing Space
             ) {
