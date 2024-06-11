@@ -95,7 +95,6 @@ In case of mocking, use $MOCKING_FRAMEWORK. But, do not use mocking for all test
 Name all methods according to the template - [MethodUnderTest][Scenario]Test, and use only English letters.
 The source code of class under test is as follows:
 $CODE
-Here are some information about other methods and classes used by the class under test. Only use them for creating objects, not your own ideas.
 $METHODS
 $POLYMORPHISM"""
 
