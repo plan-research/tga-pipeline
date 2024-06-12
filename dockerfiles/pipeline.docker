@@ -3,6 +3,8 @@ MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG PIPELINE_VERSION=0.0.11
 
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+
 # install additional packages
 USER root
 RUN apt-get -y install \
