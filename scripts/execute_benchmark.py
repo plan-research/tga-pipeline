@@ -86,6 +86,7 @@ def main():
         file.write(str(compose_file))
 
     subprocess.run(['docker-compose', '-f', tmp.name, 'up'])
+    subprocess.run(['docker-compose', '-f', tmp.name, 'down'])
 
 
 if __name__ == '__main__':
