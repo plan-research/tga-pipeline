@@ -1,6 +1,5 @@
 package org.plan.research.tga.runner
 
-import org.plan.research.tga.core.util.initLog
 import org.plan.research.tga.runner.config.TgaRunnerConfig
 import org.vorpal.research.kthelper.logging.log
 import java.nio.file.Paths
@@ -15,8 +14,6 @@ fun main(args: Array<String>) {
     val benchmarks = Paths.get(config.getCmdValue("config")!!)
     val timeLimit = config.getCmdValue("timeout")!!.toInt().toDuration(DurationUnit.SECONDS)
     val outputDirectory = Paths.get(config.getCmdValue("output")!!)
-
-    initLog(outputDirectory, "tga-runner.log")
 
     val baseRunName = config.getCmdValue("runName", "run")
     val runIds = try {

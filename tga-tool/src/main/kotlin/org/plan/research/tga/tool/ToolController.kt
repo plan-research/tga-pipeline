@@ -28,7 +28,10 @@ class ToolController(
                 break
             }
             when (request) {
-                is StopRequest -> break
+                is StopRequest -> {
+                    log.debug("Stopping tool ${tool.name}")
+                    break
+                }
                 is BenchmarkRequest -> {
                     tool.init(request.benchmark.root, request.benchmark.classPath)
 
@@ -62,5 +65,9 @@ class ToolController(
                 }
             }
         }
+    }
+
+    fun shutdown() {
+        executorService.shutdown()
     }
 }

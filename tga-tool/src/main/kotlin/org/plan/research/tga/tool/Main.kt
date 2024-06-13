@@ -40,4 +40,5 @@ fun main(args: Array<String>) {
 
     val controller = ToolController(connection, tool)
     controller.run()
+    controller.shutdown()
 }
