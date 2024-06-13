@@ -1,7 +1,7 @@
 package org.plan.research.tga.tool.protocol.tcp
 
 import kotlinx.serialization.encodeToString
-import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
+import org.plan.research.tga.core.tool.protocol.GenerationRequest
 import org.plan.research.tga.core.tool.protocol.GenerationResult
 import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.plan.research.tga.core.tool.protocol.protocolJson
@@ -24,7 +24,7 @@ class TcpTool2TgaConnection(
         writer.flush()
     }
 
-    override fun receive(): BenchmarkRequest {
+    override fun receive(): GenerationRequest {
         val json = reader.readLine()
         log.debug("Received request from server: $json")
         return protocolJson.decodeFromString(json)

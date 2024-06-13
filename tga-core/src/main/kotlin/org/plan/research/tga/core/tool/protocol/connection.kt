@@ -9,12 +9,18 @@ import java.nio.file.Path
 import kotlin.time.Duration
 
 @Serializable
+sealed interface GenerationRequest
+
+@Serializable
 data class BenchmarkRequest(
     val benchmark: Benchmark,
     val timeLimit: Duration,
     @Serializable(with = PathAsStringSerializer::class)
     val outputDirectory: Path,
-)
+) : GenerationRequest
+
+@Serializable
+data object StopRequest : GenerationRequest
 
 @Serializable
 sealed interface GenerationResult {
@@ -41,12 +47,12 @@ interface TgaServer : AutoCloseable {
 
 interface Tga2ToolConnection : AutoCloseable {
     fun init(): String
-    fun send(request: BenchmarkRequest)
+    fun send(request: GenerationRequest)
     fun receive(): GenerationResult
 }
 
 interface Tool2TgaConnection : AutoCloseable {
     fun init(name: String)
-    fun receive(): BenchmarkRequest
+    fun receive(): GenerationRequest
     fun send(result: GenerationResult)
 }

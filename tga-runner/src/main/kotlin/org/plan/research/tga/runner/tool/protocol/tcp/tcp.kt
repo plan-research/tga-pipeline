@@ -1,7 +1,7 @@
 package org.plan.research.tga.runner.tool.protocol.tcp
 
 import kotlinx.serialization.encodeToString
-import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
+import org.plan.research.tga.core.tool.protocol.GenerationRequest
 import org.plan.research.tga.core.tool.protocol.GenerationResult
 import org.plan.research.tga.core.tool.protocol.Tga2ToolConnection
 import org.plan.research.tga.core.tool.protocol.TgaServer
@@ -11,7 +11,7 @@ import java.net.ServerSocket
 import java.net.Socket
 
 class TcpTgaServer(
-    val port: UInt
+    port: UInt
 ) : TgaServer {
     private val serverSocket = ServerSocket(port.toInt())
 
@@ -37,7 +37,7 @@ class TcpTga2ToolConnection(
         return name
     }
 
-    override fun send(request: BenchmarkRequest) {
+    override fun send(request: GenerationRequest) {
         val json = protocolJson.encodeToString(request)
         log.debug("Sending request to client: $json")
         writer.write(protocolJson.encodeToString(request))

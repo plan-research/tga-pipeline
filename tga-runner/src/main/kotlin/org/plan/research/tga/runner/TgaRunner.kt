@@ -5,6 +5,7 @@ import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.tool.ToolResults
 import org.plan.research.tga.core.tool.protocol.BenchmarkRequest
+import org.plan.research.tga.core.tool.protocol.StopRequest
 import org.plan.research.tga.core.tool.protocol.SuccessfulGenerationResult
 import org.plan.research.tga.core.tool.protocol.UnsuccessfulGenerationResult
 import org.plan.research.tga.runner.coverage.ExternalCoverageProvider
@@ -74,6 +75,8 @@ class TgaRunner(
 
                 resultFile.writeText(getJsonSerializer(pretty = true).encodeToString(results))
             }
+
+            toolConnection.send(StopRequest)
         }
     }
 }
