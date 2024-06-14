@@ -30,15 +30,15 @@ fun main(args: Array<String>) {
 
     for ((tool, results) in data) {
         val resultsBranches = results
-            .filterNot { it.coverage.coverage.singleOrNull() != null }
+            .filterNot { it.coverage.coverage.singleOrNull() == null }
             .filter { it.coverage.coverage.first().instructions.covered > 0U }
             .filter { it.coverage.coverage.first().branches.total > 0U }
 
         log.debug(
             String.format(
-                "$tool: Average coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
-                100.0 * results.sumOf { it.coverage.coverage.first().lines.ratio } / results.size,
-                100.0 * resultsBranches.sumOf { it.coverage.coverage.first().branches.ratio } / resultsBranches.size,
+                "$tool: Average coverage: %.2f%s %.2f%s based on %d benchmarks",
+                100.0 * results.sumOf { it.coverage.coverage.first().lines.ratio } / results.size, "%",
+                100.0 * resultsBranches.sumOf { it.coverage.coverage.first().branches.ratio } / resultsBranches.size, "%",
                 results.size
             )
         )
@@ -47,9 +47,9 @@ fun main(args: Array<String>) {
         val filteredBranches = resultsBranches.filter { it.coverage.coverage.first().branches.ratio > 0.0 }
         log.debug(
             String.format(
-                "$tool: Average filtered coverage: %.2f${'%'} %.2f${'%'} based on %d benchmarks",
-                100.0 * filteredLines.sumOf { it.coverage.coverage.first().lines.ratio } / filteredLines.size,
-                100.0 * filteredBranches.sumOf { it.coverage.coverage.first().branches.ratio } / filteredBranches.size,
+                "$tool: Average filtered coverage: %.2f%s %.2f%s based on %d benchmarks",
+                100.0 * filteredLines.sumOf { it.coverage.coverage.first().lines.ratio } / filteredLines.size, "%",
+                100.0 * filteredBranches.sumOf { it.coverage.coverage.first().branches.ratio } / filteredBranches.size, "%",
                 filteredLines.size
             )
         )
