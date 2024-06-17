@@ -7,6 +7,14 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import org.plan.research.tga.core.coverage.BranchId
+import org.plan.research.tga.core.coverage.ClassId
+import org.plan.research.tga.core.coverage.Id
+import org.plan.research.tga.core.coverage.InstructionId
+import org.plan.research.tga.core.coverage.LineId
+import org.plan.research.tga.core.coverage.MethodId
 import java.nio.file.Path
 
 fun getJsonSerializer(pretty: Boolean): Json = Json {
@@ -16,6 +24,15 @@ fun getJsonSerializer(pretty: Boolean): Json = Json {
     useArrayPolymorphism = false
     allowStructuredMapKeys = true
     allowSpecialFloatingPointValues = true
+    serializersModule = SerializersModule {
+        polymorphic(Id::class) {
+            this.subclass(InstructionId::class, InstructionId.serializer())
+            this.subclass(LineId::class, LineId.serializer())
+            this.subclass(BranchId::class, BranchId.serializer())
+            this.subclass(MethodId::class, MethodId.serializer())
+            this.subclass(ClassId::class, ClassId.serializer())
+        }
+    }
 }
 
 object PathAsStringSerializer : KSerializer<Path> {

@@ -1,6 +1,7 @@
 package org.plan.research.tga.runner.coverage.jacoco
 
 import org.plan.research.tga.core.benchmark.Benchmark
+import org.plan.research.tga.core.coverage.BasicCoverageInfo
 import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
 import org.plan.research.tga.core.coverage.ClassId
@@ -142,16 +143,39 @@ class JacocoCliCoverageProvider(
         val classElement = packageElement.getElementByTag("class", 0)
         ktassert(classElement.getAttribute("name") == benchmark.klass.replace('.', '/'))
 
-        val methodBounds = classElement.getAllElementsByTag("method").map { methodElement ->
+        val methodCoverages = mutableSetOf<MethodCoverageInfo>()
+        val methodBounds = classElement.getAllElementsByTag("method").mapNotNull { methodElement ->
             val methodName = methodElement.getAttribute("name")
             val methodDescriptor = methodElement.getAttribute("desc")
-            val startLine = methodElement.getAttribute("line").toInt()
-            val length = methodElement.getAllElementsByTag("counter").first { it.getAttribute("type") == "LINE" }.let {
-                val missed = it.getAttribute("missed").toInt()
+            val counters = methodElement.getAllElementsByTag("counter").associate {
                 val covered = it.getAttribute("covered").toInt()
-                missed + covered
+                val missed = it.getAttribute("missed").toInt()
+                it.getAttribute("type") to Fraction(covered, covered + missed)
             }
-            Triple(MethodId(methodName, methodDescriptor), startLine, length)
+            when {
+                /**
+                 * Special case for default constructors and static initializers
+                 * because they may be non-continuous in code
+                 */
+                methodName == "<init>" && methodDescriptor == "()V" || methodName == "<clinit>" -> {
+                    val inst = counters["INSTRUCTION"] ?: Fraction(0, 0)
+                    val line = counters["LINE"] ?: Fraction(0, 0)
+                    val branch = counters["BRANCH"] ?: Fraction(0, 0)
+                    methodCoverages += MethodCoverageInfo(
+                        MethodId(methodName, methodDescriptor),
+                        BasicCoverageInfo(inst.numerator.toUInt(), inst.denominator.toUInt()),
+                        BasicCoverageInfo(line.numerator.toUInt(), line.denominator.toUInt()),
+                        BasicCoverageInfo(branch.numerator.toUInt(), branch.denominator.toUInt()),
+                    )
+                    null
+                }
+
+                else -> {
+                    val startLine = methodElement.getAttribute("line").toInt()
+                    val length = counters["LINE"]!!.denominator
+                    Triple(MethodId(methodName, methodDescriptor), startLine, length)
+                }
+            }
         }.sortedBy { it.second }
 
         val sourceFileElement = packageElement.getElementByTag("sourcefile", 0)
@@ -164,7 +188,6 @@ class JacocoCliCoverageProvider(
         var instructions = mutableMapOf<InstructionId, Boolean>()
         var branches = mutableMapOf<BranchId, Boolean>()
 
-        val methodCoverages = mutableSetOf<MethodCoverageInfo>()
         for (lineElement in sourceFileElement.getAllElementsByTag("line").sortedBy { it.getAttribute("nr").toInt() }) {
             val lineNumber = lineElement.getAttribute("nr").toInt()
             if (lineNumber == methodBounds[index].second) {

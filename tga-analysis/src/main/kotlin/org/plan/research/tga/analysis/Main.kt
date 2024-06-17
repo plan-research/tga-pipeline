@@ -2,6 +2,8 @@ package org.plan.research.tga.analysis
 
 import org.plan.research.tga.analysis.metrics.MetricsProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
+import org.plan.research.tga.core.coverage.BranchId
+import org.plan.research.tga.core.coverage.ExtendedCoverageInfo
 import org.plan.research.tga.core.metrics.ValueModel
 import org.plan.research.tga.core.tool.ToolResults
 import org.vorpal.research.kthelper.logging.debug
@@ -63,7 +65,7 @@ fun main(args: Array<String>) {
             val benchmarkMetrics = metrics[toolResult.benchmark.buildId] ?: continue
             label@ for (methodCoverage in toolResult.coverage.coverage.first().methods) {
                 if (methodCoverage.methodId.name == "<clinit>") continue
-                for ((branch, covered) in methodCoverage.branches.coverage) {
+                for ((branch, covered) in (methodCoverage.branches as? ExtendedCoverageInfo<BranchId>)?.coverage ?: emptyMap()) {
                     val methodMetrics = benchmarkMetrics.methods.firstOrNull { it.methodId == methodCoverage.methodId }
                     if (methodMetrics == null) {
                         log.error("${toolResult.benchmark.buildId}:${methodCoverage.methodId} not found")

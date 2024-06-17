@@ -9,49 +9,55 @@ data class Fraction(val numerator: Int, val denominator: Int) {
 }
 
 @Serializable
-sealed class CoverageInfo<T: Any> {
+sealed class CoverageInfo<T : Id> {
     abstract val covered: UInt
     abstract val total: UInt
 
     @Required
-    val ratio: Double get() = when {
-        total != 0U -> covered.toDouble() / total.toDouble()
-        else -> 0.0
-    }
+    val ratio: Double
+        get() = when {
+            total != 0U -> covered.toDouble() / total.toDouble()
+            else -> 0.0
+        }
 }
 
 @Serializable
-data class BasicCoverageInfo<T : Any>(
+data class BasicCoverageInfo<T : Id>(
     override val covered: UInt,
     override val total: UInt,
 ) : CoverageInfo<T>()
 
 @Serializable
-data class ExtendedCoverageInfo<T : Any>(
+data class ExtendedCoverageInfo<T : Id>(
     val coverage: Map<T, Boolean>
 ) : CoverageInfo<T>() {
     @Required
     override val covered: UInt = coverage.count { it.value }.toUInt()
+
     @Required
     override val total: UInt = coverage.size.toUInt()
 }
 
 @Serializable
-data class LineId(val fileName: String, val lineNumber: UInt)
+sealed interface Id
 
 @Serializable
-data class InstructionId(val line: LineId, val number: UInt)
+data class LineId(val fileName: String, val lineNumber: UInt) : Id
 
 @Serializable
-data class BranchId(val line: LineId, val number: UInt)
+data class InstructionId(val line: LineId, val number: UInt) : Id
 
 @Serializable
-data class MethodId(val name: String, val descriptor: String)
+data class BranchId(val line: LineId, val number: UInt) : Id
 
 @Serializable
-data class ClassId(val name: String)
+data class MethodId(val name: String, val descriptor: String) : Id
 
-interface CodeCoverageInfo {
+@Serializable
+data class ClassId(val name: String) : Id
+
+@Serializable
+sealed interface CodeCoverageInfo {
     val instructions: CoverageInfo<InstructionId>
     val lines: CoverageInfo<LineId>
     val branches: CoverageInfo<BranchId>
@@ -66,9 +72,9 @@ interface CodeCoverageInfo {
 @Serializable
 data class MethodCoverageInfo(
     val methodId: MethodId,
-    override val instructions: ExtendedCoverageInfo<InstructionId>,
-    override val lines: ExtendedCoverageInfo<LineId>,
-    override val branches: ExtendedCoverageInfo<BranchId>
+    override val instructions: CoverageInfo<InstructionId>,
+    override val lines: CoverageInfo<LineId>,
+    override val branches: CoverageInfo<BranchId>
 ) : CodeCoverageInfo {
     override fun toString(): String = "Method $methodId coverage: ${print()}"
 }
@@ -82,10 +88,12 @@ data class ClassCoverageInfo(
     override val instructions = BasicCoverageInfo<InstructionId>(
         methods.sumOf { it.instructions.covered }, methods.sumOf { it.instructions.total }
     )
+
     @Required
     override val lines = BasicCoverageInfo<LineId>(
         methods.sumOf { it.lines.covered }, methods.sumOf { it.lines.total }
     )
+
     @Required
     override val branches = BasicCoverageInfo<BranchId>(
         methods.sumOf { it.branches.covered }, methods.sumOf { it.branches.total }
