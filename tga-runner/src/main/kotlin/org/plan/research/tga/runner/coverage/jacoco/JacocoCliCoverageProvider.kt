@@ -21,7 +21,7 @@ import org.plan.research.tga.runner.compiler.SystemJavaCompiler
 import org.vorpal.research.kthelper.assert.ktassert
 import org.vorpal.research.kthelper.collection.mapToArray
 import org.vorpal.research.kthelper.deleteOnExit
-import org.vorpal.research.kthelper.executeProcess
+import org.vorpal.research.kthelper.executeProcessWithTimeout
 import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
@@ -32,6 +32,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.io.path.exists
+import kotlin.time.Duration.Companion.seconds
 
 
 class JacocoCliCoverageProvider(
@@ -75,8 +76,8 @@ class JacocoCliCoverageProvider(
         val compilationRate = Fraction(compilableTestCases.size, tests.size)
         log.debug(
             "{} tests of {} are successfully compiled, compilation rate {}%",
-            tests.size,
             compilableTestCases.size,
+            tests.size,
             "%.2f".format(100.0 * compilationRate.ratio)
         )
 
@@ -88,30 +89,36 @@ class JacocoCliCoverageProvider(
 
         for ((testName, _) in compilableTestCases) {
             val execFile = testSuite.testSrcPath.resolve("$testName.exec")
-            executeProcess(
-                "java",
-                "-cp",
-                fullTestCP.joinToString(separator = File.pathSeparator),
-                "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
-                "org.junit.runner.JUnitCore",
-                testName,
+            executeProcessWithTimeout(
+                listOf(
+                    "java",
+                    "-cp",
+                    fullTestCP.joinToString(separator = File.pathSeparator),
+                    "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
+                    "org.junit.runner.JUnitCore",
+                    testName,
+                ),
+                timeout = 10.seconds
             )
             execFiles.add(execFile)
         }
 
         val xmlCoverageReport = testSuite.testSrcPath.resolve("coverage.xml")
-        executeProcess(
-            "java",
-            "-jar",
-            JACOCO_CLI_PATH.toString(),
-            "report",
-            *execFiles.mapToArray { it.toString() },
-            "--classfiles",
-            "${benchmark.bin.resolve(*pkg.split('.').toTypedArray(), "$name.class")}",
-            "--sourcefiles",
-            "${benchmark.src.resolve(*pkg.split('.').toTypedArray(), "$name.java")}",
-            "--xml",
-            xmlCoverageReport.toString(),
+        executeProcessWithTimeout(
+            listOf(
+                "java",
+                "-jar",
+                JACOCO_CLI_PATH.toString(),
+                "report",
+                *execFiles.mapToArray { it.toString() },
+                "--classfiles",
+                "${benchmark.bin.resolve(*pkg.split('.').toTypedArray(), "$name.class")}",
+                "--sourcefiles",
+                "${benchmark.src.resolve(*pkg.split('.').toTypedArray(), "$name.java")}",
+                "--xml",
+                xmlCoverageReport.toString(),
+            ),
+            timeout = 60.seconds
         )
 
         return TestSuiteCoverage(

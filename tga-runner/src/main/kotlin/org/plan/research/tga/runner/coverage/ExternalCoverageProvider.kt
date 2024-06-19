@@ -9,12 +9,14 @@ import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.terminate
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvider {
     private val json = getJsonSerializer(pretty = false)
@@ -63,6 +65,6 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
         log.debug("Running coverage computation with command \"${builder.command().joinToString(" ")}\"")
         val process = builder.start()
         process.waitFor(timeLimit.inWholeMilliseconds, TimeUnit.MILLISECONDS)
-        process.destroy()
+        process.terminate(10U, 1.seconds)
     }
 }
