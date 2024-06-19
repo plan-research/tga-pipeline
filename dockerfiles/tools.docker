@@ -2,7 +2,7 @@ FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.7
-ARG TEST_SPARK_COMMIT=pderakhshanfar/improvements/headless-mode-newopener
+ARG TEST_SPARK_COMMIT=abdullin/improvements/headless-new-project-importer
 
 # make tools dir
 USER root

@@ -11,7 +11,7 @@ There is a Docker image containing pre-build benchmarks, it can be obtained usin
 
 ```shell
 docker pull abdullin/tga-pipeline:benchmarks-latest 
-# or a specific version, e.g. `benchmarks-0.0.12`
+# or a specific version, e.g. `benchmarks-0.0.13`
 ```
 
 One can also build that Docker image locally if necessary:
