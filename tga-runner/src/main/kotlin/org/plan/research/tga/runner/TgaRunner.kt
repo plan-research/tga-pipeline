@@ -12,6 +12,7 @@ import org.plan.research.tga.runner.coverage.ExternalCoverageProvider
 import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.log
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.writeText
 import kotlin.time.Duration
@@ -77,6 +78,11 @@ class TgaRunner(
             }
 
             toolConnection.send(StopRequest)
+        }
+
+        Files.walk(outputDirectory).forEach {
+            it.toFile().setReadable(true, false)
+            it.toFile().setWritable(true, false)
         }
     }
 }
