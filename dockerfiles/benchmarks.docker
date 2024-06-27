@@ -19,3 +19,7 @@ ADD ./scripts /var/scripts
 
 # run scripts and build benchmarks
 RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug
+
+# give access to all users
+RUN chmod a+r -R /var/benchmarks
+RUN chmod a+w -R /var/benchmarks

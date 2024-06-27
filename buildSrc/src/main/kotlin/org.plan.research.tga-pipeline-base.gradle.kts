@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.plan.research"
-version = "0.0.14"
+version = "0.0.15"
 
 repositories {
     mavenCentral()
