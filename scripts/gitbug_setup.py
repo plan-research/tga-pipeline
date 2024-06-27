@@ -65,7 +65,7 @@ def build(project_json, project_dir):
 	logging.info("Detected build system: {}".format(build_system))
 
 	if build_system == 'maven':
-		process = subprocess.Popen(['mvn', 'clean', 'package', '-Dmaven.test.skip=true'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		process = subprocess.Popen(['mvn', 'clean', 'package', '-DskipTests'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output, err = process.communicate()
 		if process.returncode != 0:
 			logging.error("Failed to build maven project {}".format(project_dir))

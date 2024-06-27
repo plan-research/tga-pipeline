@@ -1,7 +1,7 @@
 
-VERSION = 0.0.15
+VERSION = 0.0.16
 
-.PHONY: all publish
+.PHONY: benchmarks all publish
 
 all: runner tools
 

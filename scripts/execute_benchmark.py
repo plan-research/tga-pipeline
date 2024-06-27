@@ -12,8 +12,8 @@ from generate_compose import Tool
 from generate_compose import generate_compose
 
 # Global parameters
-RUNNER_IMAGE = "abdullin/tga-pipeline:runner-0.0.15"
-TOOL_IMAGE = "abdullin/tga-pipeline:tools-0.0.15"
+RUNNER_IMAGE = "abdullin/tga-pipeline:runner-0.0.16"
+TOOL_IMAGE = "abdullin/tga-pipeline:tools-0.0.16"
 BENCHMARKS_FILE = "/var/benchmarks/gitbug/benchmarks.json"
 
 
