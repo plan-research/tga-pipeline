@@ -8,7 +8,9 @@ import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
+import org.vorpal.research.kthelper.getJavaPath
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.terminate
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
@@ -51,13 +53,16 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
     }
 
     private fun runExternalCoverage(benchmark: Path, testSuite: Path, output: Path) {
-        val args = buildString {
-            append("--benchmark ${benchmark.toAbsolutePath()} ")
-            append("--testSuite ${testSuite.toAbsolutePath()} ")
-            append("--output ${output.toAbsolutePath()}")
-        }
         val builder = ProcessBuilder(
-            "/bin/sh", "gradlew", "tga-runner:runCoverage", "--args=$args",
+            getJavaPath().toString(),
+            "-jar",
+            TGA_PIPELINE_HOME.resolve("tga-runner", "build", "libs", "tga-coverage.jar").toString(),
+            "--benchmark",
+            benchmark.toAbsolutePath().toString(),
+            "--testSuite",
+            testSuite.toAbsolutePath().toString(),
+            "--output",
+            output.toAbsolutePath().toString(),
         )
             .redirectOutput(ProcessBuilder.Redirect.DISCARD)
             .redirectError(ProcessBuilder.Redirect.DISCARD)

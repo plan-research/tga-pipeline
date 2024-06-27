@@ -2,7 +2,7 @@ FROM abdullin/tga-pipeline:base-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
 ARG KEX_VERSION=0.0.7
-ARG TEST_SPARK_COMMIT=a92e489634e29a8ab499d16608fae01bf513443f
+ARG TEST_SPARK_COMMIT=3ce28eb98ae0c2e064a50826ceb27a347463176a
 
 # make tools dir
 USER root
@@ -24,11 +24,19 @@ RUN git clone https://github.com/AbdullinAM/TestSpark.git
 WORKDIR /var/tools/TestSpark
 RUN git checkout $TEST_SPARK_COMMIT
 ## try to prebuild TestSpark
-RUN ./gradlew buildPlugin
+# do not prebuild TestSpark because it causes problems if someone tries to run docker as non-root user
+# ./gradlew headless || true
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
 
 # run tool
 USER root
 WORKDIR /tga-pipeline
 RUN ./gradlew :tga-tool:build
-ENTRYPOINT ["./gradlew", ":tga-tool:run"]
+
+# give access to all users
+RUN chmod a+r -R /tga-pipeline
+RUN chmod a+w -R /tga-pipeline
+RUN chmod a+r -R /var
+RUN chmod a+w -R /var
+
+ENTRYPOINT ["java", "-jar", "/tga-pipeline/tga-tool/build/libs/tga-tool.jar"]

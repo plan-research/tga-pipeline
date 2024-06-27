@@ -1,3 +1,4 @@
+import os
 from collections.abc import Iterable
 from enum import Enum
 
@@ -79,9 +80,10 @@ class Network:
 
 
 class Service:
-    def __init__(self, name: str, image: str, command: str):
+    def __init__(self, name: str, image: str, user: str, command: str):
         self.name = name
         self.image = image
+        self.user = user
         self.command = command
         self.networks = []
         self.volumes = {}
@@ -90,6 +92,7 @@ class Service:
         return '\n'.join([
             f'{make_indent(indent)}{self.name}:',
             f'{make_indent(indent * 2)}image: {self.image}',
+            f'{make_indent(indent * 2)}user: {self.user}',
             f'{make_indent(indent * 2)}command: {self.command}',
             f'{make_indent(indent * 2)}networks:',
             '\n'.join([f'{make_indent(indent * 3)}- {network.name}' for network in self.networks]),
@@ -176,6 +179,8 @@ def generate_compose(
     result_volume = Volume(results_path, is_external=False)
     result.add_volume(result_volume)
 
+    uid = os.getuid()
+
     for thread in range(workers):
         thread_runs = runs_per_thread
         if leftover > 0:
@@ -188,8 +193,9 @@ def generate_compose(
         runner_service = Service(
             name=f'runner-{tool.name}-{thread}',
             image=runner_image,
-            command=f'--args="-p 10000 -c {benchmarks_path} -t {timeout} -o /var/results '
-                    f'--runName {run_name} --runs {starting_run}..{starting_run + thread_runs - 1}"'
+            user=f'\"{uid}\"',
+            command=f'-p 10000 -c {benchmarks_path} -t {timeout} -o /var/results '
+                    f'--runName {run_name} --runs {starting_run}..{starting_run + thread_runs - 1}'
         )
         runner_service.add_network(network)
         runner_service.add_volume(result_volume, '/var/results')
@@ -197,7 +203,8 @@ def generate_compose(
         tool_service = Service(
             name=f'tool-{tool.name}-{thread}',
             image=tool_image,
-            command=f'--args="--ip {runner_service.name} --port 10000 --tool {tool.name} --toolArgs=\'{tool_args}\'"'
+            user=f'\"{uid}\"',
+            command=f'--ip {runner_service.name} --port 10000 --tool {tool.name} --toolArgs=\'{tool_args}\''
         )
         tool_service.add_network(network)
         tool_service.add_volume(result_volume, '/var/results')

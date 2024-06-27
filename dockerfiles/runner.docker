@@ -5,4 +5,11 @@ MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 USER root
 WORKDIR /tga-pipeline
 RUN ./gradlew :tga-runner:build
-ENTRYPOINT ["./gradlew", ":tga-runner:run"]
+
+# give access to all users
+RUN chmod a+r -R /tga-pipeline
+RUN chmod a+w -R /tga-pipeline
+RUN chmod a+r -R /var
+RUN chmod a+w -R /var
+
+ENTRYPOINT ["java", "-jar", "/tga-pipeline/tga-runner/build/libs/tga-runner.jar"]
