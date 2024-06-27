@@ -9,7 +9,7 @@ RUN ./gradlew :tga-runner:build
 # give access to all users
 RUN chmod a+r -R /tga-pipeline
 RUN chmod a+w -R /tga-pipeline
-RUN chmod a+r -R /var
-RUN chmod a+w -R /var
+RUN chmod a+r -R /var/tools
+RUN chmod a+w -R /var/tools
 
 ENTRYPOINT ["java", "-jar", "/tga-pipeline/tga-runner/build/libs/tga-runner.jar"]
