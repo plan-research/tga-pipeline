@@ -1,9 +1,9 @@
-package org.plan.research.tga.runner.coverage
+package org.plan.research.tga.analysis.coverage
 
 import kotlinx.serialization.encodeToString
+import org.plan.research.tga.analysis.compilation.CompilationResult
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
-import org.plan.research.tga.core.coverage.CoverageProvider
 import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.tool.TestSuite
@@ -20,12 +20,38 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+@Deprecated("It is basically not needed, considering that we already run jacoco externally")
 class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvider {
     private val json = getJsonSerializer(pretty = false)
 
-    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): TestSuiteCoverage = try {
+    override fun computeCoverage(
+        benchmarkPath: Path,
+        testSuitePath: Path,
+        compilationResultPath: Path
+    ): TestSuiteCoverage = try {
+        val output = benchmarkPath.parent.resolve("coverage.json")
+        runExternalCoverage(benchmarkPath, testSuitePath, compilationResultPath, output)
+
+        when {
+            output.exists() -> json.decodeFromString<TestSuiteCoverage>(output.readText())
+            else -> TestSuiteCoverage(Fraction(0, 0), emptySet())
+        }
+    } catch (err: Exception) {
+        log.error(
+            "Execution of ExternalCoverageProvider.computeCoverage function failed due to the error: ${err.message}",
+            err
+        )
+        TestSuiteCoverage(Fraction(0, 0), emptySet())
+    }
+
+    override fun computeCoverage(
+        benchmark: Benchmark,
+        testSuite: TestSuite,
+        compilationResult: CompilationResult
+    ): TestSuiteCoverage = try {
         val benchmarkStr = json.encodeToString(benchmark)
         val testSuiteStr = json.encodeToString(testSuite)
+        val compilationResultStr = json.encodeToString(compilationResult)
         val benchmarkPath = testSuite.testSrcPath.resolve("benchmark.json").also {
             it.parent.toFile().mkdirs()
             it.writeText(benchmarkStr)
@@ -34,9 +60,13 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
             it.parent.toFile().mkdirs()
             it.writeText(testSuiteStr)
         }
+        val compilationResultPath = testSuite.testSrcPath.resolve("compilationResult.json").also {
+            it.parent.toFile().mkdirs()
+            it.writeText(compilationResultStr)
+        }
         val output = testSuite.testSrcPath.resolve("coverage.json")
 
-        runExternalCoverage(benchmarkPath, testSuitePath, output)
+        runExternalCoverage(benchmarkPath, testSuitePath, compilationResultPath, output)
 
         log.debug("'coverage.json' exists: ${output.exists()}")
 
@@ -52,7 +82,7 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
         TestSuiteCoverage(Fraction(0, testSuite.tests.size), emptySet())
     }
 
-    private fun runExternalCoverage(benchmark: Path, testSuite: Path, output: Path) {
+    private fun runExternalCoverage(benchmark: Path, testSuite: Path, compilationResultPath: Path, output: Path) {
         val builder = ProcessBuilder(
             getJavaPath().toString(),
             "-jar",
@@ -61,6 +91,8 @@ class ExternalCoverageProvider(private val timeLimit: Duration) : CoverageProvid
             benchmark.toAbsolutePath().toString(),
             "--testSuite",
             testSuite.toAbsolutePath().toString(),
+            "--compilationResult",
+            compilationResultPath.toAbsolutePath().toString(),
             "--output",
             output.toAbsolutePath().toString(),
         )

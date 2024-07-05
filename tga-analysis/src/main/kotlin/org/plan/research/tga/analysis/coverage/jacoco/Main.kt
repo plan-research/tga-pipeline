@@ -1,12 +1,12 @@
-package org.plan.research.tga.runner.coverage.jacoco
+package org.plan.research.tga.analysis.coverage.jacoco
 
 import kotlinx.serialization.encodeToString
 import org.apache.commons.cli.Option
+import org.plan.research.tga.analysis.compilation.CompilationResult
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.config.TgaConfig
 import org.plan.research.tga.core.config.buildOptions
-import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import java.nio.file.Paths
 import kotlin.io.path.bufferedWriter
@@ -35,6 +35,12 @@ private class TgaCoverageConfig(args: Array<String>) : TgaConfig("tga-coverage",
             )
 
             addOption(
+                Option("c", "compilationResult", true, "path to compilation result file in JSON format").also {
+                    it.isRequired = true
+                }
+            )
+
+            addOption(
                 Option("o", "output", true, "output file").also {
                     it.isRequired = true
                 }
@@ -47,14 +53,14 @@ private class TgaCoverageConfig(args: Array<String>) : TgaConfig("tga-coverage",
 fun main(args: Array<String>) {
     val config = TgaCoverageConfig(args)
 
-    val dependencyManager = DependencyManager()
-    val coverageProvider = JacocoCliCoverageProvider(dependencyManager)
+    val coverageProvider = JacocoCliCoverageProvider()
 
     val serializer = getJsonSerializer(pretty = false)
 
     val benchmark = serializer.decodeFromString<Benchmark>(Paths.get(config.getCmdValue("benchmark")!!).readText())
     val testSuite = serializer.decodeFromString<TestSuite>(Paths.get(config.getCmdValue("testSuite")!!).readText())
-    val coverage = coverageProvider.computeCoverage(benchmark, testSuite)
+    val compilationResult = serializer.decodeFromString<CompilationResult>(Paths.get(config.getCmdValue("compilationResult")!!).readText())
+    val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
 
     val outputFile = Paths.get(config.getCmdValue("output")!!)
     outputFile.parent.toFile().mkdirs()

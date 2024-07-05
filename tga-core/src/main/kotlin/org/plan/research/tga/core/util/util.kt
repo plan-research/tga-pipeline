@@ -13,7 +13,7 @@ val String.javaString get() = replace(Package.SEPARATOR, Package.CANONICAL_SEPAR
 
 fun Class<*>.asArray(): Class<*> = Array.newInstance(this, 0).javaClass
 
-fun Path.remap(from: Path, to: Path): Path = to.resolve(this.relativeToOrSelf(from))
+fun Path.remap(from: Path, to: Path): Path = to.resolve(this.relativeToOrSelf(from)).normalize()
 
 val Boolean?.orFalse: Boolean get() = this ?: false
 val Boolean?.orTrue: Boolean get() = this ?: true

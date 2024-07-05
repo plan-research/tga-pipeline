@@ -1,4 +1,4 @@
-package org.plan.research.tga.runner.coverage.jacoco
+package org.plan.research.tga.analysis.coverage.jacoco
 
 import org.jacoco.core.analysis.Analyzer
 import org.jacoco.core.analysis.CoverageBuilder
@@ -10,29 +10,23 @@ import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.IExecutionDataAccessorGenerator
 import org.jacoco.core.runtime.LoggerRuntime
 import org.jacoco.core.runtime.RuntimeData
+import org.plan.research.tga.analysis.compilation.CompilationResult
+import org.plan.research.tga.analysis.coverage.CoverageProvider
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.coverage.BranchId
 import org.plan.research.tga.core.coverage.ClassCoverageInfo
 import org.plan.research.tga.core.coverage.ClassId
-import org.plan.research.tga.core.coverage.CoverageProvider
 import org.plan.research.tga.core.coverage.ExtendedCoverageInfo
-import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.coverage.InstructionId
 import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodCoverageInfo
 import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.coverage.TestSuiteCoverage
-import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.asArray
 import org.plan.research.tga.core.util.asmString
-import org.plan.research.tga.runner.compiler.SystemJavaCompiler
-import org.vorpal.research.kthelper.collection.mapToArray
-import org.vorpal.research.kthelper.deleteOnExit
-import org.vorpal.research.kthelper.logging.error
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.tryOrNull
-import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.exists
@@ -48,49 +42,16 @@ fun ExecutionDataStore.deepCopy(): ExecutionDataStore {
     return executionDataCopy
 }
 
-class JacocoCoverageProvider(
-    private val dependencyManager: DependencyManager
-) : CoverageProvider {
-    private val tgaTempDir = Files.createTempDirectory("tga-runner").also {
-        deleteOnExit(it)
-    }.toAbsolutePath()
-    private val compiledDir: Path = tgaTempDir.resolve("compiled").toAbsolutePath().also {
-        it.toFile().mkdirs()
-    }
-
-    override fun computeCoverage(benchmark: Benchmark, testSuite: TestSuite): TestSuiteCoverage {
-        log.debug("Computing coverage: compiledDir='{}'", compiledDir)
-        val tests = testSuite.tests.associateWith { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-        val testDependencies =
-            testSuite.testSrcDependencies.mapToArray { testSuite.testSrcPath.resolve(it.asmString + ".java") }
-
-        val classPath = benchmark.classPath + testSuite.dependencies.flatMap { dependencyManager.findDependency(it) }
-        val compiler = SystemJavaCompiler(classPath)
-
-        val compilableTestCases = mutableMapOf<String, Path>()
-
-        for ((name, path) in tests) {
-            log.debug("Attempting to compile test {}", name)
-
-            try {
-                val result = compiler.compile(listOf(path, *testDependencies), compiledDir)
-                compilableTestCases[name] = path
-                log.debug("Compilation succeeded with result: {}", result)
-            } catch (e: Throwable) {
-                log.error(e)
-            }
-        }
-        val compilationRate = Fraction(compilableTestCases.size, tests.size)
-        log.debug(
-            "{} tests of {} are successfully compiled, compilation rate {}%",
-            tests.size,
-            compilableTestCases.size,
-            "%.2f".format(100.0 * compilationRate.ratio)
-        )
-
+@Deprecated("Use external jacoco runner")
+class JacocoCoverageProvider : CoverageProvider {
+    override fun computeCoverage(
+        benchmark: Benchmark,
+        testSuite: TestSuite,
+        compilationResult: CompilationResult
+    ): TestSuiteCoverage {
         val runtime = LoggerRuntime()
         val classLoader = InstrumentingPathClassLoader(
-            listOf(*classPath.toTypedArray(), compiledDir),
+            compilationResult.fullClassPath,
             setOf(benchmark.klass),
             runtime
         )
@@ -99,7 +60,7 @@ class JacocoCoverageProvider(
         val data = RuntimeData()
         runtime.startup(data)
 
-        for ((testName, testPath) in compilableTestCases) {
+        for ((testName, testPath) in compilationResult.compilableTests) {
             try {
                 val testClass = classLoader.loadClass(testName)
                 val jcClass = classLoader.loadClass("org.junit.runner.JUnitCore")
@@ -123,7 +84,7 @@ class JacocoCoverageProvider(
         runtime.shutdown()
 
         val mergedExecutionData = ExecutionDataStore()
-        for ((_, testPath) in compilableTestCases) {
+        for ((_, testPath) in compilationResult.compilableTests) {
             val executions = datum[testPath] ?: continue
             for (d in executions.contents) {
                 mergedExecutionData.put(d)
@@ -180,10 +141,10 @@ class JacocoCoverageProvider(
                     ExtendedCoverageInfo(branches)
                 )
             }
-        }.firstOrNull() ?: return TestSuiteCoverage(compilationRate, emptySet())
+        }.firstOrNull() ?: return TestSuiteCoverage(compilationResult.compilationRate, emptySet())
 
         return TestSuiteCoverage(
-            compilationRate,
+            compilationResult.compilationRate,
             setOf(ClassCoverageInfo(ClassId(benchmark.klass), methods))
         )
     }

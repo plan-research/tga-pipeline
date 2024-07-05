@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Fraction(val numerator: Int, val denominator: Int) {
     val ratio: Double = numerator.toDouble() / denominator.toDouble()
+
+    override fun toString(): String = String.format("%.2f", ratio)
 }
 
 @Serializable
@@ -19,6 +21,8 @@ sealed class CoverageInfo<T : Id> {
             total != 0U -> covered.toDouble() / total.toDouble()
             else -> 0.0
         }
+
+    override fun toString(): String = String.format("%.2f", covered)
 }
 
 @Serializable

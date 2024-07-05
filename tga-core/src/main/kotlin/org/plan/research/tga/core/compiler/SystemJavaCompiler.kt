@@ -1,7 +1,5 @@
-package org.plan.research.tga.runner.compiler
+package org.plan.research.tga.core.compiler
 
-import org.plan.research.tga.core.compiler.CompilationException
-import org.plan.research.tga.core.compiler.JavaCompiler
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.`try`
 import java.io.ByteArrayOutputStream

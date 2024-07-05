@@ -3,6 +3,7 @@ package org.plan.research.tga.core.tool
 import kotlinx.serialization.Serializable
 import org.plan.research.tga.core.benchmark.json.PathAsStringSerializer
 import org.plan.research.tga.core.dependency.Dependency
+import org.plan.research.tga.core.util.remap
 import java.nio.file.Path
 
 @Serializable
@@ -24,4 +25,6 @@ data class TestSuite(
      * External dependencies of the test suite, e.g., JUnit, Mockito, etc.
      */
     val dependencies: List<Dependency>,
-)
+) {
+    fun remap(from: Path, to: Path): TestSuite = copy(testSrcPath = testSrcPath.remap(from, to))
+}
