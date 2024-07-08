@@ -22,6 +22,7 @@ import java.nio.file.Paths
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -58,7 +59,7 @@ fun main(args: Array<String>) {
     val tools = resultsDir.listDirectoryEntries().map { it.name }
     log.debug(tools)
 
-    val coroutineContext = newFixedThreadPoolContext(10, "analysis-dispatcher")
+    val coroutineContext = newFixedThreadPoolContext(1, "analysis-dispatcher")
 
     val allData = ConcurrentLinkedDeque<String>()
 
@@ -79,6 +80,8 @@ fun main(args: Array<String>) {
                     for (benchmarkName in benchmarks.sorted()) {
                         allJobs += async {
                             val benchmarkDir = runDir.resolve(benchmarkName)
+                            if (!benchmarkDir.exists()) return@async
+
                             val benchmark = serializer.decodeFromString<Benchmark>(
                                 benchmarkDir.walk().firstOrNull { it.name == "benchmark.json" }?.readText()
                                     ?: return@async
@@ -87,6 +90,9 @@ fun main(args: Array<String>) {
                                 benchmarkDir.walk().firstOrNull { it.name == "testSuite.json" }?.readText()
                                     ?: return@async
                             ).remap(DOCKER_RESULTS_DIR, LOCAL_RESULTS_DIR)
+
+                            if (!testSuite.testSrcPath.exists()) return@async
+
                             val compilationResult = compiler.compile(benchmark, testSuite)
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
