@@ -1,7 +1,7 @@
 FROM abdullin/tga-pipeline:benchmarks-latest
 MAINTAINER Azat Abdullin <azat.aam@gmail.com>
 
-ARG PIPELINE_VERSION=0.0.16
+ARG PIPELINE_VERSION=0.0.17
 
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 

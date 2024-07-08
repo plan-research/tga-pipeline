@@ -1,5 +1,5 @@
 
-VERSION = 0.0.16
+VERSION = 0.0.17
 
 .PHONY: benchmarks all publish
 
