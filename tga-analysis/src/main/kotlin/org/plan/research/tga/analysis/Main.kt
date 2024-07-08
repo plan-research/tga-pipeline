@@ -1,4 +1,4 @@
-@file:Suppress("unused", "UNUSED_VARIABLE")
+@file:Suppress("unused")
 
 package org.plan.research.tga.analysis
 
@@ -38,6 +38,8 @@ val LOCAL_RESULTS_DIR: Path = Paths.get("/home/abdullin/workspace/tga-pipeline/r
  * 2. Coverage
  * 3. Mutation score
  * 4. Feature coverage?
+ *    * external dependencies
+ *    * language
  * 5. Crash reproduction
  * 6. Readability...?
  * 7. ...?
@@ -55,13 +57,13 @@ fun main(args: Array<String>) {
     val tools = resultsDir.listDirectoryEntries().map { it.name }
     log.debug(tools)
 
-    val coroutineContext = newFixedThreadPoolContext(1, "analysis-dispatcher")
+    val coroutineContext = newFixedThreadPoolContext(10, "analysis-dispatcher")
 
     val allData = ConcurrentLinkedDeque<String>()
 
     runBlocking(coroutineContext) {
         val allJobs = mutableListOf<Deferred<*>>()
-        for (tool in tools.takeLast(1)) {
+        for (tool in tools) {
             val toolDir = resultsDir.resolve(tool)
             val runs = toolDir.listDirectoryEntries()
                 .map { it.name }
@@ -70,10 +72,10 @@ fun main(args: Array<String>) {
 
             log.debug(runs)
             for ((runName, iterations) in runs) {
-                for (iteration in iterations.take(1)) {
+                for (iteration in iterations) {
                     val runDir = toolDir.resolve("$runName-$iteration")
                     val benchmarks = runDir.listDirectoryEntries().map { it.name }
-                    for (benchmarkName in benchmarks.shuffled().take(10)) {
+                    for (benchmarkName in benchmarks.sorted()) {
                         allJobs += async {
                             val benchmarkDir = runDir.resolve(benchmarkName)
                             val benchmark = serializer.decodeFromString<Benchmark>(
