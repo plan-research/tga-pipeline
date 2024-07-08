@@ -16,6 +16,7 @@ import java.nio.file.Path
 
 @Serializable
 data class CompilationResult(
+    val compiledDir: Path,
     val compilableTests: Map<String, Path>,
     val fullClassPath: List<Path>,
     val compilationRate: Fraction,
@@ -65,6 +66,6 @@ class TestSuiteCompiler(private val dependencyManager: DependencyManager) {
             "%.2f".format(100.0 * compilationRate.ratio)
         )
         val fullTestCP = listOf(*classPath.toTypedArray(), compiledDir)
-        return CompilationResult(compilableTestCases, fullTestCP, compilationRate)
+        return CompilationResult(compiledDir, compilableTestCases, fullTestCP, compilationRate)
     }
 }

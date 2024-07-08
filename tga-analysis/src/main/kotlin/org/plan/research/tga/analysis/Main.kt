@@ -21,6 +21,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -103,6 +104,8 @@ fun main(args: Array<String>) {
                                 coverage.coverage.first().branches.ratio * 100.0,
                                 mutationScore.ratio * 100.0,
                             )
+
+                            compilationResult.compiledDir.deleteRecursively()
                         }
                     }
                 }
