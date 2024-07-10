@@ -18,6 +18,7 @@ import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.logging.debug
 import org.vorpal.research.kthelper.logging.log
+import org.vorpal.research.kthelper.tryOrNull
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentLinkedDeque
@@ -67,6 +68,11 @@ fun main(args: Array<String>) {
     log.debug(tools)
 
     val coroutineContext = newFixedThreadPoolContext(1, "analysis-dispatcher")
+    val benchmarkProperties = tryOrNull {
+        getJsonSerializer(pretty = true)
+            .decodeFromString<List<Properties>>(Paths.get("properties.json").readText())
+            .associate { it.benchmark to it.properties }
+    } ?: emptyMap()
 
     val allData = ConcurrentLinkedDeque<String>()
     runBlocking(coroutineContext) {
@@ -83,7 +89,7 @@ fun main(args: Array<String>) {
                 for (iteration in iterations) {
                     val runDir = toolDir.resolve("$runName-$iteration")
                     val benchmarks = runDir.listDirectoryEntries().map { it.name }
-                    for (benchmarkName in benchmarks.sorted()) {
+                    for (benchmarkName in benchmarks.sorted().take(2)) {
                         allJobs += async {
                             val benchmarkDir = runDir.resolve(benchmarkName)
                             if (!benchmarkDir.exists()) return@async
@@ -105,7 +111,7 @@ fun main(args: Array<String>) {
                             val mutationScore = MutationScoreProvider().computeMutationScore(benchmark, testSuite, compilationResult)
 
                             allData += String.format(
-                                "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f",
+                                "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f, %s",
                                 tool,
                                 runName,
                                 iteration,
@@ -115,6 +121,7 @@ fun main(args: Array<String>) {
                                 coverage.coverage.first().lines.ratio * 100.0,
                                 coverage.coverage.first().branches.ratio * 100.0,
                                 mutationScore.ratio * 100.0,
+                                benchmarkProperties[benchmarkName]?.toList()?.joinToString { "${it.first} -> ${it.second}" } ?: ""
                             )
 
                             compilationResult.compiledDir.deleteRecursively()

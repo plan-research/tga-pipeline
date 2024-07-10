@@ -8,7 +8,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "52"
         }
     },
     {
@@ -20,7 +21,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "574"
         }
     },
     {
@@ -32,7 +34,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "177"
         }
     },
     {
@@ -44,7 +47,8 @@
             "Number of external dependencies": "11",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "950"
         }
     },
     {
@@ -56,7 +60,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "240"
         }
     },
     {
@@ -68,7 +73,8 @@
             "Number of external dependencies": "33",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1486"
         }
     },
     {
@@ -80,7 +86,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "203"
         }
     },
     {
@@ -92,7 +99,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "400"
         }
     },
     {
@@ -104,7 +112,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "779"
         }
     },
     {
@@ -116,7 +125,8 @@
             "Number of external dependencies": "5",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "65"
         }
     },
     {
@@ -128,7 +138,8 @@
             "Number of external dependencies": "1",
             "Language": "Portugese (Brasil)",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "85"
         }
     },
     {
@@ -140,7 +151,8 @@
             "Number of external dependencies": "5",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1272"
         }
     },
     {
@@ -152,7 +164,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "173"
         }
     },
     {
@@ -164,7 +177,8 @@
             "Number of external dependencies": "11",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "277"
         }
     },
     {
@@ -176,7 +190,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "361"
         }
     },
     {
@@ -188,7 +203,8 @@
             "Number of external dependencies": "8",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "484"
         }
     },
     {
@@ -200,7 +216,8 @@
             "Number of external dependencies": "7",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "586"
         }
     },
     {
@@ -212,7 +229,8 @@
             "Number of external dependencies": "12",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "446"
         }
     },
     {
@@ -224,7 +242,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "807"
         }
     },
     {
@@ -236,7 +255,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "525"
         }
     },
     {
@@ -248,7 +268,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "24"
         }
     },
     {
@@ -260,7 +281,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "108"
         }
     },
     {
@@ -272,7 +294,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "50"
         }
     },
     {
@@ -284,7 +307,8 @@
             "Number of external dependencies": "7",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "60"
         }
     },
     {
@@ -296,7 +320,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "951"
         }
     },
     {
@@ -308,7 +333,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "212"
         }
     },
     {
@@ -320,7 +346,8 @@
             "Number of external dependencies": "10",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "196"
         }
     },
     {
@@ -332,7 +359,8 @@
             "Number of external dependencies": "10",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "196"
         }
     },
     {
@@ -344,7 +372,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "34"
         }
     },
     {
@@ -356,7 +385,8 @@
             "Number of external dependencies": "13",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "2657"
         }
     },
     {
@@ -368,7 +398,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "109"
         }
     },
     {
@@ -380,7 +411,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "455"
         }
     },
     {
@@ -392,7 +424,8 @@
             "Number of external dependencies": "6",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "81"
         }
     },
     {
@@ -404,7 +437,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "115"
         }
     },
     {
@@ -416,7 +450,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "40"
         }
     },
     {
@@ -428,7 +463,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "123"
         }
     },
     {
@@ -440,7 +476,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1665"
         }
     },
     {
@@ -452,7 +489,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1157"
         }
     },
     {
@@ -464,7 +502,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "791"
         }
     },
     {
@@ -476,7 +515,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1674"
         }
     },
     {
@@ -488,7 +528,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "126"
         }
     },
     {
@@ -500,7 +541,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1166"
         }
     },
     {
@@ -512,7 +554,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "792"
         }
     },
     {
@@ -524,7 +567,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1758"
         }
     },
     {
@@ -536,7 +580,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "284"
         }
     },
     {
@@ -548,7 +593,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "82"
         }
     },
     {
@@ -560,7 +606,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1672"
         }
     },
     {
@@ -572,7 +619,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "155"
         }
     },
     {
@@ -584,7 +632,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "92"
         }
     },
     {
@@ -596,7 +645,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "809"
         }
     },
     {
@@ -608,7 +658,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "814"
         }
     },
     {
@@ -620,7 +671,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "672"
         }
     },
     {
@@ -632,7 +684,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1670"
         }
     },
     {
@@ -644,7 +697,8 @@
             "Number of external dependencies": "11",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "410"
         }
     },
     {
@@ -656,7 +710,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "820"
         }
     },
     {
@@ -668,7 +723,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "88"
         }
     },
     {
@@ -680,7 +736,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "583"
         }
     },
     {
@@ -692,7 +749,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "509"
         }
     },
     {
@@ -704,7 +762,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "601"
         }
     },
     {
@@ -716,7 +775,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "1187"
         }
     },
     {
@@ -728,7 +788,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "89"
         }
     },
     {
@@ -740,7 +801,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "57"
         }
     },
     {
@@ -752,7 +814,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "221"
         }
     },
     {
@@ -764,7 +827,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "387"
         }
     },
     {
@@ -776,7 +840,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "315"
         }
     },
     {
@@ -788,7 +853,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "314"
         }
     },
     {
@@ -800,7 +866,8 @@
             "Number of external dependencies": "5",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "233"
         }
     },
     {
@@ -812,7 +879,8 @@
             "Number of external dependencies": "46",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "799"
         }
     },
     {
@@ -824,7 +892,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1190"
         }
     },
     {
@@ -836,7 +905,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1191"
         }
     },
     {
@@ -848,7 +918,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "296"
         }
     },
     {
@@ -860,7 +931,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "377"
         }
     },
     {
@@ -872,7 +944,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "298"
         }
     },
     {
@@ -884,7 +957,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "28"
         }
     },
     {
@@ -896,7 +970,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "143"
         }
     },
     {
@@ -908,7 +983,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "38"
         }
     },
     {
@@ -920,7 +996,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "562"
         }
     },
     {
@@ -932,7 +1009,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "220"
         }
     },
     {
@@ -944,7 +1022,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "521"
         }
     },
     {
@@ -956,7 +1035,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "568"
         }
     },
     {
@@ -968,7 +1048,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "325"
         }
     },
     {
@@ -980,7 +1061,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "46"
         }
     },
     {
@@ -992,7 +1074,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "387"
         }
     },
     {
@@ -1004,7 +1087,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "580"
         }
     },
     {
@@ -1016,7 +1100,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "573"
         }
     },
     {
@@ -1028,7 +1113,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "803"
         }
     },
     {
@@ -1040,7 +1126,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "819"
         }
     },
     {
@@ -1052,7 +1139,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "287"
         }
     },
     {
@@ -1064,7 +1152,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "548"
         }
     },
     {
@@ -1076,7 +1165,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "285"
         }
     },
     {
@@ -1088,7 +1178,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "831"
         }
     },
     {
@@ -1100,7 +1191,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "206"
         }
     },
     {
@@ -1112,7 +1204,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "847"
         }
     },
     {
@@ -1124,7 +1217,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "76"
         }
     },
     {
@@ -1136,7 +1230,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "579"
         }
     },
     {
@@ -1148,7 +1243,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "855"
         }
     },
     {
@@ -1160,7 +1256,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "595"
         }
     },
     {
@@ -1172,7 +1269,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "55"
         }
     },
     {
@@ -1184,7 +1282,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "886"
         }
     },
     {
@@ -1196,7 +1295,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "585"
         }
     },
     {
@@ -1208,7 +1308,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "848"
         }
     },
     {
@@ -1220,7 +1321,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1222"
         }
     },
     {
@@ -1232,7 +1334,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1224"
         }
     },
     {
@@ -1244,7 +1347,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "266"
         }
     },
     {
@@ -1256,7 +1360,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "886"
         }
     },
     {
@@ -1268,7 +1373,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "904"
         }
     },
     {
@@ -1280,7 +1386,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "87"
         }
     },
     {
@@ -1292,7 +1399,8 @@
             "Number of external dependencies": "0",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "135"
         }
     },
     {
@@ -1304,7 +1412,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "235"
         }
     },
     {
@@ -1316,7 +1425,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "192"
         }
     },
     {
@@ -1328,7 +1438,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "67"
         }
     },
     {
@@ -1340,7 +1451,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "865"
         }
     },
     {
@@ -1352,7 +1464,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "40"
         }
     },
     {
@@ -1364,7 +1477,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "927"
         }
     },
     {
@@ -1376,7 +1490,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "353"
         }
     },
     {
@@ -1388,7 +1503,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "301"
         }
     },
     {
@@ -1400,7 +1516,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1265"
         }
     },
     {
@@ -1412,7 +1529,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1228"
         }
     },
     {
@@ -1424,7 +1542,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "264"
         }
     },
     {
@@ -1436,7 +1555,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "178"
         }
     },
     {
@@ -1448,7 +1568,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1353"
         }
     },
     {
@@ -1460,7 +1581,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "215"
         }
     },
     {
@@ -1472,7 +1594,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1364"
         }
     },
     {
@@ -1484,7 +1607,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1232"
         }
     },
     {
@@ -1496,7 +1620,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1235"
         }
     },
     {
@@ -1508,7 +1633,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "314"
         }
     },
     {
@@ -1520,7 +1646,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "224"
         }
     },
     {
@@ -1532,7 +1659,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "75"
         }
     },
     {
@@ -1544,7 +1672,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "266"
         }
     },
     {
@@ -1556,7 +1685,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "132"
         }
     },
     {
@@ -1568,7 +1698,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "79"
         }
     },
     {
@@ -1580,7 +1711,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1235"
         }
     },
     {
@@ -1592,7 +1724,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "269"
         }
     },
     {
@@ -1604,7 +1737,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "713"
         }
     },
     {
@@ -1616,7 +1750,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "302"
         }
     },
     {
@@ -1628,7 +1763,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "350"
         }
     },
     {
@@ -1640,7 +1776,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1229"
         }
     },
     {
@@ -1652,7 +1789,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1252"
         }
     },
     {
@@ -1664,7 +1802,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "113"
         }
     },
     {
@@ -1676,7 +1815,8 @@
             "Number of external dependencies": "2",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "81"
         }
     },
     {
@@ -1688,7 +1828,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "206"
         }
     },
     {
@@ -1700,7 +1841,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "215"
         }
     },
     {
@@ -1712,7 +1854,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "58"
         }
     },
     {
@@ -1724,7 +1867,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "941"
         }
     },
     {
@@ -1736,7 +1880,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "440"
         }
     },
     {
@@ -1748,7 +1893,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "640"
         }
     },
     {
@@ -1760,7 +1906,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1282"
         }
     },
     {
@@ -1772,7 +1919,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1284"
         }
     },
     {
@@ -1784,7 +1932,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "1285"
         }
     },
     {
@@ -1796,7 +1945,8 @@
             "Number of external dependencies": "13",
             "Language": "Eng",
             "Comments": "1",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "413"
         }
     },
     {
@@ -1808,7 +1958,8 @@
             "Number of external dependencies": "4",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "155"
         }
     },
     {
@@ -1820,7 +1971,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "499"
         }
     },
     {
@@ -1832,7 +1984,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "167"
         }
     },
     {
@@ -1844,7 +1997,8 @@
             "Number of external dependencies": "3",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "0"
+            "Java docs": "0",
+            "SLoC": "526"
         }
     },
     {
@@ -1856,7 +2010,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "123"
         }
     },
     {
@@ -1868,7 +2023,8 @@
             "Number of external dependencies": "1",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "76"
         }
     },
     {
@@ -1880,7 +2036,8 @@
             "Number of external dependencies": "5",
             "Language": "Eng",
             "Comments": "0",
-            "Java docs": "1"
+            "Java docs": "1",
+            "SLoC": "655"
         }
     }
 ]
