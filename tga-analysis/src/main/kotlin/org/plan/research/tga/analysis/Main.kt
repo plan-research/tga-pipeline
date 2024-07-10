@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
 import org.plan.research.tga.analysis.compilation.TestSuiteCompiler
 import org.plan.research.tga.analysis.coverage.jacoco.JacocoCliCoverageProvider
 import org.plan.research.tga.analysis.mutation.MutationScoreProvider
@@ -46,6 +47,12 @@ val LOCAL_RESULTS_DIR: Path = Paths.get("/home/abdullin/workspace/tga-pipeline/r
  * 6. Readability...?
  * 7. ...?
  */
+
+@Serializable
+data class Properties(
+    val benchmark: String,
+    val properties: Map<String, String>
+)
 
 
 @OptIn(ExperimentalPathApi::class, DelicateCoroutinesApi::class)
