@@ -89,7 +89,7 @@ fun main(args: Array<String>) {
                 for (iteration in iterations) {
                     val runDir = toolDir.resolve("$runName-$iteration")
                     val benchmarks = runDir.listDirectoryEntries().map { it.name }
-                    for (benchmarkName in benchmarks.sorted().take(2)) {
+                    for (benchmarkName in benchmarks.sorted()) {
                         allJobs += async {
                             val benchmarkDir = runDir.resolve(benchmarkName)
                             if (!benchmarkDir.exists()) return@async
