@@ -9,11 +9,14 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
+import org.apache.commons.cli.Option
 import org.plan.research.tga.analysis.compilation.TestSuiteCompiler
 import org.plan.research.tga.analysis.coverage.jacoco.JacocoCliCoverageProvider
 import org.plan.research.tga.analysis.mutation.MutationScoreProvider
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
+import org.plan.research.tga.core.config.TgaConfig
+import org.plan.research.tga.core.config.buildOptions
 import org.plan.research.tga.core.dependency.DependencyManager
 import org.plan.research.tga.core.tool.TestSuite
 import org.vorpal.research.kthelper.logging.debug
@@ -31,9 +34,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.walk
 
 val DOCKER_BENCHMARKS_DIR: Path = Paths.get("/var/benchmarks/gitbug")
-val LOCAL_BENCHMARKS_DIR: Path = Paths.get("/home/abdullin/workspace/tga-pipeline/benchmarks")
 val DOCKER_RESULTS_DIR: Path = Paths.get("/var/results")
-val LOCAL_RESULTS_DIR: Path = Paths.get("/home/abdullin/workspace/tga-pipeline/results")
 
 
 /**
@@ -49,6 +50,34 @@ val LOCAL_RESULTS_DIR: Path = Paths.get("/home/abdullin/workspace/tga-pipeline/r
  * 7. ...?
  */
 
+
+class TgaAnalysisConfig(args: Array<String>) : TgaConfig("tga-analysis", options, args) {
+    companion object {
+        private val options = buildOptions {
+            addOption(
+                Option("h", "help", false, "print this help and quit").also {
+                    it.isRequired = false
+                }
+            )
+
+            addOption(
+                Option(null, "benchmarksPath", true, "path to local benchmarks")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option(null, "resultsPath", true, "path to results dir")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
+                Option(null, "threads", true, "number of threads to run")
+                    .also { it.isRequired = false }
+            )
+        }
+    }
+}
+
 @Serializable
 data class Properties(
     val benchmark: String,
@@ -58,16 +87,19 @@ data class Properties(
 
 @OptIn(ExperimentalPathApi::class, DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
+    val config = TgaAnalysisConfig(args)
     val serializer = getJsonSerializer(pretty = true)
     val dependencyManager = DependencyManager()
     val compiler = TestSuiteCompiler(dependencyManager)
     val coverageProvider = JacocoCliCoverageProvider()
 
-    val resultsDir = Paths.get(args[0])
+    val resultsDir = Paths.get(config.getCmdValue("resultsPath")!!)
+    val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
     val tools = resultsDir.listDirectoryEntries().map { it.name }
     log.debug(tools)
 
-    val coroutineContext = newFixedThreadPoolContext(1, "analysis-dispatcher")
+    val threads = config.getCmdValue("threads")?.toInt() ?: 10
+    val coroutineContext = newFixedThreadPoolContext(threads, "analysis-dispatcher")
     val benchmarkProperties = tryOrNull {
         getJsonSerializer(pretty = true)
             .decodeFromString<List<Properties>>(Paths.get("properties.json").readText())
@@ -97,18 +129,19 @@ fun main(args: Array<String>) {
                             val benchmark = serializer.decodeFromString<Benchmark>(
                                 benchmarkDir.walk().firstOrNull { it.name == "benchmark.json" }?.readText()
                                     ?: return@async
-                            ).remap(DOCKER_BENCHMARKS_DIR, LOCAL_BENCHMARKS_DIR)
+                            ).remap(DOCKER_BENCHMARKS_DIR, benchmarksDir)
                             val testSuite = serializer.decodeFromString<TestSuite>(
                                 benchmarkDir.walk().firstOrNull { it.name == "testSuite.json" }?.readText()
                                     ?: return@async
-                            ).remap(DOCKER_RESULTS_DIR, LOCAL_RESULTS_DIR)
+                            ).remap(DOCKER_RESULTS_DIR, resultsDir)
 
                             if (!testSuite.testSrcPath.exists()) return@async
 
                             val compilationResult = compiler.compile(benchmark, testSuite)
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
-                            val mutationScore = MutationScoreProvider().computeMutationScore(benchmark, testSuite, compilationResult)
+                            val mutationScore =
+                                MutationScoreProvider().computeMutationScore(benchmark, testSuite, compilationResult)
 
                             allData += String.format(
                                 "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f, %s",
@@ -121,7 +154,8 @@ fun main(args: Array<String>) {
                                 coverage.coverage.first().lines.ratio * 100.0,
                                 coverage.coverage.first().branches.ratio * 100.0,
                                 mutationScore.ratio * 100.0,
-                                benchmarkProperties[benchmarkName]?.toList()?.joinToString { "${it.first} -> ${it.second}" } ?: ""
+                                benchmarkProperties[benchmarkName]?.toList()
+                                    ?.joinToString(", ") { "${it.first} -> ${it.second}" } ?: ""
                             )
 
                             compilationResult.compiledDir.deleteRecursively()
