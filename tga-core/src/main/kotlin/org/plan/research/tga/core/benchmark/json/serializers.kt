@@ -2,6 +2,8 @@ package org.plan.research.tga.core.benchmark.json
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -44,3 +46,6 @@ object PathAsStringSerializer : KSerializer<Path> {
 }
 
 object ListOfPathSerializer : KSerializer<List<Path>> by ListSerializer(PathAsStringSerializer)
+
+object MapOfStringPathSerializer :
+    KSerializer<Map<String, Path>> by MapSerializer(String.serializer(), PathAsStringSerializer)

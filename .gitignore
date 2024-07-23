@@ -60,3 +60,6 @@ gitbug-java/
 research/
 /kex-results.json
 /tool-configs/
+/benchmarks-translated/
+/results-eng/
+/results-esp/

@@ -2,6 +2,9 @@ package org.plan.research.tga.analysis.compilation
 
 import kotlinx.serialization.Serializable
 import org.plan.research.tga.core.benchmark.Benchmark
+import org.plan.research.tga.core.benchmark.json.ListOfPathSerializer
+import org.plan.research.tga.core.benchmark.json.MapOfStringPathSerializer
+import org.plan.research.tga.core.benchmark.json.PathAsStringSerializer
 import org.plan.research.tga.core.compiler.SystemJavaCompiler
 import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.dependency.DependencyManager
@@ -16,8 +19,11 @@ import java.nio.file.Path
 
 @Serializable
 data class CompilationResult(
+    @Serializable(with = PathAsStringSerializer::class)
     val compiledDir: Path,
+    @Serializable(with = MapOfStringPathSerializer::class)
     val compilableTests: Map<String, Path>,
+    @Serializable(with = ListOfPathSerializer::class)
     val fullClassPath: List<Path>,
     val compilationRate: Fraction,
 )

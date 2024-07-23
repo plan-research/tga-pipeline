@@ -1,4 +1,4 @@
-@file:Suppress("unused", "UnnecessaryOptInAnnotation", "ControlFlowWithEmptyBody")
+@file:Suppress("unused", "UnnecessaryOptInAnnotation", "ControlFlowWithEmptyBody", "UNUSED_VARIABLE", "UnusedImport")
 
 package org.plan.research.tga.analysis
 
@@ -9,10 +9,11 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import org.apache.commons.cli.Option
 import org.plan.research.tga.analysis.compilation.TestSuiteCompiler
 import org.plan.research.tga.analysis.coverage.jacoco.JacocoCliCoverageProvider
-import org.plan.research.tga.analysis.mutation.MutationScoreProvider
+import org.plan.research.tga.analysis.junit.JUnitExternalRunner
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.config.TgaConfig
@@ -26,6 +27,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.bufferedWriter
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
@@ -138,25 +140,29 @@ fun main(args: Array<String>) {
                             if (!testSuite.testSrcPath.exists()) return@async
 
                             val compilationResult = compiler.compile(benchmark, testSuite)
+                            val failures = JUnitExternalRunner().run(compilationResult)
+                            testSuite.testSrcPath.resolve("failures.json").bufferedWriter().use {
+                                it.write(serializer.encodeToString(failures))
+                            }
 
-                            val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
-                            val mutationScore =
-                                MutationScoreProvider().computeMutationScore(benchmark, testSuite, compilationResult)
-
-                            allData += String.format(
-                                "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f, %s",
-                                tool,
-                                runName,
-                                iteration,
-                                benchmark.buildId,
-                                benchmark.klass,
-                                coverage.compilationRate.ratio * 100.0,
-                                coverage.coverage.first().lines.ratio * 100.0,
-                                coverage.coverage.first().branches.ratio * 100.0,
-                                mutationScore.ratio * 100.0,
-                                benchmarkProperties[benchmarkName]?.toList()
-                                    ?.joinToString(", ") { "${it.first} -> ${it.second}" } ?: ""
-                            )
+//                            val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
+//                            val mutationScore =
+//                                MutationScoreProvider().computeMutationScore(benchmark, testSuite, compilationResult)
+//
+//                            allData += String.format(
+//                                "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f, %s",
+//                                tool,
+//                                runName,
+//                                iteration,
+//                                benchmark.buildId,
+//                                benchmark.klass,
+//                                coverage.compilationRate.ratio * 100.0,
+//                                coverage.coverage.first().lines.ratio * 100.0,
+//                                coverage.coverage.first().branches.ratio * 100.0,
+//                                mutationScore.ratio * 100.0,
+//                                benchmarkProperties[benchmarkName]?.toList()
+//                                    ?.joinToString(", ") { "${it.first} -> ${it.second}" } ?: ""
+//                            )
 
                             compilationResult.compiledDir.deleteRecursively()
                         }
