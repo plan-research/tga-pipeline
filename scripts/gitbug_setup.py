@@ -6,16 +6,16 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 
 from cut_info import cut_map
-
 
 def clone(output_dir, project_json) -> str:
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 	os.chdir(output_dir)
 	project_name = project_json['repository'].split('/')[1]
-	commit_id = project_json['commit_hash']
+	commit_id = project_json['previous_commit_hash']
 	project_dir_name = "{}-{}".format(project_name, commit_id[0:10])
 	project_dir = os.path.join(output_dir, project_dir_name)
 
@@ -47,12 +47,28 @@ def clone(output_dir, project_json) -> str:
 
 	return project_dir
 
-def build(project_json, project_dir):
+def build(project_json, project_dir, apply_patch):
 	if not os.path.exists(project_dir):
 		return None
 
 	logging.info("Building the project '{}'".format(project_dir))
 	os.chdir(project_dir)
+
+	if apply_patch:
+		logging.info("Applying bug patch")
+		patch = project_json['bug_patch']
+
+		tmp = tempfile.NamedTemporaryFile()
+		with open(tmp.name, 'w') as f:
+			f.write(patch)
+
+		logging.info(f'Patch temporarily written to {tmp.name}')
+		p = subprocess.Popen(['git', 'apply', tmp.name])
+		_, _ = p.communicate()
+		if p.returncode == 0:
+			logging.info('Patch successfully applied')
+		else:
+			logging.error('Failed to successfully apply patch')
 
 	build_system = ''
 	for file in os.listdir(project_dir):
@@ -75,7 +91,7 @@ def build(project_json, project_dir):
 			return None
 
 		process = subprocess.Popen(['mvn', 'dependency:copy-dependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		output, err = process.communicate()
+		_, _ = process.communicate()
 		if process.returncode != 0:
 			logging.error("Failed to copy maven dependencies {}".format(project_dir))
 			shutil.rmtree(project_dir)
@@ -95,7 +111,7 @@ def build(project_json, project_dir):
 			build_file_path = os.path.join(project_dir, 'build.gradle.kts')
 			build_file_patch = """
 task("copyDependencies", Copy::class) {
-    from(configurations.default).into("${layout.buildDirectory}/dependencies")
+	from(configurations.default).into("${layout.buildDirectory}/dependencies")
 }
 	"""
 		else:
@@ -126,7 +142,7 @@ task copyDependencies(type: Copy) {
 	return project_dir
 
 
-def download_projects(gitbug_data_dir, output_dir):
+def download_projects(gitbug_data_dir, output_dir, apply_patch):
 	downloaded_projects = []
 	for file in os.listdir(gitbug_data_dir):
 		project_json = os.path.join(gitbug_data_dir, file)
@@ -138,7 +154,7 @@ def download_projects(gitbug_data_dir, output_dir):
 			if project_dir == None:
 				continue
 
-			project_dir = build(project_data, project_dir)
+			project_dir = build(project_data, project_dir, apply_patch)
 			if project_dir == None:
 				continue
 
@@ -226,14 +242,15 @@ def main():
 		level=logging.INFO
 	)
 
-	if len(sys.argv) < 3:
-		logging.error("Usage: `./gutbug_setup.py *path to GitBug root* *path to output dir*`")
+	if len(sys.argv) < 4:
+		logging.error("Usage: `./gutbug_setup.py *path to GitBug root* *path to output dir* *apply patches*`")
 		sys.exit(1)
 
 	gitbug_data_dir = os.path.join(sys.argv[1], 'data/bugs/')
 	output_dir = sys.argv[2]
+	apply_patch = (sys.argv[3] == 'True')
 
-	downloaded_projects = download_projects(gitbug_data_dir, output_dir)
+	downloaded_projects = download_projects(gitbug_data_dir, output_dir, apply_patch)
 	benchmarks = produce_benchmarks(downloaded_projects)
 
 	output_file_path = os.path.join(output_dir, 'benchmarks.json')

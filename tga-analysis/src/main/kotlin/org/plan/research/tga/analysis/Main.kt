@@ -30,6 +30,7 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -97,7 +98,7 @@ fun main(args: Array<String>) {
 
     val resultsDir = Paths.get(config.getCmdValue("resultsPath")!!)
     val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
-    val tools = resultsDir.listDirectoryEntries().map { it.name }
+    val tools = resultsDir.listDirectoryEntries().filter { it.isDirectory() }.map { it.name }
     log.debug(tools)
 
     val threads = config.getCmdValue("threads")?.toInt() ?: 10
