@@ -18,7 +18,8 @@ RUN git clone https://github.com/gitbugactions/gitbug-java.git /root/gitbug-java
 ADD ./scripts /var/scripts
 
 # run scripts and build benchmarks
-RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug
+RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug False
+RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug-patched True
 
 # give access to all users
 RUN chmod a+r -R /var/benchmarks
