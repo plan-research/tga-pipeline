@@ -16,6 +16,7 @@ import org.plan.research.tga.analysis.coverage.jacoco.JacocoCliCoverageProvider
 import org.plan.research.tga.analysis.junit.JUnitExternalRunner
 import org.plan.research.tga.analysis.mutation.MutationScoreProvider
 import org.plan.research.tga.core.benchmark.Benchmark
+import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.config.TgaConfig
 import org.plan.research.tga.core.config.buildOptions
@@ -70,6 +71,11 @@ class TgaAnalysisConfig(args: Array<String>) : TgaConfig("tga-analysis", options
             )
 
             addOption(
+                Option(null, "benchmarksPatchedPath", true, "path to local benchmarks")
+                    .also { it.isRequired = true }
+            )
+
+            addOption(
                 Option(null, "resultsPath", true, "path to results dir")
                     .also { it.isRequired = true }
             )
@@ -99,6 +105,9 @@ fun main(args: Array<String>) {
 
     val resultsDir = Paths.get(config.getCmdValue("resultsPath")!!)
     val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
+    val benchmarksPatched = JsonBenchmarkProvider(Paths.get(config.getCmdValue("benchmarksPatchedPath")!!))
+        .benchmarks()
+        .associateBy { it.buildId }
     val tools = resultsDir.listDirectoryEntries().filter { it.isDirectory() }.map { it.name }
     log.debug(tools)
 
@@ -145,6 +154,14 @@ fun main(args: Array<String>) {
                             val failures = JUnitExternalRunner().run(compilationResult)
                             testSuite.testSrcPath.resolve("failures.json").bufferedWriter().use {
                                 it.write(serializer.encodeToString(failures))
+                            }
+
+                            benchmarksPatched[benchmark.buildId]?.let { patchedBenchmark ->
+                                val patchedCompilationResult = compiler.compile(patchedBenchmark, testSuite)
+                                val patchedFailures = JUnitExternalRunner().run(patchedCompilationResult)
+                                testSuite.testSrcPath.resolve("failures-patched.json").bufferedWriter().use {
+                                    it.write(serializer.encodeToString(patchedFailures))
+                                }
                             }
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
