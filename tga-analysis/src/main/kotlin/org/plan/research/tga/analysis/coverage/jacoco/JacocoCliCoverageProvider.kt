@@ -16,6 +16,7 @@ import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.coverage.TestSuiteCoverage
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
+import org.plan.research.tga.core.util.getJvmModuleParams
 import org.vorpal.research.kthelper.assert.ktassert
 import org.vorpal.research.kthelper.collection.mapToArray
 import org.vorpal.research.kthelper.executeProcessWithTimeout
@@ -66,6 +67,7 @@ class JacocoCliCoverageProvider(
         executeProcessWithTimeout(
             listOf(
                 "java",
+                *getJvmModuleParams().toTypedArray(),
                 "-jar",
                 JACOCO_CLI_PATH.toString(),
                 "report",
