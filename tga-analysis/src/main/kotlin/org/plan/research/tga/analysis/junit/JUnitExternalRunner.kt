@@ -8,6 +8,7 @@ import org.plan.research.tga.core.util.getJvmModuleParams
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.terminateOrKill
+import org.vorpal.research.kthelper.tryOrNull
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.exists
@@ -41,13 +42,11 @@ class JUnitExternalRunner {
             process.waitFor(100.seconds.inWholeMilliseconds, TimeUnit.MILLISECONDS)
             process.terminateOrKill(10U, waitTime = 500.milliseconds)
 
-            if (process.exitValue() != 0) {
-                println("a")
-            }
-
             val stackTraceFile = compilationResult.compiledDir.resolve("stackTrace.json")
             if (stackTraceFile.exists()) {
-                addAll(serializer.decodeFromString<Set<StackTrace>>(stackTraceFile.readText()))
+                tryOrNull {
+                    serializer.decodeFromString<Set<StackTrace>>(stackTraceFile.readText())
+                }?.let { addAll(it) }
             }
         }
     }

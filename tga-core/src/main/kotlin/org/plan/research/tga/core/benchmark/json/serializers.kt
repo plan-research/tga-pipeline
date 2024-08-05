@@ -1,5 +1,6 @@
 package org.plan.research.tga.core.benchmark.json
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -19,6 +20,7 @@ import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodId
 import java.nio.file.Path
 
+@OptIn(ExperimentalSerializationApi::class)
 fun getJsonSerializer(pretty: Boolean): Json = Json {
     encodeDefaults = false
     ignoreUnknownKeys = false
@@ -26,6 +28,7 @@ fun getJsonSerializer(pretty: Boolean): Json = Json {
     useArrayPolymorphism = false
     allowStructuredMapKeys = true
     allowSpecialFloatingPointValues = true
+    allowTrailingComma = true
     serializersModule = SerializersModule {
         polymorphic(Id::class) {
             this.subclass(InstructionId::class, InstructionId.serializer())
