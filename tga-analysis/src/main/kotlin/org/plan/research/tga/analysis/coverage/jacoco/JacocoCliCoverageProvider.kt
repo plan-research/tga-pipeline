@@ -20,6 +20,7 @@ import org.vorpal.research.kthelper.assert.ktassert
 import org.vorpal.research.kthelper.collection.mapToArray
 import org.vorpal.research.kthelper.executeProcessWithTimeout
 import org.vorpal.research.kthelper.resolve
+import org.vorpal.research.kthelper.tryOrNull
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.File
@@ -86,7 +87,7 @@ class JacocoCliCoverageProvider(
     }
 
     @Suppress("UNUSED_VARIABLE")
-    private fun parseCoverageXml(benchmark: Benchmark, path: Path): ClassCoverageInfo {
+    private fun parseCoverageXml(benchmark: Benchmark, path: Path): ClassCoverageInfo = tryOrNull {
         if (!path.exists()) return ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
         val pkg = benchmark.klass.substringBeforeLast('.')
         val name = benchmark.klass.substringAfterLast('.')
@@ -118,6 +119,10 @@ class JacocoCliCoverageProvider(
                 it.getAttribute("type") to Fraction(covered, covered + missed)
             }
             when {
+                /**
+                 * Special case for default constructors and static initializers
+                 * because they may be non-continuous in code
+                 */
                 /**
                  * Special case for default constructors and static initializers
                  * because they may be non-continuous in code
@@ -197,8 +202,8 @@ class JacocoCliCoverageProvider(
             }
         }
 
-        return ClassCoverageInfo(ClassId(benchmark.klass), methodCoverages)
-    }
+        ClassCoverageInfo(ClassId(benchmark.klass), methodCoverages)
+    } ?: ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
 
     private fun Document.getElementByTag(name: String, index: Int): Element =
         this.getElementsByTagName(name).item(index) as Element
