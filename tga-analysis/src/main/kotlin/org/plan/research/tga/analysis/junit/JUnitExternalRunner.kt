@@ -4,6 +4,7 @@ import kotlinx.serialization.encodeToString
 import org.plan.research.tga.analysis.compilation.CompilationResult
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
+import org.plan.research.tga.core.util.getJvmModuleParams
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.terminateOrKill
@@ -27,8 +28,12 @@ class JUnitExternalRunner {
         }
         for (testName in compilationResult.compilableTests.keys) {
             val process = buildProcess(
-                "java", "-jar", JUNIT_RUNNER_JAR.toString(),
-                compilationResultFile.toString(), testName
+                "java",
+                *getJvmModuleParams().toTypedArray(),
+                "-jar",
+                JUNIT_RUNNER_JAR.toString(),
+                compilationResultFile.toString(),
+                testName
             ) {
                 this.inheritIO()
                 this.environment()["TGA_PIPELINE_HOME"] = TGA_PIPELINE_HOME.toString()

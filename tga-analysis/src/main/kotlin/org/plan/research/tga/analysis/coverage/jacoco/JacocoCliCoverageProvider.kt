@@ -52,6 +52,7 @@ class JacocoCliCoverageProvider(
             executeProcessWithTimeout(
                 listOf(
                     "java",
+                    *getJvmModuleParams().toTypedArray(),
                     "-cp",
                     compilationResult.fullClassPath.joinToString(separator = File.pathSeparator),
                     "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",

@@ -5,6 +5,7 @@ import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.coverage.Fraction
 import org.plan.research.tga.core.tool.TestSuite
 import org.plan.research.tga.core.util.TGA_PIPELINE_HOME
+import org.plan.research.tga.core.util.getJvmModuleParams
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
@@ -33,6 +34,7 @@ class MutationScoreProvider {
             .filterNot { "junit-jupiter" in it.toString() }
         val process = buildProcess(
             "java",
+            *getJvmModuleParams().toTypedArray(),
             "-cp",
             PI_TEST_PATH.toAbsolutePath().toString(),
             "org.pitest.mutationtest.commandline.MutationCoverageReport",
