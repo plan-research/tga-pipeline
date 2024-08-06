@@ -162,6 +162,7 @@ fun main(args: Array<String>) {
                                 testSuite.testSrcPath.resolve("failures-patched.json").bufferedWriter().use {
                                     it.write(serializer.encodeToString(patchedFailures))
                                 }
+                                patchedCompilationResult.compiledDir.deleteRecursively()
                             }
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
