@@ -125,7 +125,6 @@ fun main(args: Array<String>) {
             .associate { it.benchmark to it.properties }
     } ?: emptyMap()
 
-    val allData = ConcurrentLinkedDeque<String>()
     runBlocking(coroutineContext) {
         val allJobs = mutableListOf<Deferred<*>>()
         for (tool in tools) {
@@ -138,6 +137,7 @@ fun main(args: Array<String>) {
             log.debug(runs)
             for ((runName, iterations) in runs) {
                 for (iteration in iterations) {
+                    val allData = ConcurrentLinkedDeque<String>()
                     val runDir = toolDir.resolve("$runName-$iteration")
                     val benchmarks = runDir.listDirectoryEntries().map { it.name }
                     for (benchmarkName in benchmarks.sorted()) {
@@ -193,11 +193,12 @@ fun main(args: Array<String>) {
                             compilationResult.compiledDir.deleteRecursively()
                         }
                     }
+                    allJobs.awaitAll()
+                    Paths.get("$tool-$iteration.csv").bufferedWriter().use {
+                        it.write(allData.joinToString("\n"))
+                    }
                 }
             }
         }
-        allJobs.awaitAll()
-
-        log.debug(allData.joinToString("\n"))
     }
 }
