@@ -84,6 +84,11 @@ class TgaAnalysisConfig(args: Array<String>) : TgaConfig("tga-analysis", options
                 Option(null, "threads", true, "number of threads to run")
                     .also { it.isRequired = false }
             )
+
+            addOption(
+                Option(null, "tool", true, "name of the tool")
+                    .also { it.isRequired = true }
+            )
         }
     }
 }
@@ -109,6 +114,7 @@ fun main(args: Array<String>) {
         .benchmarks()
         .associateBy { it.buildId }
     val tools = resultsDir.listDirectoryEntries().filter { it.isDirectory() }.map { it.name }
+        .filter { it == config.getCmdValue("tool") }
     log.debug(tools)
 
     val threads = config.getCmdValue("threads")?.toInt() ?: 10
