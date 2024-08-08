@@ -17,6 +17,7 @@ import org.plan.research.tga.core.metrics.RegexModel
 import org.plan.research.tga.core.metrics.StaticModel
 import org.plan.research.tga.core.metrics.StdLibModel
 import org.plan.research.tga.core.metrics.StringModel
+import org.plan.research.tga.core.metrics.SwitchModel
 import org.plan.research.tga.core.metrics.TypeCheckModel
 import org.plan.research.tga.core.metrics.ValueModel
 import org.vorpal.research.kfg.ClassManager
@@ -295,11 +296,11 @@ class ConditionTypeDfa(
     override fun visitJumpInst(inst: JumpInst) {}
     override fun visitReturnInst(inst: ReturnInst) {}
     override fun visitSwitchInst(inst: SwitchInst) {
-        valueDomains[inst] = PrimitiveModel
+        valueDomains[inst] = SwitchModel
     }
 
     override fun visitTableSwitchInst(inst: TableSwitchInst) {
-        valueDomains[inst] = PrimitiveModel
+        valueDomains[inst] = SwitchModel
     }
 
     override fun visitThrowInst(inst: ThrowInst) {}

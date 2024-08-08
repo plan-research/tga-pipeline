@@ -26,6 +26,9 @@ data object PrimitiveModel : ValueModel(10_000U)
 data object NullModel : ValueModel(10_000U)
 
 @Serializable
+data object SwitchModel : ValueModel(11_000U)
+
+@Serializable
 data object TypeCheckModel : ValueModel(15_000U)
 
 @Serializable
