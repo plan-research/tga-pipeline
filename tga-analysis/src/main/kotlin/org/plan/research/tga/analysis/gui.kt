@@ -55,7 +55,7 @@ fun main() {
             log.error("Could not resolve class ${benchmark.klass} in ${benchmark.src}")
             continue
         }
-        val props = properties[benchmark.buildId]!!
+        val props = properties.getOrDefault(benchmark.buildId, Properties(benchmark.buildId, emptyMap()))
         properties[benchmark.buildId] = props.copy(properties = props.properties.toMutableMap().also {
             it["SLoC"] = srcPath.resolve(localPath).readLines().filter { it.isNotBlank() }.size.toString()
         })
@@ -107,7 +107,7 @@ fun main() {
                     val internalPackage = fields["Internal package"]!!.text
                     val imports = largeTextArea.text.split("\n")
                         .filter { line -> line.startsWith("import") }
-                        .map { line -> line.removePrefix("import ") }
+                        .map { line -> line.removePrefix("import ").removePrefix("static ") }
                     val internal = imports.count { line -> line.startsWith(internalPackage) }
                     val std =
                         imports.count { line ->

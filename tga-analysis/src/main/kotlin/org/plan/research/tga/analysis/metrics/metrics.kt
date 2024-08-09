@@ -93,4 +93,6 @@ fun main(args: Array<String>) {
         val metrics = metricsProvider.getMetrics(benchmark)
         println(metrics)
     }
+
+    metricsProvider.save()
 }

@@ -2039,5 +2039,1499 @@
             "Java docs": "1",
             "SLoC": "655"
         }
+    },
+    {
+        "benchmark": "cbor-java-b010e8c62b",
+        "properties": {
+            "Internal package": "co.nstant.in.cbor",
+            "Number of internal dependencies": "6",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "word-wrap-930eb5e91a",
+        "properties": {
+            "Internal package": "org.davidmoten.text",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "19",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "rcv-558b63d5c4",
+        "properties": {
+            "Internal package": "network.brightspots.rcv",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "12",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "rcv-833ebaf06e",
+        "properties": {
+            "Internal package": "network.brightspots.rcv",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "22",
+            "Number of external dependencies": "11",
+            "Language": "Eng",
+            "Comments": "",
+            "Java docs": ""
+        }
+    },
+    {
+        "benchmark": "dataframe-ec-1109752c4e",
+        "properties": {
+            "SLoC": "240"
+        }
+    },
+    {
+        "benchmark": "dataframe-ec-d11d1fdeaa",
+        "properties": {
+            "Internal package": "io.github.vmzakharov.ecdataframe",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "22",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "frigga-6b520bbb2e",
+        "properties": {
+            "Internal package": "com.netflix.frigga",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "aws-java-nio-spi-for-s3-a5c2d52a54",
+        "properties": {
+            "Internal package": "software.amazon.nio.spi.s3",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "13",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "aws-java-nio-spi-for-s3-890fdddf30",
+        "properties": {
+            "Internal package": "software.amazon.nio.spi.s3",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "16",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "formatter-maven-plugin-a6994326aa",
+        "properties": {
+            "Internal package": "net.revelc.code.formatter",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "5",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "nfe-ec5ddf7e73",
+        "properties": {
+            "Internal package": "com.fincatto.documentofiscal",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "1",
+            "Language": "Esp",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "reasonml-idea-plugin-4543078ccf",
+        "properties": {
+            "Internal package": "com.reason",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "5",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "grammaticus-d6d4d50ea1",
+        "properties": {
+            "Internal package": "com.force.i18n",
+            "Number of internal dependencies": "8",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "java-stellar-sdk-06641953c4",
+        "properties": {
+            "Internal package": "org.stellar.sdk",
+            "Number of internal dependencies": "8",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "10",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "java-stellar-sdk-d6379e9615",
+        "properties": {
+            "Internal package": "org.stellar.sdk",
+            "Number of internal dependencies": "18",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "java-stellar-sdk-c9b9f99677",
+        "properties": {
+            "Internal package": "org.stellar.sdk",
+            "Number of internal dependencies": "26",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "8",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "epubcheck-873d4f5dbb",
+        "properties": {
+            "Internal package": "com.adobe.epubcheck",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "7",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "epubcheck-da643e4010",
+        "properties": {
+            "Internal package": "org.w3c.epubcheck",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "7",
+            "Number of external dependencies": "11",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "epubcheck-8575a6b1c4",
+        "properties": {
+            "Internal package": "com.adobe.epubcheck",
+            "Number of internal dependencies": "28",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "EvalEx-df8eeeb85e",
+        "properties": {
+            "Internal package": "com.ezylang.evalex",
+            "Number of internal dependencies": "7",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "markedj-2881d5b547",
+        "properties": {
+            "Internal package": "io.github.gitbucket.markedj",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "ConfigMe-cab40d1c3c",
+        "properties": {
+            "Internal package": "ch.jalu.configme",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "ConfigMe-7449db4901",
+        "properties": {
+            "Internal package": "ch.jalu.configme",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "crowdin-api-client-java-334d414753",
+        "properties": {
+            "Internal package": "com.crowdin.client",
+            "Number of internal dependencies": "9",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "7",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "crawler-commons-d8a6126365",
+        "properties": {
+            "Internal package": "crawlercommons",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "17",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "graphql-java-annotations-6d9d7a79de",
+        "properties": {
+            "Internal package": "graphql.annotations",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "7",
+            "Number of external dependencies": "5",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "database-engine-acf65274fd",
+        "properties": {
+            "Internal package": "app",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "10",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "database-engine-403a4c0b3b",
+        "properties": {
+            "Internal package": "app",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "10",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "assertj-vavr-cd521160aa",
+        "properties": {
+            "Internal package": "org.assertj.vavr",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "5",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "snowflake-jdbc-832de67a1e",
+        "properties": {
+            "Internal package": "net.snowflake",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "11",
+            "Number of external dependencies": "11",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "semver4j-28823cff38",
+        "properties": {
+            "Internal package": "org.semver4j",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "semver4j-bf853ab269",
+        "properties": {
+            "Internal package": "org.semver4j",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "semver4j-48ffbfd1f6",
+        "properties": {
+            "Internal package": "org.semver4j",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "aws-secretsmanager-jdbc-42dc301cc7",
+        "properties": {
+            "Internal package": "com.amazonaws.secretsmanager",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "java-solutions-7a73ea56d0",
+        "properties": {
+            "Internal package": "leetcode",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-c507588b5c",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-6e1335e35c",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "13",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-b129bc9e3b",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "35",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-e98305dcf5",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "18",
+            "Number of stdlib dependencies": "14",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-9d104b7ea2",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-da5e9778e4",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "35",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-da23af85f3",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-b6f652cef6",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "9",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-5afef3ecc0",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-21aac91219",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-78aeac18c6",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "2",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-d9544a49ec",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "17",
+            "Number of stdlib dependencies": "15",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-23ea77ef4b",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "7",
+            "Number of stdlib dependencies": "23",
+            "Number of external dependencies": "9",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-f284d35658",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-e1880ad73e",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-23573ef31c",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-9170b1d17b",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "5",
+            "Number of stdlib dependencies": "11",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-4864af45af",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "5",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "jsoup-eff15210b0",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "32",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-f0eb6bd1cc",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-13f7ef9241",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jsoup-c61ce94f35",
+        "properties": {
+            "Internal package": "org.jsoup",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "Simple-DSL-1e06e149f6",
+        "properties": {
+            "Internal package": "com.lmax.simpledsl",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "openapi-to-plantuml-b921ab3832",
+        "properties": {
+            "Internal package": "com.github.davidmoten.oas3",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "12",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jaxb-xew-plugin-f2320aaa24",
+        "properties": {
+            "Internal package": "com.sun.tools.xjc.addon.xew",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "42",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2ed386ecd1",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-85501f9cf4",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-0ec73ae585",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-080c289a8a",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "16",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-3ba077b000",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-02d073d690",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-9ceecf3571",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-754ff3a85b",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-596036dc33",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2ac77554f7",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-0f5c17535f",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-5b77d6297e",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-5284faae8c",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-785933bc74",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-a07e078645",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2bb447924b",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-f73263da48",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "8",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-b083371beb",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-1d1fc57b3d",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-c2dad387cb",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-44d188ece3",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-9a427527da",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "5",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-4c57f717f6",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-ab801e8565",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-03cebd3191",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-bb6964f038",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-b9b2c5c111",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-074dc016d2",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "10",
+            "Number of stdlib dependencies": "12",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-fb83a98d33",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-854afb13bd",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-a24d7d5d7a",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "8",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-532c414196",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-82ecf19d23",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "13",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2088a59da5",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "7",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-3952b3445d",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-18ee50d2b0",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-7ade92a97f",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-957a68d4a3",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-44527107b2",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-92e90931cd",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-b5d5ec4318",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "15",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2be2a4558a",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "7",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-104e8a4a78",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-74d73a9dc2",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "11",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-a632bdab0f",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "7",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-f1470e5670",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "1",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-fc3c3ee38b",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2561c33407",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "14",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-28440b7726",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "8",
+            "Number of stdlib dependencies": "5",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-eb2021058a",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-2dd48fa51b",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "0",
+            "Number of external dependencies": "2",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-9df5d93ba0",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "12",
+            "Number of stdlib dependencies": "1",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-070cb02751",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "10",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "1",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-d5bc3cc9d9",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "4",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-fae601aa36",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "13",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-b569b3467d",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "traccar-d3631eb728",
+        "properties": {
+            "Internal package": "org.traccar",
+            "Number of internal dependencies": "16",
+            "Number of stdlib dependencies": "8",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "spring-guice-e133fee483",
+        "properties": {
+            "Internal package": "org.springframework.guice",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "16",
+            "Number of external dependencies": "28",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jwarc-e00277a5a8",
+        "properties": {
+            "Internal package": "org.netpreserve.jwarc",
+            "Number of internal dependencies": "3",
+            "Number of stdlib dependencies": "9",
+            "Number of external dependencies": "3",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jwarc-0561764a9f",
+        "properties": {
+            "Internal package": "org.netpreserve.jwarc",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "12",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jwarc-ed4e7940b8",
+        "properties": {
+            "Internal package": "org.netpreserve.jwarc",
+            "Number of internal dependencies": "4",
+            "Number of stdlib dependencies": "6",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "jwarc-eb28cfa8e5",
+        "properties": {
+            "Internal package": "org.netpreserve.jwarc",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "12",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "1",
+            "Java docs": "0"
+        }
+    },
+    {
+        "benchmark": "solarpositioning-2756287e64",
+        "properties": {
+            "Internal package": "org.netpreserve.jwarc",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "3",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "solarpositioning-8faa18c702",
+        "properties": {
+            "Internal package": "net.e175.klaus.solarpositioning",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "2",
+            "Number of external dependencies": "0",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
+    },
+    {
+        "benchmark": "event-ruler-e97a9ce044",
+        "properties": {
+            "Internal package": "software.amazon.event.ruler",
+            "Number of internal dependencies": "0",
+            "Number of stdlib dependencies": "10",
+            "Number of external dependencies": "4",
+            "Language": "Eng",
+            "Comments": "0",
+            "Java docs": "1"
+        }
     }
 ]
