@@ -168,7 +168,7 @@ fun main(args: Array<String>) {
                                 testSuite.testSrcPath.resolve("failures-patched.json").bufferedWriter().use {
                                     it.write(serializer.encodeToString(patchedFailures))
                                 }
-                                patchedCompilationResult.compiledDir.deleteRecursively()
+                                tryOrNull { patchedCompilationResult.compiledDir.deleteRecursively() }
                             }
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
@@ -190,7 +190,7 @@ fun main(args: Array<String>) {
                                     ?.joinToString(", ") { "${it.first} -> ${it.second}" } ?: ""
                             )
 
-                            compilationResult.compiledDir.deleteRecursively()
+                            tryOrNull { compilationResult.compiledDir.deleteRecursively() }
                         }
                     }
                     allJobs.awaitAll()

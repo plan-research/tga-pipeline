@@ -2,6 +2,7 @@ package org.plan.research.tga.analysis.metrics
 
 import kotlinx.serialization.encodeToString
 import org.plan.research.tga.core.benchmark.Benchmark
+import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.coverage.ClassId
 import org.plan.research.tga.core.coverage.MethodId
@@ -17,6 +18,7 @@ import org.vorpal.research.kfg.util.Flags
 import org.vorpal.research.kfg.visitor.executeClassPipeline
 import org.vorpal.research.kthelper.tryOrNull
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -82,4 +84,13 @@ private fun computeMetrics(benchmark: Benchmark): ClassMetrics {
             ConditionTypeDfa.getMetrics(it.fullId)
         )
     })
+}
+
+fun main(args: Array<String>) {
+    val benchmarks = JsonBenchmarkProvider(Paths.get(args[0]))
+    val metricsProvider = MetricsProvider("metrics.json".let { Path.of(it) })
+    for (benchmark in benchmarks.benchmarks()) {
+        val metrics = metricsProvider.getMetrics(benchmark)
+        println(metrics)
+    }
 }
