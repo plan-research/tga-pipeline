@@ -130,6 +130,7 @@ fun main(args: Array<String>) {
         for (tool in tools) {
             val toolDir = resultsDir.resolve(tool)
             val runs = toolDir.listDirectoryEntries()
+                .filter { it.isDirectory() }
                 .map { it.name }
                 .groupBy({ it.substringBeforeLast('-') }, { it.substringAfterLast('-').toInt() })
                 .mapValues { it.value.sorted() }
