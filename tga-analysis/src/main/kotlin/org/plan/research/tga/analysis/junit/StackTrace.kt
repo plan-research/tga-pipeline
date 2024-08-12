@@ -14,7 +14,9 @@ data class StackTraceLine(
     val methodName: String,
     val fileName: String?,
     val lineNumber: Int
-)
+) {
+    override fun toString(): String = "\t$klassName.$methodName${if (fileName != null) "($fileName:$lineNumber)" else "(null)"}"
+}
 
 @Serializable
 data class StackTrace(
