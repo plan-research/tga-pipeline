@@ -112,7 +112,7 @@ $POLYMORPHISM"""
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
         // first, kill any running Gradle daemons left from the execution
-        executeProcess("pkill",  "-f", "-9", "'[gG]radle'")
+        executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
 
         this.outputDirectory = outputDirectory.also {
             it.toFile().mkdirs()
@@ -165,7 +165,7 @@ $POLYMORPHISM"""
 
     override fun report(): TestSuite {
         // first, kill any running Gradle daemons left from the execution
-        executeProcess("pkill",  "-f", "-9", "'[gG]radle'")
+        executeProcess("/bin/sh", "${TEST_SPARK_HOME.resolve("gradlew")}", "--stop")
 
         val testSrcPath = outputDirectory
         val tests = getTestCasesFromSrcPath(testSrcPath)

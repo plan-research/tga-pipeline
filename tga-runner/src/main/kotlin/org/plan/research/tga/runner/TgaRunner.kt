@@ -11,6 +11,7 @@ import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.log
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
 
@@ -43,6 +44,12 @@ class TgaRunner(
                     log.debug("Running on benchmark ${benchmark.buildId}")
 
                     val benchmarkOutput = runDir.resolve(benchmark.buildId)
+
+                    if (benchmarkOutput.exists()) {
+                        log.debug("Benchmark {} already run, skipping", benchmark)
+                        continue
+                    }
+
                     toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
                     log.debug("Sent benchmark to tool")
 
