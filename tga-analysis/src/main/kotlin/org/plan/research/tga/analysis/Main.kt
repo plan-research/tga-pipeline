@@ -177,23 +177,15 @@ fun main(args: Array<String>) {
                                 .computeMutationScore(benchmark, testSuite, compilationResult)
 
                             allData += String.format(
-                                "%s, %s, %d, %s, %s, %d, %d, %.2f, %d, %d, %.2f, %d, %d, %.2f, %d, %d, %.2f, %s",
+                                "%s, %s, %d, %s, %s, %.2f, %.2f, %.2f, %.2f, %s",
                                 tool,
                                 runName,
                                 iteration,
                                 benchmark.buildId,
                                 benchmark.klass,
-                                coverage.compilationRate.numerator,
-                                coverage.compilationRate.denominator,
                                 coverage.compilationRate.ratio * 100.0,
-                                coverage.coverage.first().lines.covered,
-                                coverage.coverage.first().lines.total,
                                 coverage.coverage.first().lines.ratio * 100.0,
-                                coverage.coverage.first().branches.covered,
-                                coverage.coverage.first().branches.total,
                                 coverage.coverage.first().branches.ratio * 100.0,
-                                mutationScore.numerator,
-                                mutationScore.denominator,
                                 mutationScore.ratio * 100.0,
                                 benchmarkProperties[benchmarkName]?.toList()
                                     ?.joinToString(", ") { "${it.first} -> ${it.second}" } ?: ""

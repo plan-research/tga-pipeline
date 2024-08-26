@@ -38,10 +38,9 @@ fun main(args: Array<String>) {
     } ?: emptyMap()
     val metricsProvider = MetricsProvider(Paths.get("metrics.json"))
 
-    val header = "tool,runName,iteration,benchmark buildId,benchmark klass,compiled tests,total tests,compilation rate," +
-            "covered lines,total lines,line coverage," +
-            "covered branches,total branches,branch coverage,mutation score,package,internal dependencies,stdlib dependencies," +
-            "external dependencies,language,comments,java docs,sloc,cyclomatic complexity"
+    val header = "tool,runName,iteration,benchmark buildId,benchmark klass,compilation rate,line coverage," +
+            "branch coverage,mutation score,package,internal dependencies,stdlib dependencies,external dependencies," +
+            "language,comments,java docs,sloc,cyclomatic complexity"
     val valueTypes = listOf(
         "PrimitiveModel" to PrimitiveModel,
         "NullModel" to NullModel,
@@ -61,16 +60,16 @@ fun main(args: Array<String>) {
 
     val fullHeader = header + "," + valueTypes.joinToString(separator = ",") { it.first }
 
-    val newCsv = Paths.get("TestSpark-metrics-gpt4o-300.csv").bufferedWriter().use { writer ->
+    val newCsv = Paths.get("TestSpark-metrics-llama2-300.csv").bufferedWriter().use { writer ->
         writer.write(fullHeader)
         writer.write("\n")
 
         for (file in input.listDirectoryEntries().filter { it.name.endsWith(".csv") }) {
             val (tool, _, runName, iteration) = file.name.removeSuffix(".csv").split('-')
-            if (runName != "gpt4o") continue
+            if (runName != "llama2") continue
 
             for (run in file.readLines()) {
-                val fixedLine = run.split(", ").take(15).toMutableList()
+                val fixedLine = run.split(", ").take(9).toMutableList()
                 if (fixedLine[3] !in benchmarkProperties) {
                     continue
                 }
