@@ -24,7 +24,6 @@ import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.tryOrNull
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import java.io.File
 import java.nio.file.Path
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.io.path.exists
@@ -35,6 +34,7 @@ class JacocoCliCoverageProvider(
 ) : CoverageProvider {
     companion object {
         private val JACOCO_CLI_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacococli.jar")
+        @Suppress("unused")
         private val JACOCO_AGENT_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacocoagent.jar")
     }
 
@@ -49,18 +49,18 @@ class JacocoCliCoverageProvider(
 
         for ((testName, _) in compilationResult.compilableTests) {
             val execFile = testSuite.testSrcPath.resolve("$testName.exec")
-            executeProcessWithTimeout(
-                listOf(
-                    "java",
-                    *getJvmModuleParams().toTypedArray(),
-                    "-cp",
-                    compilationResult.fullClassPath.joinToString(separator = File.pathSeparator),
-                    "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
-                    "org.junit.runner.JUnitCore",
-                    testName,
-                ),
-                timeout = 10.seconds
-            )
+//            executeProcessWithTimeout(
+//                listOf(
+//                    "java",
+//                    *getJvmModuleParams().toTypedArray(),
+//                    "-cp",
+//                    compilationResult.fullClassPath.joinToString(separator = File.pathSeparator),
+//                    "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
+//                    "org.junit.runner.JUnitCore",
+//                    testName,
+//                ),
+//                timeout = 10.seconds
+//            )
             execFiles.add(execFile)
         }
 

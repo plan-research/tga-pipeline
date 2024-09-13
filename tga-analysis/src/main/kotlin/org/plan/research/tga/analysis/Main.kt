@@ -9,11 +9,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import org.apache.commons.cli.Option
 import org.plan.research.tga.analysis.compilation.TestSuiteCompiler
 import org.plan.research.tga.analysis.coverage.jacoco.JacocoCliCoverageProvider
-import org.plan.research.tga.analysis.junit.JUnitExternalRunner
 import org.plan.research.tga.analysis.mutation.MutationScoreProvider
 import org.plan.research.tga.core.benchmark.Benchmark
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
@@ -158,19 +156,19 @@ fun main(args: Array<String>) {
                             if (!testSuite.testSrcPath.exists()) return@async
 
                             val compilationResult = compiler.compile(benchmark, testSuite)
-                            val failures = JUnitExternalRunner().run(compilationResult)
-                            testSuite.testSrcPath.resolve("failures.json").bufferedWriter().use {
-                                it.write(serializer.encodeToString(failures))
-                            }
-
-                            benchmarksPatched[benchmark.buildId]?.let { patchedBenchmark ->
-                                val patchedCompilationResult = compiler.compile(patchedBenchmark, testSuite)
-                                val patchedFailures = JUnitExternalRunner().run(patchedCompilationResult)
-                                testSuite.testSrcPath.resolve("failures-patched.json").bufferedWriter().use {
-                                    it.write(serializer.encodeToString(patchedFailures))
-                                }
-                                tryOrNull { patchedCompilationResult.compiledDir.deleteRecursively() }
-                            }
+//                            val failures = JUnitExternalRunner().run(compilationResult)
+//                            testSuite.testSrcPath.resolve("failures.json").bufferedWriter().use {
+//                                it.write(serializer.encodeToString(failures))
+//                            }
+//
+//                            benchmarksPatched[benchmark.buildId]?.let { patchedBenchmark ->
+//                                val patchedCompilationResult = compiler.compile(patchedBenchmark, testSuite)
+//                                val patchedFailures = JUnitExternalRunner().run(patchedCompilationResult)
+//                                testSuite.testSrcPath.resolve("failures-patched.json").bufferedWriter().use {
+//                                    it.write(serializer.encodeToString(patchedFailures))
+//                                }
+//                                tryOrNull { patchedCompilationResult.compiledDir.deleteRecursively() }
+//                            }
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
                             val mutationScore = MutationScoreProvider()
