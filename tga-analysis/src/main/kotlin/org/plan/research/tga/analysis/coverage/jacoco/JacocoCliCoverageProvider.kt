@@ -112,7 +112,7 @@ class JacocoCliCoverageProvider(
         val classElement = packageElement.getElementByTag("class", 0)
         ktassert(classElement.getAttribute("name") == benchmark.klass.replace('.', '/'))
 
-        val methodCoverages = mutableSetOf<MethodCoverageInfo>()
+        val methodCoverages = mutableMapOf<MethodId, MethodCoverageInfo>()
         val methodBounds = classElement.getAllElementsByTag("method").mapNotNull { methodElement ->
             val methodName = methodElement.getAttribute("name")
             val methodDescriptor = methodElement.getAttribute("desc")
@@ -121,6 +121,17 @@ class JacocoCliCoverageProvider(
                 val missed = it.getAttribute("missed").toInt()
                 it.getAttribute("type") to Fraction(covered, covered + missed)
             }
+
+            val inst = counters["INSTRUCTION"] ?: Fraction(0, 0)
+            val line = counters["LINE"] ?: Fraction(0, 0)
+            val branch = counters["BRANCH"] ?: Fraction(0, 0)
+            methodCoverages[MethodId(methodName, methodDescriptor)] = MethodCoverageInfo(
+                MethodId(methodName, methodDescriptor),
+                BasicCoverageInfo(inst.numerator.toUInt(), inst.denominator.toUInt()),
+                BasicCoverageInfo(line.numerator.toUInt(), line.denominator.toUInt()),
+                BasicCoverageInfo(branch.numerator.toUInt(), branch.denominator.toUInt()),
+            )
+
             when {
                 /**
                  * Special case for default constructors and static initializers
@@ -131,15 +142,6 @@ class JacocoCliCoverageProvider(
                  * because they may be non-continuous in code
                  */
                 methodName == "<init>" && methodDescriptor == "()V" || methodName == "<clinit>" -> {
-                    val inst = counters["INSTRUCTION"] ?: Fraction(0, 0)
-                    val line = counters["LINE"] ?: Fraction(0, 0)
-                    val branch = counters["BRANCH"] ?: Fraction(0, 0)
-                    methodCoverages += MethodCoverageInfo(
-                        MethodId(methodName, methodDescriptor),
-                        BasicCoverageInfo(inst.numerator.toUInt(), inst.denominator.toUInt()),
-                        BasicCoverageInfo(line.numerator.toUInt(), line.denominator.toUInt()),
-                        BasicCoverageInfo(branch.numerator.toUInt(), branch.denominator.toUInt()),
-                    )
                     null
                 }
 
@@ -155,18 +157,53 @@ class JacocoCliCoverageProvider(
         val sourceFileName = sourceFileElement.getAttribute("name")
         ktassert(sourceFileName == classElement.getAttribute("sourcefilename"))
 
-        var length = -1
-        var index = 0
+        val line2method = mutableMapOf<Int, MethodId>()
+        var i = 0
+        val lns = sourceFileElement.getAllElementsByTag("line").map { it.getAttribute("nr").toInt() }.sorted()
+        while (i < methodBounds.size) {
+            val (method, start, len) = methodBounds[i]
+            var currentIndex = lns.indexOf(start)
+            val startIndex = currentIndex
+            val l2m = mutableMapOf<Int, MethodId>()
+            l2m[lns[currentIndex++]] = method
+            while (
+                currentIndex < lns.size &&
+                (currentIndex - startIndex) < len &&
+                ((i < methodBounds.size - 1 && lns[currentIndex] < methodBounds[i + 1].second) || i == methodBounds.size - 1)
+            ) {
+                l2m[lns[currentIndex++]] = method
+            }
+            if (len == l2m.size) {
+                line2method.putAll(l2m)
+            }
+            ++i
+        }
+
+        var lastMethod: MethodId? = null
         var lines = mutableMapOf<LineId, Boolean>()
         var instructions = mutableMapOf<InstructionId, Boolean>()
         var branches = mutableMapOf<BranchId, Boolean>()
 
         for (lineElement in sourceFileElement.getAllElementsByTag("line").sortedBy { it.getAttribute("nr").toInt() }) {
             val lineNumber = lineElement.getAttribute("nr").toInt()
-            if (lineNumber == methodBounds[index].second) {
-                length = 0
+            val currentMethod = line2method[lineNumber] ?: continue
+            if (currentMethod != lastMethod && lastMethod != null) {
+                val newCoverageInfo = MethodCoverageInfo(
+                    lastMethod,
+                    ExtendedCoverageInfo(instructions),
+                    ExtendedCoverageInfo(lines),
+                    ExtendedCoverageInfo(branches),
+                )
+                ktassert(
+                    methodCoverages[lastMethod]!!.instructions.ratio == newCoverageInfo.instructions.ratio &&
+                            methodCoverages[lastMethod]!!.lines.ratio == newCoverageInfo.lines.ratio &&
+                            methodCoverages[lastMethod]!!.branches.ratio == newCoverageInfo.branches.ratio
+                )
+                methodCoverages[lastMethod] = newCoverageInfo
+                instructions = mutableMapOf()
+                lines = mutableMapOf()
+                branches = mutableMapOf()
             }
-            if (length < 0) continue
 
             val missedInstructions = lineElement.getAttribute("mi").toInt()
             val coveredInstructions = lineElement.getAttribute("ci").toInt()
@@ -188,24 +225,10 @@ class JacocoCliCoverageProvider(
                 val id = BranchId(lineId, branch.toUInt())
                 branches[id] = (branch < coveredBranches)
             }
-            ++length
-
-            if (length == methodBounds[index].third) {
-                methodCoverages += MethodCoverageInfo(
-                    methodBounds[index].first,
-                    ExtendedCoverageInfo(instructions),
-                    ExtendedCoverageInfo(lines),
-                    ExtendedCoverageInfo(branches),
-                )
-                instructions = mutableMapOf()
-                lines = mutableMapOf()
-                branches = mutableMapOf()
-                length = -1
-                ++index
-            }
+            lastMethod = currentMethod
         }
 
-        ClassCoverageInfo(ClassId(benchmark.klass), methodCoverages)
+        ClassCoverageInfo(ClassId(benchmark.klass), methodCoverages.values.toSet())
     } ?: ClassCoverageInfo(ClassId(benchmark.klass), emptySet())
 
     private fun Document.getElementByTag(name: String, index: Int): Element =
