@@ -194,12 +194,13 @@ class JacocoCliCoverageProvider(
                     ExtendedCoverageInfo(lines),
                     ExtendedCoverageInfo(branches),
                 )
-                ktassert(
+                if (
                     methodCoverages[lastMethod]!!.instructions.ratio == newCoverageInfo.instructions.ratio &&
                             methodCoverages[lastMethod]!!.lines.ratio == newCoverageInfo.lines.ratio &&
                             methodCoverages[lastMethod]!!.branches.ratio == newCoverageInfo.branches.ratio
-                )
-                methodCoverages[lastMethod] = newCoverageInfo
+                ) {
+                    methodCoverages[lastMethod] = newCoverageInfo
+                }
                 instructions = mutableMapOf()
                 lines = mutableMapOf()
                 branches = mutableMapOf()
