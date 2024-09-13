@@ -108,7 +108,7 @@ fun main(args: Array<String>) {
 
     val resultsDir = Paths.get(config.getCmdValue("resultsPath")!!)
     val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
-    val benchmarksPatched = JsonBenchmarkProvider(Paths.get(config.getCmdValue("benchmarksPatchedPath")!!))
+    @Suppress("UNUSED_VARIABLE") val benchmarksPatched = JsonBenchmarkProvider(Paths.get(config.getCmdValue("benchmarksPatchedPath")!!))
         .benchmarks()
         .associateBy { it.buildId }
     val tools = resultsDir.listDirectoryEntries().filter { it.isDirectory() }.map { it.name }
