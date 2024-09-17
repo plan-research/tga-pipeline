@@ -24,7 +24,7 @@ class EvoSuiteCliTool : TestGenerationTool {
     override val name: String = "EvoSuite"
 
     companion object {
-        private const val EVOSUITE_VERSION = "1.0.5"
+        private const val EVOSUITE_VERSION = "1.2.0"
         private const val EVOSUITE_DEPENDENCY_VERSION = "1.0.6"
         private const val EVOSUITE_LOG = "evosuite.log"
         private val EVOSUITE_JAR_PATH = TGA_PIPELINE_HOME.resolve("lib", "evosuite-$EVOSUITE_VERSION.jar")
