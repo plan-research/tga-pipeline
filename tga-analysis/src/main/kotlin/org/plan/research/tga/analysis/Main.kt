@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
     val coverageProvider = JacocoCliCoverageProvider()
 
     val resultsDir = Paths.get(config.getCmdValue("resultsPath")!!)
-    val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
+//    val benchmarksDir = Paths.get(config.getCmdValue("benchmarksPath")!!)
     val benchmarksPatched = JsonBenchmarkProvider(Paths.get(config.getCmdValue("benchmarksPatchedPath")!!))
         .benchmarks()
         .associateBy { it.buildId }
@@ -149,11 +149,11 @@ fun main(args: Array<String>) {
                             val benchmark = serializer.decodeFromString<Benchmark>(
                                 benchmarkDir.walk().firstOrNull { it.name == "benchmark.json" }?.readText()
                                     ?: return@async
-                            ).remap(DOCKER_BENCHMARKS_DIR, benchmarksDir)
+                            )//.remap(DOCKER_BENCHMARKS_DIR, benchmarksDir)
                             val testSuite = serializer.decodeFromString<TestSuite>(
                                 benchmarkDir.walk().firstOrNull { it.name == "testSuite.json" }?.readText()
                                     ?: return@async
-                            ).remap(DOCKER_RESULTS_DIR, resultsDir)
+                            )//.remap(DOCKER_RESULTS_DIR, resultsDir)
 
                             if (!testSuite.testSrcPath.exists()) return@async
 
