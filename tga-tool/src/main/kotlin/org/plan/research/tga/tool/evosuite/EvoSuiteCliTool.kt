@@ -84,16 +84,47 @@ class EvoSuiteCliTool : TestGenerationTool {
 
     override fun report(): TestSuite {
         val testSrcPath = outputDirectory.resolve("evosuite-tests")
-        val tests = when {
+        val originalTests = when {
             testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
                 .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
                 .toList()
 
             else -> emptyList()
         }
+        val newTests = mutableListOf<String>()
+        for (test in originalTests) {
+            val testCode = testSrcPath.resolve(test.replace('.', '/') + ".java")
+                .toFile().readText()
+
+            val header = testCode.substringBefore("public class")
+            val testFunctions = testCode
+                .removePrefix(header)
+                .removePrefix("public class ${test.substringAfterLast('.')} {")
+                .removeSuffix("\n")
+                .removeSuffix("}")
+                .trim()
+                .split("@Test")
+                .filter { it.isNotBlank() }
+            for ((index, testFunction) in testFunctions.withIndex()) {
+                val newTestName = "$test${index}"
+                newTests += newTestName
+
+                val newTestFile = testSrcPath.resolve(newTestName.replace('.', '/') + ".java")
+                newTestFile.parent.toFile().mkdirs()
+                newTestFile.bufferedWriter().use {
+                    it.write(header)
+                    it.write("public class ${newTestName.substringAfterLast('.')} {")
+                    it.write("@Test$testFunction")
+                    it.write("}")
+                }
+            }
+        }
+        originalTests.forEach {
+            testSrcPath.resolve(it.replace('.', '/') + ".java").toFile().delete()
+        }
         return TestSuite(
             testSrcPath,
-            tests,
+            newTests,
             emptyList(),
             listOf(
                 Dependency("junit", "junit", "4.13.2"),
