@@ -1,25 +1,24 @@
 package org.plan.research.tga.analysis
 
 import kotlinx.serialization.encodeToString
+import org.plan.research.tga.analysis.metrics.MetricsProvider
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
-import java.awt.Dimension
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.nio.file.Paths
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.AbstractAction
 import javax.swing.Action
 import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JFrame
-import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
-import javax.swing.JTextField
 import javax.swing.KeyStroke
 import javax.swing.ScrollPaneConstants
 import javax.swing.WindowConstants
@@ -37,11 +36,13 @@ fun main() {
 
         else -> mutableMapOf()
     }
+    val metricsProvider = MetricsProvider(Paths.get("metrics2.json"), Paths.get("cyclomatic-complexity.txt"))
 
     var shouldStop = false
 
     for (benchmark in JsonBenchmarkProvider(Paths.get("benchmarks/benchmarks.json")).benchmarks()) {
-        if (benchmark.buildId in properties) continue
+        val canContinue = AtomicBoolean(false)
+//        if (benchmark.buildId in properties) continue
         if (shouldStop) break
 
         val localPath = benchmark.klass.replace('.', '/') + ".java"
@@ -67,7 +68,9 @@ fun main() {
 
         val largeTextArea = JTextArea()
         largeTextArea.font = largeTextArea.font.deriveFont(32f)
-        largeTextArea.text = srcPath.resolve(localPath).readText()
+        largeTextArea.text = srcPath.resolve(localPath).readLines().withIndex().joinToString("\n") {
+            "${it.index + 1 } ${it.value}"
+        }
         largeTextArea.isEditable = false
         val scrollPane = JScrollPane(largeTextArea)
         scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
@@ -75,50 +78,27 @@ fun main() {
         val rightPanel = JPanel()
         rightPanel.layout = BoxLayout(rightPanel, BoxLayout.Y_AXIS)
 
-        val fields = mutableMapOf<String, JTextField>()
-        var canContinue = false
-
-        for (name in listOf(
-            "Internal package",
-            "Number of internal dependencies",
-            "Number of stdlib dependencies",
-            "Number of external dependencies",
-            "Language",
-            "Comments",
-            "Java docs"
-        )) {
-            val label = JLabel(name)
-            label.font = label.font.deriveFont(32f)
-            val field = JTextField(
-                properties[benchmark.buildId]?.properties?.get(name) ?: if (name == "Language") "Eng" else ""
-            )
-            field.font = field.font.deriveFont(32f)
-            field.maximumSize = Dimension(Int.MAX_VALUE, 100)
-            fields[name] = field
-
-            rightPanel.add(label)
-            rightPanel.add(field)
+        val metrics = metricsProvider.getMetrics(benchmark)
+        val largeTextArea2 = JTextArea()
+        largeTextArea2.font = largeTextArea.font.deriveFont(32f)
+        largeTextArea2.text = metrics.methods.joinToString("\n\n") {
+            buildString {
+                appendLine(it.methodId)
+                for ((branch, type) in it.branches) {
+                    appendLine("  ${branch.line.lineNumber} -> $type")
+                }
+            }
         }
+        largeTextArea2.isEditable = false
+        val scrollPane2 = JScrollPane(largeTextArea2)
+        scrollPane2.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
 
-        rightPanel.add(JButton("Analyze").also {
+        rightPanel.add(JButton("Next").also {
             it.font = it.font.deriveFont(32f)
             val buttonAction = object : AbstractAction(it.text) {
                 override fun actionPerformed(evt: ActionEvent) {
-                    val internalPackage = fields["Internal package"]!!.text
-                    val imports = largeTextArea.text.split("\n")
-                        .filter { line -> line.startsWith("import") }
-                        .map { line -> line.removePrefix("import ").removePrefix("static ") }
-                    val internal = imports.count { line -> line.startsWith(internalPackage) }
-                    val std =
-                        imports.count { line ->
-                            line.startsWith("java.") || line.startsWith("javax.") || line.startsWith(
-                                "javafx."
-                            )
-                        }
-                    val external = imports.size - internal - std
-                    fields["Number of internal dependencies"]!!.text = internal.toString()
-                    fields["Number of stdlib dependencies"]!!.text = std.toString()
-                    fields["Number of external dependencies"]!!.text = external.toString()
+                    canContinue.set(true)
+                    frame.dispose()
                 }
             }
             it.action = buttonAction
@@ -130,39 +110,11 @@ fun main() {
             it.actionMap.put(it.text, buttonAction)
         })
 
-        rightPanel.add(JButton("Save").also {
-            it.font = it.font.deriveFont(32f)
-
-            val buttonAction = object : AbstractAction(it.text) {
-                override fun actionPerformed(evt: ActionEvent) {
-                    canContinue = true
-                    for ((key, value) in fields) {
-                        log.debug("Benchmark ${benchmark.buildId}, $key = ${value.text}")
-                    }
-
-                    properties[benchmark.buildId] =
-                        Properties(benchmark.buildId, fields.mapValues { entry -> entry.value.text }.toMap())
-
-                    propertiesFile.bufferedWriter().use { writer ->
-                        writer.write(getJsonSerializer(pretty = true).encodeToString(properties.values.toList()))
-                    }
-
-                    frame.dispose()
-                }
-            }
-            it.action = buttonAction
-
-            buttonAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R)
-            it.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), it.text
-            )
-            it.actionMap.put(it.text, buttonAction)
-        })
-
+        rightPanel.add(scrollPane2)
         rightPanel.add(JButton("Stop").also {
             it.font = it.font.deriveFont(32f)
             it.addActionListener {
-                canContinue = true
+                canContinue.set(true)
                 shouldStop = true
                 frame.dispose()
             }
@@ -175,7 +127,7 @@ fun main() {
 
         frame.isVisible = true
 
-        while (!canContinue) {
+        while (!canContinue.get()) {
         }
         propertiesFile.bufferedWriter().use { writer ->
             writer.write(getJsonSerializer(pretty = true).encodeToString(properties.values.toList()))

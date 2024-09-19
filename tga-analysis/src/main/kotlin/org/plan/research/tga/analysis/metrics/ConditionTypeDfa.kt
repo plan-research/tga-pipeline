@@ -6,14 +6,9 @@ import org.plan.research.tga.core.coverage.LineId
 import org.plan.research.tga.core.coverage.MethodId
 import org.plan.research.tga.core.metrics.Bottom
 import org.plan.research.tga.core.metrics.CollectionModel
-import org.plan.research.tga.core.metrics.IteratorModel
-import org.plan.research.tga.core.metrics.LambdaModel
 import org.plan.research.tga.core.metrics.MixedModel
-import org.plan.research.tga.core.metrics.NativeModel
 import org.plan.research.tga.core.metrics.NullModel
 import org.plan.research.tga.core.metrics.PrimitiveModel
-import org.plan.research.tga.core.metrics.ProjectModel
-import org.plan.research.tga.core.metrics.RegexModel
 import org.plan.research.tga.core.metrics.StaticModel
 import org.plan.research.tga.core.metrics.StdLibModel
 import org.plan.research.tga.core.metrics.StringModel
@@ -25,6 +20,7 @@ import org.vorpal.research.kfg.Package
 import org.vorpal.research.kfg.collectionClass
 import org.vorpal.research.kfg.ir.BasicBlock
 import org.vorpal.research.kfg.ir.CatchBlock
+import org.vorpal.research.kfg.ir.ConcreteClass
 import org.vorpal.research.kfg.ir.Location
 import org.vorpal.research.kfg.ir.Method
 import org.vorpal.research.kfg.ir.value.Value
@@ -42,7 +38,6 @@ import org.vorpal.research.kfg.ir.value.instruction.EnterMonitorInst
 import org.vorpal.research.kfg.ir.value.instruction.ExitMonitorInst
 import org.vorpal.research.kfg.ir.value.instruction.FieldLoadInst
 import org.vorpal.research.kfg.ir.value.instruction.FieldStoreInst
-import org.vorpal.research.kfg.ir.value.instruction.HandleBsmArgument
 import org.vorpal.research.kfg.ir.value.instruction.InstanceOfInst
 import org.vorpal.research.kfg.ir.value.instruction.InvokeDynamicInst
 import org.vorpal.research.kfg.ir.value.instruction.JumpInst
@@ -57,6 +52,8 @@ import org.vorpal.research.kfg.ir.value.instruction.UnaryInst
 import org.vorpal.research.kfg.ir.value.instruction.UnaryOpcode
 import org.vorpal.research.kfg.ir.value.instruction.UnknownValueInst
 import org.vorpal.research.kfg.ir.value.instruction.UnreachableInst
+import org.vorpal.research.kfg.type.ArrayType
+import org.vorpal.research.kfg.type.ClassType
 import org.vorpal.research.kfg.type.NullType
 import org.vorpal.research.kfg.type.PrimitiveType
 import org.vorpal.research.kfg.type.SystemTypeNames
@@ -105,16 +102,23 @@ class ConditionTypeDfa(
         }
     }
 
+    @Suppress("RecursivePropertyAccessor")
+    val Type.isConcreteType: Boolean get() = when (this) {
+        is ClassType -> klass is ConcreteClass
+        is ArrayType -> component.isConcreteType
+        else -> false
+    }
+
     private fun convert(type: Type): ValueModel = when {
         type is PrimitiveType -> PrimitiveModel
 //        type in types.primitiveWrapperTypes -> PrimitiveModel
         type is NullType -> NullModel
         type.name in stringTypes -> StringModel
-        regexPackage.isParent(type.name) -> RegexModel
-        type.isSubtypeOf(cm["java/util/Iterator"].asType) -> IteratorModel
-        type.isSubtypeOf(cm.collectionClass.asType) -> CollectionModel
+        regexPackage.isParent(type.name) -> StringModel
+        type.isConcreteType && type.isSubtypeOf(cm["java/util/Iterator"].asType) -> CollectionModel
+        type.isConcreteType && type.isSubtypeOf(cm.collectionClass.asType) -> CollectionModel
         stdlibPackage.isParent(type.name) -> StdLibModel
-        projectPackage.isParent(type.name) -> ProjectModel
+        projectPackage.isParent(type.name) -> MixedModel
         else -> MixedModel
     }
 
@@ -211,16 +215,16 @@ class ConditionTypeDfa(
 
     private fun convertCall(inst: CallInst): ValueModel = when (inst.opcode) {
         CallOpcode.STATIC -> when {
-            inst.method.returnType.name in iteratorCallTypes -> IteratorModel
+            inst.method.returnType.name in iteratorCallTypes -> CollectionModel
             inst.method.klass.fullName in staticCollectionCallTypes -> CollectionModel
-            inst.method.isNative -> NativeModel
+            inst.method.isNative -> MixedModel
             else -> StaticModel
         }
 
         else -> when {
-            inst.method.returnType.name in iteratorCallTypes -> IteratorModel
-            inst.method.klass.fullName in iteratorCallTypes -> IteratorModel
-            inst.method.isNative -> NativeModel
+            inst.method.returnType.name in iteratorCallTypes -> CollectionModel
+            inst.method.klass.fullName in iteratorCallTypes -> CollectionModel
+            inst.method.isNative -> MixedModel
             else -> convert(inst.callee)
         }
     }
@@ -264,14 +268,7 @@ class ConditionTypeDfa(
     }
 
     override fun visitInvokeDynamicInst(inst: InvokeDynamicInst) {
-        // fucked up for now
-        for (handle in inst.bootstrapMethodArgs.filterIsInstance<HandleBsmArgument>()) {
-            visit(handle.handle.method)
-            methodMetrics[handle.handle.method.fullId]?.let {
-                methodMetrics[inst.parent.method.fullId]!!.putAll(it)
-            }
-        }
-        valueDomains[inst] = LambdaModel
+        valueDomains[inst] = MixedModel
     }
 
     override fun visitNewArrayInst(inst: NewArrayInst) {

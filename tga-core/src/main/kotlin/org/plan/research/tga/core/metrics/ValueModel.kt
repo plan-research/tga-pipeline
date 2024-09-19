@@ -36,21 +36,11 @@ data object StaticModel : ValueModel(20_000U)
 
 @Serializable
 data object StringModel : ValueModel(30_000U)
-@Serializable
-data object RegexModel : ValueModel(40_000U)
 
-@Serializable
-data object LambdaModel : ValueModel(45_000U)
-
-@Serializable
-data object IteratorModel : ValueModel(50_000U)
 @Serializable
 data object CollectionModel : ValueModel(60_000U)
 @Serializable
 data object StdLibModel : ValueModel(70_000U)
-@Serializable
-data object NativeModel : ValueModel(80_000U)
-@Serializable
-data object ProjectModel : ValueModel(90_000U)
+
 @Serializable
 data object MixedModel : ValueModel(100_000U)

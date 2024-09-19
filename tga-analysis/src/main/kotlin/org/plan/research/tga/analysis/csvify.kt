@@ -7,14 +7,9 @@ import org.plan.research.tga.analysis.metrics.MetricsProvider
 import org.plan.research.tga.core.benchmark.json.JsonBenchmarkProvider
 import org.plan.research.tga.core.benchmark.json.getJsonSerializer
 import org.plan.research.tga.core.metrics.CollectionModel
-import org.plan.research.tga.core.metrics.IteratorModel
-import org.plan.research.tga.core.metrics.LambdaModel
 import org.plan.research.tga.core.metrics.MixedModel
-import org.plan.research.tga.core.metrics.NativeModel
 import org.plan.research.tga.core.metrics.NullModel
 import org.plan.research.tga.core.metrics.PrimitiveModel
-import org.plan.research.tga.core.metrics.ProjectModel
-import org.plan.research.tga.core.metrics.RegexModel
 import org.plan.research.tga.core.metrics.StaticModel
 import org.plan.research.tga.core.metrics.StdLibModel
 import org.plan.research.tga.core.metrics.StringModel
@@ -54,27 +49,21 @@ fun main(args: Array<String>) {
         "TypeCheckModel" to TypeCheckModel,
         "StaticModel" to StaticModel,
         "StringModel" to StringModel,
-        "RegexModel" to RegexModel,
-        "LambdaModel" to LambdaModel,
-        "IteratorModel" to IteratorModel,
         "CollectionModel" to CollectionModel,
         "StdLibModel" to StdLibModel,
-        "NativeModel" to NativeModel,
-        "ProjectModel" to ProjectModel,
         "MixedModel" to MixedModel,
     )
 
     val fullHeader = header + "," + valueTypes.joinToString(separator = ",") { it.first }
 
-    val newCsv = Paths.get("EvoSuite-metrics-version120-default.csv").bufferedWriter().use { writer ->
+    val newCsv = Paths.get("EvoSuite-metrics-default.csv").bufferedWriter().use { writer ->
         writer.write(fullHeader)
         writer.write("\n")
 
         for (file in input.listDirectoryEntries().filter { it.name.endsWith(".csv") }) {
-//            val (tool, runName, iteration) = file.name.removeSuffix(".csv").split('-')
-            if (file.name.split('-').size != 4) continue
-            val (tool, _, runName, iteration) = file.name.removeSuffix(".csv").split('-')
-            if (runName != "version120") continue
+            val (tool, runName, iteration) = file.name.removeSuffix(".csv").split('-')
+//            val (tool, _, runName, iteration) = file.name.removeSuffix(".csv").split('-')
+//            if (runName != "version120") continue
 
             for (run in file.readLines()) {
                 val fixedLine = run.split(", ").take(17).toMutableList()
