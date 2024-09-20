@@ -31,7 +31,10 @@ class SystemJavaCompiler(
             compilerOutput.writer(),
             fileManager,
             null,
-            listOf("-Xlint:none", "-Xlint:unchecked"),
+            listOf("-Xlint:none", "-Xlint:unchecked",
+                "--add-exports", "java.base/sun.nio.cs=ALL-UNNAMED",
+                "--add-exports", "java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED",
+            ),
             null,
             objects
         )
