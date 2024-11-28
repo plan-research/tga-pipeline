@@ -12,7 +12,7 @@ import kotlin.io.path.relativeToOrSelf
 val TGA_PIPELINE_HOME: Path = Paths.get(System.getenv("TGA_PIPELINE_HOME"))
 
 val String.asmString get() = replace(Package.CANONICAL_SEPARATOR, Package.SEPARATOR)
-val String.javaString get() = replace(Package.SEPARATOR, Package.CANONICAL_SEPARATOR)
+val String.javaString get() = replace(Package.SEPARATOR, Package.CANONICAL_SEPARATOR).replace('$', '.')
 
 fun Class<*>.asArray(): Class<*> = Array.newInstance(this, 0).javaClass
 
