@@ -72,6 +72,8 @@ def main():
             space_token=args.spaceToken,
             prompt=args.prompt,
         )
+    elif args.tool == Tool.Jazzer:
+        tool_args = JazzerArgs()
     else:
         print(f'Unknown tool {args.tool}', file=sys.stderr)
 

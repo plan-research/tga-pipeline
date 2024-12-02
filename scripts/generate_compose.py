@@ -7,6 +7,7 @@ class Tool(Enum):
     kex = 'kex'
     EvoSuite = 'EvoSuite'
     TestSpark = 'TestSpark'
+    Jazzer = 'Jazzer'
 
 
 class ToolArgs:
@@ -47,6 +48,12 @@ class TestSparkArgs(ToolArgs):
 
         return cmd
 
+class JazzerArgs(ToolArgs):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return ''
 
 def make_indent(indentation: int) -> str:
     return " " * indentation
