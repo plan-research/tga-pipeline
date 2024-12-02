@@ -39,6 +39,7 @@ class JazzerCliTool : TestGenerationTool {
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
         this.outputDirectory = outputDirectory
+        this.outputDirectory.toFile().mkdirs()
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
             val execFile = outputDirectory.resolve("$index.exec")
