@@ -41,10 +41,6 @@ class TgaRunner(
 
             for (run in runIds) {
                 val runDir = baseDir.resolve("$baseRunName-$run")
-                if (!runDir.exists()) {
-                    log.debug("Creating directory {}", runDir)
-                    runDir.createDirectories()
-                }
                 for (benchmark in benchmarkProvider.benchmarks()) {
                     log.debug("Running on benchmark ${benchmark.buildId}")
 
@@ -67,7 +63,10 @@ class TgaRunner(
                     }
                     val testSuite = (result as SuccessfulGenerationResult).testSuite
 
-                    if (!benchmarkOutput.exists()) continue
+                    if (!benchmarkOutput.exists()) {
+                        log.error("Tool $name did not produce a test suite for ${benchmark.buildId} during run $run")
+                        continue
+                    }
 
                     benchmarkOutput.resolve("benchmark.json").also {
                         it.parent.toFile().mkdirs()

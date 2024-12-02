@@ -60,10 +60,12 @@ class JazzerCliTool : TestGenerationTool {
                 "--autofuzz=\"$t\""
             )
         }
+        log.debug("All the jazzer agents started")
         Thread.sleep(timeLimit.inWholeMilliseconds)
         for (process in processes) {
             process.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
         }
+        log.debug("Jazzer processes finished")
     }
 
     override fun report(): TestSuite {
