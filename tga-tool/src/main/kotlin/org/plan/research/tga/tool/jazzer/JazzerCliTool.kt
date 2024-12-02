@@ -39,12 +39,12 @@ class JazzerCliTool : TestGenerationTool {
     }
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
+        this.outputDirectory = outputDirectory
         if (!outputDirectory.exists()) {
             log.debug("Creating directory {}", outputDirectory)
-            outputDirectory.createDirectories()
+            outputDirectory.toFile().mkdirs()
         }
         log.debug("Directory {} exists: {}", outputDirectory, outputDirectory.exists())
-        this.outputDirectory = outputDirectory
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
             val testName = t.substringBefore("(")
