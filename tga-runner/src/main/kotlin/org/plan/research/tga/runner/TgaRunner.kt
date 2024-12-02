@@ -11,6 +11,7 @@ import org.plan.research.tga.runner.tool.protocol.tcp.TcpTgaServer
 import org.vorpal.research.kthelper.logging.log
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.Duration
@@ -40,7 +41,7 @@ class TgaRunner(
 
             for (run in runIds) {
                 val runDir = baseDir.resolve("$baseRunName-$run")
-                for (benchmark in benchmarkProvider.benchmarks()) {
+                for (benchmark in benchmarkProvider.benchmarks().filter { it.buildId.startsWith("rcv") }) {
                     log.debug("Running on benchmark ${benchmark.buildId}")
 
                     val benchmarkOutput = runDir.resolve(benchmark.buildId)
@@ -49,6 +50,7 @@ class TgaRunner(
                         log.debug("Benchmark {} already run, skipping", benchmark)
                         continue
                     }
+                    benchmarkOutput.createDirectories()
 
                     toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
                     log.debug("Sent benchmark to tool")
@@ -61,6 +63,8 @@ class TgaRunner(
                         continue
                     }
                     val testSuite = (result as SuccessfulGenerationResult).testSuite
+
+                    if (!benchmarkOutput.exists()) continue
 
                     benchmarkOutput.resolve("benchmark.json").also {
                         it.parent.toFile().mkdirs()

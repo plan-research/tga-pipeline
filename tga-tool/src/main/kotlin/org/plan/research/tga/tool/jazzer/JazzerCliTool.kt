@@ -17,6 +17,7 @@ import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -38,8 +39,10 @@ class JazzerCliTool : TestGenerationTool {
     }
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
+        if (!outputDirectory.exists()) {
+            outputDirectory.createDirectories()
+        }
         this.outputDirectory = outputDirectory
-        this.outputDirectory.toFile().mkdirs()
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
             val testName = t.substringBefore("(")
