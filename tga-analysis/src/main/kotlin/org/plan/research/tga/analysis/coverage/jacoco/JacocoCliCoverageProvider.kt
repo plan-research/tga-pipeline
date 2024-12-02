@@ -25,14 +25,15 @@ import org.vorpal.research.kthelper.tryOrNull
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
+import java.util.stream.Collectors
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.io.path.exists
 import kotlin.time.Duration.Companion.seconds
 
 
-class JacocoCliCoverageProvider(
-) : CoverageProvider {
+class JacocoCliCoverageProvider : CoverageProvider {
     companion object {
         private val JACOCO_CLI_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacococli.jar")
         private val JACOCO_AGENT_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacocoagent.jar")
@@ -45,7 +46,7 @@ class JacocoCliCoverageProvider(
     ): TestSuiteCoverage {
         val pkg = benchmark.klass.substringBeforeLast('.')
         val name = benchmark.klass.substringAfterLast('.')
-        val execFiles = mutableListOf<Path>()
+        val execFiles = mutableSetOf<Path>()
 
         for ((testName, _) in compilationResult.compilableTests) {
             val execFile = testSuite.testSrcPath.resolve("$testName.exec")
@@ -63,6 +64,9 @@ class JacocoCliCoverageProvider(
             )
             execFiles.add(execFile)
         }
+        execFiles.addAll(Files.walk(testSuite.testSrcPath)
+            .filter { Files.isRegularFile(it) && it.toString().endsWith(".exec") }
+            .collect(Collectors.toList()))
 
         val xmlCoverageReport = testSuite.testSrcPath.resolve("coverage.xml")
         executeProcessWithTimeout(
