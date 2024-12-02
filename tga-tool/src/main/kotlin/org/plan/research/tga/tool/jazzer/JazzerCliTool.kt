@@ -42,7 +42,8 @@ class JazzerCliTool : TestGenerationTool {
         this.outputDirectory.toFile().mkdirs()
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
-            val execFile = outputDirectory.resolve("$index.exec")
+            val testName = t.substringBefore("(").replace(".", "_")
+            val execFile = outputDirectory.resolve("${testName}_$index.exec")
             buildProcess(
                 "java",
                 "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
