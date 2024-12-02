@@ -42,7 +42,9 @@ class JazzerCliTool : TestGenerationTool {
         this.outputDirectory.toFile().mkdirs()
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
-            val testName = t.substringBefore("(").replace(".", "_")
+            val testName = t.substringBefore("(")
+                .replace("..", "_")
+                .replace(".", "_")
             val execFile = outputDirectory.resolve("${testName}_$index.exec")
             buildProcess(
                 "java",
