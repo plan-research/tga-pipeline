@@ -8,6 +8,7 @@ import tempfile
 from generate_compose import EvoSuiteArgs
 from generate_compose import KexArgs
 from generate_compose import TestSparkArgs
+from generate_compose import JazzerArgs
 from generate_compose import Tool
 from generate_compose import generate_compose
 
