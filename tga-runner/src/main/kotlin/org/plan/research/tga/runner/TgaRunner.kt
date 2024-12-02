@@ -41,6 +41,10 @@ class TgaRunner(
 
             for (run in runIds) {
                 val runDir = baseDir.resolve("$baseRunName-$run")
+                if (!runDir.exists()) {
+                    log.debug("Creating directory {}", runDir)
+                    runDir.createDirectories()
+                }
                 for (benchmark in benchmarkProvider.benchmarks()) {
                     log.debug("Running on benchmark ${benchmark.buildId}")
 

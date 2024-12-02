@@ -40,7 +40,7 @@ class JazzerCliTool : TestGenerationTool {
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
         this.outputDirectory = outputDirectory
-        if (!outputDirectory.exists()) {
+        while (!outputDirectory.exists()) {
             log.debug("Creating directory {}", outputDirectory)
             outputDirectory.toFile().mkdirs()
         }
