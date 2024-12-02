@@ -41,7 +41,7 @@ class TgaRunner(
 
             for (run in runIds) {
                 val runDir = baseDir.resolve("$baseRunName-$run")
-                for (benchmark in benchmarkProvider.benchmarks().filter { it.buildId.startsWith("rcv") }) {
+                for (benchmark in benchmarkProvider.benchmarks()) {
                     log.debug("Running on benchmark ${benchmark.buildId}")
 
                     val benchmarkOutput = runDir.resolve(benchmark.buildId)
@@ -50,7 +50,6 @@ class TgaRunner(
                         log.debug("Benchmark {} already run, skipping", benchmark)
                         continue
                     }
-                    benchmarkOutput.createDirectories()
 
                     toolConnection.send(BenchmarkRequest(benchmark, timeLimit, benchmarkOutput))
                     log.debug("Sent benchmark to tool")
