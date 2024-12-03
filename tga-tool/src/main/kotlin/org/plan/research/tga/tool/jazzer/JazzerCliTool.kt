@@ -43,7 +43,13 @@ class JazzerCliTool : TestGenerationTool {
             outputDirectory.toFile().mkdirs()
         }
         log.debug("Directory {} exists: {}", outputDirectory, outputDirectory.exists())
+
         val targets = parseMethodSignatures(target)
+        if (targets.isEmpty()) {
+            log.debug("No targets found, stopping Jazzer")
+            return
+        }
+
         val processes = targets.mapIndexed { index, t ->
             log.debug("Starting Jazzer on target {}", t)
             val testName = t.substringBefore("(")
