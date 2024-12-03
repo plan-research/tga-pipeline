@@ -11,13 +11,10 @@ import org.vorpal.research.kfg.ir.Class
 import org.vorpal.research.kthelper.assert.unreachable
 import org.vorpal.research.kthelper.buildProcess
 import org.vorpal.research.kthelper.logging.log
-import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.terminateOrKill
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
-import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -31,6 +28,7 @@ class JazzerCliTool : TestGenerationTool {
         private val JAZZER_HOME = Paths.get(System.getenv("JAZZER_HOME"))
             ?: unreachable { log.error("No \$KEX_HOME environment variable") }
         private val JACOCO_AGENT_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacocoagent.jar")
+        private val MAX_TARGETS = 12
     }
 
 
@@ -47,6 +45,7 @@ class JazzerCliTool : TestGenerationTool {
         log.debug("Directory {} exists: {}", outputDirectory, outputDirectory.exists())
         val targets = parseMethodSignatures(target)
         val processes = targets.mapIndexed { index, t ->
+            log.debug("Starting Jazzer on target {}", t)
             val testName = t.substringBefore("(")
                 .replace("..", "_")
                 .replace(".", "_")
@@ -87,11 +86,14 @@ class JazzerCliTool : TestGenerationTool {
     private fun parseMethodSignatures(target: String): List<String> {
         val cm = ClassManager().also { it.initialize(classPath.mapNotNull { path -> path.asContainer() }) }
         val klass = cm[target.asmString]
-        return getClassSignatures(klass) + klass.innerClasses.filter { it.value.isPublic }.keys.filter { it.isPublic }
-            .flatMap { getClassSignatures(it) }
+        return (getClassSignatures(klass) + klass.innerClasses.filter { it.value.isPublic }.keys.filter { it.isPublic }
+            .flatMap { getClassSignatures(it) })
+            .sortedByDescending { it.first }
+            .take(MAX_TARGETS)
+            .map { it.first }
     }
 
-    private fun getClassSignatures(klass: Class): List<String> = klass.allMethods
+    private fun getClassSignatures(klass: Class): List<Pair<String, Int>> = klass.allMethods
         .filter { it.isPublic && !(it.isAbstract || it.isNative || it.isStaticInitializer) }
         .map {
             val argTypes = it.argTypes.joinToString(separator = ",", prefix = "(", postfix = ")") { type ->
@@ -100,7 +102,7 @@ class JazzerCliTool : TestGenerationTool {
             when {
                 it.isConstructor -> "${klass.fullName.javaString}::new$argTypes"
                 else -> "${klass.fullName.javaString}::${it.name}$argTypes"
-            }
+            } to it.body.flatten().size
         } +
             klass.innerClasses.keys
                 .filter { it.isPublic }
