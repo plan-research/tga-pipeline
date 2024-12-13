@@ -173,6 +173,7 @@ fun main(args: Array<String>) {
                             }
 
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
+                            log.debug("Coverage: {}", coverage)
                             val mutationScore = MutationScoreProvider()
                                 .computeMutationScore(benchmark, testSuite, compilationResult)
 

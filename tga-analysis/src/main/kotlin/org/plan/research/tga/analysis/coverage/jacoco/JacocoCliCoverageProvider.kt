@@ -20,6 +20,7 @@ import org.plan.research.tga.core.util.getJvmModuleParams
 import org.vorpal.research.kthelper.assert.ktassert
 import org.vorpal.research.kthelper.collection.mapToArray
 import org.vorpal.research.kthelper.executeProcessWithTimeout
+import org.vorpal.research.kthelper.logging.log
 import org.vorpal.research.kthelper.resolve
 import org.vorpal.research.kthelper.tryOrNull
 import org.w3c.dom.Document
@@ -67,6 +68,7 @@ class JacocoCliCoverageProvider : CoverageProvider {
         execFiles.addAll(Files.walk(testSuite.testSrcPath)
             .filter { Files.isRegularFile(it) && it.toString().endsWith(".exec") }
             .collect(Collectors.toList()))
+        log.debug("Collecting coverage from exec files: ${execFiles.joinToString("\n", prefix = "\n")}")
 
         val xmlCoverageReport = testSuite.testSrcPath.resolve("coverage.xml")
         executeProcessWithTimeout(

@@ -18,10 +18,10 @@ import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.writeText
-import kotlin.streams.toList
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -186,7 +186,7 @@ $POLYMORPHISM"""
             .filter { it.fileName.toString().endsWith(".java") }
             .filter { !it.fileName.toString().endsWith("GeneratedTest.java") }
             .map { testSrcPath.relativize(it).toString().javaString.removeSuffix(".java") }
-            .toList()
+            .collect(Collectors.toList())
         log.debug("TestSpark generated test cases: {}", individualTestCases)
         return individualTestCases
     }
