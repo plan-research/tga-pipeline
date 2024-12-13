@@ -71,6 +71,21 @@ class JacocoCliCoverageProvider : CoverageProvider {
         log.debug("Collecting coverage from exec files: ${execFiles.joinToString("\n", prefix = "\n")}")
 
         val xmlCoverageReport = testSuite.testSrcPath.resolve("coverage.xml")
+        log.debug("Running jacoco coverage with command: ${
+            listOf(
+                "java",
+                *getJvmModuleParams().toTypedArray(),
+                "-jar",
+                JACOCO_CLI_PATH.toString(),
+                "report",
+                *execFiles.mapToArray { it.toString() },
+                "--classfiles",
+                "${benchmark.bin.resolve(*pkg.split('.').toTypedArray(), "$name.class")}",
+                "--sourcefiles",
+                "${benchmark.src.resolve(*pkg.split('.').toTypedArray(), "$name.java")}",
+                "--xml",
+                xmlCoverageReport.toString(),
+            ).joinToString(" ", prefix = "\n")}")
         executeProcessWithTimeout(
             listOf(
                 "java",
