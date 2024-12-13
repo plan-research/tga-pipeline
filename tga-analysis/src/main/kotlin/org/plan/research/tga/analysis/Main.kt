@@ -172,6 +172,7 @@ fun main(args: Array<String>) {
                                 tryOrNull { patchedCompilationResult.compiledDir.deleteRecursively() }
                             }
 
+                            log.debug("Computing coverage for run $runName of tool $tool")
                             val coverage = coverageProvider.computeCoverage(benchmark, testSuite, compilationResult)
                             log.debug("Coverage: {}", coverage)
                             val mutationScore = MutationScoreProvider()
