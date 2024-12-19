@@ -26,7 +26,7 @@ class JazzerCliTool : TestGenerationTool {
 
     companion object {
         private val JAZZER_HOME = Paths.get(System.getenv("JAZZER_HOME"))
-            ?: unreachable { log.error("No \$KEX_HOME environment variable") }
+            ?: unreachable { log.error("No \$JAZZER_HOME environment variable") }
         private val JACOCO_AGENT_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacocoagent.jar")
         private val MAX_TARGETS = 12
     }
@@ -56,13 +56,18 @@ class JazzerCliTool : TestGenerationTool {
                 .replace("..", "_")
                 .replace(".", "_")
             val execFile = outputDirectory.resolve("${testName}_$index.exec")
+            log.debug("Starting Jazzer process with command ${
+                listOf("${JAZZER_HOME.resolve("jazzer")}",
+                    "--cp=${classPath.joinToString(File.pathSeparator!!)}",
+                    "--autofuzz=\"$t\"",
+                    "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\""
+                ).joinToString(" ", prefix = "\n")
+            }")
             buildProcess(
-                "java",
-                "-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}",
-                "-jar",
-                "${JAZZER_HOME.resolve("jazzer_standalone.jar")}",
+                "${JAZZER_HOME.resolve("jazzer")}",
                 "--cp=${classPath.joinToString(File.pathSeparator!!)}",
-                "--autofuzz=\"$t\""
+                "--autofuzz=\"$t\"",
+                "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
             )
         }
         log.debug("All the jazzer agents started")
