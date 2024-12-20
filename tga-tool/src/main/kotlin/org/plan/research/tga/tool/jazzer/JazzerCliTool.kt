@@ -63,7 +63,7 @@ class JazzerCliTool : TestGenerationTool {
                 "${timeLimit.inWholeSeconds}",
                 "${JAZZER_HOME.resolve("jazzer")}",
                 "--cp=${classPath.joinToString(File.pathSeparator!!)}",
-                "--autofuzz=\"$t\"",
+                "--autofuzz=$t",
                 "--coverage_dump=${execFile.toAbsolutePath()}",
 //                "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
                 "--keep_going=10",
