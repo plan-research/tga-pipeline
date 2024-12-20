@@ -56,19 +56,16 @@ class JazzerCliTool : TestGenerationTool {
                 .replace("..", "_")
                 .replace(".", "_")
             val execFile = outputDirectory.resolve("${testName}_$index.exec")
-            log.debug("Starting Jazzer process with command ${
-                listOf("${JAZZER_HOME.resolve("jazzer")}",
-                    "--cp=${classPath.joinToString(File.pathSeparator!!)}",
-                    "--autofuzz=\"$t\"",
-                    "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\""
-                ).joinToString(" ", prefix = "\n")
-            }")
-            buildProcess(
-                "${JAZZER_HOME.resolve("jazzer")}",
+            val command = listOf("${JAZZER_HOME.resolve("jazzer")}",
                 "--cp=${classPath.joinToString(File.pathSeparator!!)}",
                 "--autofuzz=\"$t\"",
                 "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
+                "--keep_going=2",
             )
+            log.debug("Starting Jazzer process with command ${
+                command.joinToString(" ", prefix = "\n")
+            }")
+            buildProcess(command)
         }
         log.debug("All the jazzer agents started")
         Thread.sleep(timeLimit.inWholeMilliseconds)
