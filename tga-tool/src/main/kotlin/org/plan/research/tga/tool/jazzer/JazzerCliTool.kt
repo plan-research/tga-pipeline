@@ -56,11 +56,14 @@ class JazzerCliTool : TestGenerationTool {
                 .replace("..", "_")
                 .replace(".", "_")
             val execFile = outputDirectory.resolve("${testName}_$index.exec")
-            val command = listOf("${JAZZER_HOME.resolve("jazzer")}",
+            val command = listOf(
+                "timeout",
+                "${timeLimit.inWholeSeconds}",
+                "${JAZZER_HOME.resolve("jazzer")}",
                 "--cp=${classPath.joinToString(File.pathSeparator!!)}",
                 "--autofuzz=\"$t\"",
                 "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
-                "--keep_going=2",
+                "--keep_going=10",
             )
             log.debug("Starting Jazzer process with command ${
                 command.joinToString(" ", prefix = "\n")
