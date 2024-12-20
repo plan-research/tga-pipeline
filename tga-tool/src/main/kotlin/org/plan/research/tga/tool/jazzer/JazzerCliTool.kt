@@ -62,7 +62,8 @@ class JazzerCliTool : TestGenerationTool {
                 "${JAZZER_HOME.resolve("jazzer")}",
                 "--cp=${classPath.joinToString(File.pathSeparator!!)}",
                 "--autofuzz=\"$t\"",
-                "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
+                "--coverage_dump=${execFile.toAbsolutePath()}",
+//                "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
                 "--keep_going=10",
             )
             log.debug("Starting Jazzer process with command ${
