@@ -18,6 +18,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class JazzerCliTool : TestGenerationTool {
     override val name = "Jazzer"
@@ -56,6 +57,7 @@ class JazzerCliTool : TestGenerationTool {
                 .replace("..", "_")
                 .replace(".", "_")
             val execFile = outputDirectory.resolve("${testName}_$index.exec")
+            val logFile = this.outputDirectory.resolve("${testName}_$index.log")
             val command = listOf(
                 "timeout",
                 "${timeLimit.inWholeSeconds}",
@@ -69,10 +71,13 @@ class JazzerCliTool : TestGenerationTool {
             log.debug("Starting Jazzer process with command ${
                 command.joinToString(" ", prefix = "\n")
             }")
-            buildProcess(command)
+            buildProcess(command) {
+                redirectErrorStream(true)
+                redirectOutput(logFile.toFile())
+            }
         }
         log.debug("All the jazzer agents started")
-        Thread.sleep(timeLimit.inWholeMilliseconds)
+        Thread.sleep((timeLimit + 5.seconds).inWholeMilliseconds)
         for (process in processes) {
             process.terminateOrKill(attempts = 10U, waitTime = 500.milliseconds)
         }
