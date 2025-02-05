@@ -31,11 +31,15 @@ ENV TEST_SPARK_HOME=/var/tools/TestSpark
 # install Jazzer
 USER root
 WORKDIR /var/tools
-RUN mkdir Jazzer
-WORKDIR /var/tools/Jazzer
-RUN wget https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.22.1/jazzer-linux.tar.gz
-RUN tar -xvzf jazzer-linux.tar.gz
-ENV JAZZER_HOME=/var/tools/Jazzer
+RUN git clone https://github.com/AbdullinAM/jazzer.git
+WORKDIR /var/tools/jazzer
+RUN bazel run //:jazzer
+ENV JAZZER_HOME=/var/tools/jazzer/bazel-bin/launcher/
+# RUN mkdir Jazzer
+# WORKDIR /var/tools/Jazzer
+# RUN wget https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.22.1/jazzer-linux.tar.gz
+# RUN tar -xvzf jazzer-linux.tar.gz
+# ENV JAZZER_HOME=/var/tools/Jazzer
 
 # run tool
 USER root
