@@ -29,6 +29,9 @@ RUN git checkout $TEST_SPARK_COMMIT
 ENV TEST_SPARK_HOME=/var/tools/TestSpark
 
 # install Jazzer
+USER root
+WORKDIR /var
+RUN chmod a+w -r /var
 RUN useradd -ms /bin/bash test
 USER test
 WORKDIR /var/tools
