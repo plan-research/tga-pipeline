@@ -15,21 +15,29 @@ import org.vorpal.research.kthelper.terminateOrKill
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.copyTo
 import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.readText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import org.plan.research.tga.core.dependency.Dependency
+import org.vorpal.research.kthelper.resolve
 
 class JazzerCliTool : TestGenerationTool {
     override val name = "Jazzer"
     private lateinit var classPath: List<Path>
     private lateinit var outputDirectory: Path
+    private lateinit var packageName: String
 
     companion object {
         private val JAZZER_HOME = Paths.get(System.getenv("JAZZER_HOME"))
             ?: unreachable { log.error("No \$JAZZER_HOME environment variable") }
         private val JACOCO_AGENT_PATH = TGA_PIPELINE_HOME.resolve("lib").resolve("jacocoagent.jar")
-        private val MAX_TARGETS = 12
+        private val MAX_TARGETS = 8
     }
 
 
@@ -39,6 +47,7 @@ class JazzerCliTool : TestGenerationTool {
 
     override fun run(target: String, timeLimit: Duration, outputDirectory: Path) {
         this.outputDirectory = outputDirectory
+        this.packageName = target.substringBeforeLast(".")
         while (!outputDirectory.exists()) {
             log.debug("Creating directory {}", outputDirectory)
             outputDirectory.toFile().mkdirs()
@@ -66,11 +75,13 @@ class JazzerCliTool : TestGenerationTool {
                 "--autofuzz=$t",
                 "--coverage_dump=${execFile.toAbsolutePath()}",
 //                "--jvm_args=\"-javaagent:${JACOCO_AGENT_PATH.toAbsolutePath()}=destfile=${execFile.toAbsolutePath()}\"",
-                "--keep_going=10",
+                "--keep_going=100",
             )
-            log.debug("Starting Jazzer process with command ${
-                command.joinToString(" ", prefix = "\n")
-            }")
+            log.debug(
+                "Starting Jazzer process with command ${
+                    command.joinToString(" ", prefix = "\n")
+                }"
+            )
             buildProcess(command) {
                 redirectErrorStream(true)
                 redirectOutput(logFile.toFile())
@@ -85,7 +96,37 @@ class JazzerCliTool : TestGenerationTool {
     }
 
     override fun report(): TestSuite {
-        return TestSuite(outputDirectory, emptyList(), emptyList(), emptyList())
+        val testSrcPath = outputDirectory.resolve("tests")
+        val path = packageName.split(".").toTypedArray()
+        val tests = File(".").listFiles().orEmpty()
+            .filter { it.name.startsWith("CrashTest_") && it.name.endsWith(".java") }
+            .map { it.toPath().toAbsolutePath() }
+            .map { test ->
+                val file = testSrcPath.resolve(*path).resolve(test.name)
+                file.parent.toFile().mkdirs()
+                val code = "package $packageName;\n${test.readText()}\n"
+                file.bufferedWriter().use {
+                    it.write(code)
+                }
+                "$packageName.${test.nameWithoutExtension}"
+            }
+
+        File(".").listFiles().orEmpty()
+            .filter {
+                it.name.startsWith("CrashTest_")
+                        || it.name.startsWith("crash-")
+                        || it.name.startsWith("slow-unit-")
+            }
+            .forEach { it.delete() }
+
+        return TestSuite(
+            testSrcPath,
+            tests,
+            emptyList(),
+            listOf(
+                Dependency("junit", "junit", "4.13.2"),
+            ),
+        )
     }
 
 
