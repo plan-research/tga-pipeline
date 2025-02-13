@@ -186,7 +186,8 @@ def generate_compose(
     result_volume = Volume(results_path, is_external=False)
     result.add_volume(result_volume)
 
-    uid = os.getuid()
+    # os.getuid() does not work on Windows, hence pid was suggested as a replacement.
+    pid = os.getpid()
 
     for thread in range(workers):
         thread_runs = runs_per_thread
@@ -200,7 +201,7 @@ def generate_compose(
         runner_service = Service(
             name=f'runner-{tool.name}-{thread}',
             image=runner_image,
-            user=f'\"{uid}\"',
+            user=f'\"{pid}\"',
             command=f'-p 10000 -c {benchmarks_path} -t {timeout} -o /var/results '
                     f'--runName {run_name} --runs {starting_run}..{starting_run + thread_runs - 1}'
         )
@@ -210,7 +211,7 @@ def generate_compose(
         tool_service = Service(
             name=f'tool-{tool.name}-{thread}',
             image=tool_image,
-            user=f'\"{uid}\"',
+            user=f'\"{pid}\"',
             command=f'--ip {runner_service.name} --port 10000 --tool {tool.name} --toolArgs=\'{tool_args}\''
         )
         tool_service.add_network(network)
