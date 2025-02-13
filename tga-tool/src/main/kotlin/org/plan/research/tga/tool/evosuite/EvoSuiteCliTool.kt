@@ -86,14 +86,14 @@ class EvoSuiteCliTool : TestGenerationTool {
         val testSrcPath = outputDirectory.resolve("evosuite-tests")
         val originalTests = when {
             testSrcPath.exists() -> Files.walk(testSrcPath).filter { it.fileName.toString().endsWith(".java") }
-                .map { testSrcPath.relativize(it).toString().replace('/', '.').removeSuffix(".java") }
+                .map { testSrcPath.relativize(it).toString().replace(File.separatorChar, '.').removeSuffix(".java") }
                 .toList()
 
             else -> emptyList()
         }
         val newTests = mutableListOf<String>()
         for (test in originalTests) {
-            val testCode = testSrcPath.resolve(test.replace('.', '/') + ".java")
+            val testCode = testSrcPath.resolve(test.replace('.', File.separatorChar) + ".java")
                 .toFile().readText()
 
             val header = testCode.substringBefore("public class")
@@ -109,7 +109,7 @@ class EvoSuiteCliTool : TestGenerationTool {
                 val newTestName = "$test${index}"
                 newTests += newTestName
 
-                val newTestFile = testSrcPath.resolve(newTestName.replace('.', '/') + ".java")
+                val newTestFile = testSrcPath.resolve(newTestName.replace('.', File.separatorChar) + ".java")
                 newTestFile.parent.toFile().mkdirs()
                 newTestFile.bufferedWriter().use {
                     it.write(header)
@@ -120,7 +120,7 @@ class EvoSuiteCliTool : TestGenerationTool {
             }
         }
         originalTests.forEach {
-            testSrcPath.resolve(it.replace('.', '/') + ".java").toFile().delete()
+            testSrcPath.resolve(it.replace('.', File.separatorChar) + ".java").toFile().delete()
         }
         return TestSuite(
             testSrcPath,
