@@ -7,8 +7,52 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import errno
+import stat
+import time
 
 from cut_info import cut_map
+
+
+GRADLEW_CMD = '.\gradlew.bat' if sys.platform.startswith('win') else './gradlew'
+MVN_CMD = 'mvn.cmd' if sys.platform.startswith('win') else 'mvn'
+
+def handle_remove_readonly(func, path, exc):
+	"""
+	On some Windows machines, for example, mine, shutil.rmtree() fails with PermissionError.
+	This PermissionError seems to be caused because of missing permissions to delete a file
+	and the locking placed on the recently created file as a process still uses it.
+	To complete the execution of shutil.rmtree(), we need to give the process the necessary rights and
+	wait a bit longer for the lock on the resource to disappear.
+	This function checks which function threw the error, gives correct permissions, and
+	retries to execute the failed command up to five times with an increasing delay each time.
+
+	:param func: Function which threw an error and should be handled by this function.
+	:param path: Path on which the failed function was called.
+	:param exc: Returned exception information.
+	:return:
+	"""
+	excvalue = exc[1]
+	if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
+		os.chmod(path, stat.S_IRWXU| stat.S_IRWXG| stat.S_IRWXO) # 0777
+		time.sleep(5)
+		try:
+			func(path)
+		except PermissionError as e:
+			if e.errno != errno.EACCES:
+				# Retry mechanism
+				for i in [10,15,20,25,30]:  # Retry up to 5 times
+					try:
+						time.sleep(i)  # Wait for i seconds before retrying
+						func(path)
+						break
+					except PermissionError:
+						continue
+				else:
+					raise
+
+	else:
+		raise
 
 def clone(output_dir, project_json) -> str:
 	if not os.path.exists(output_dir):
@@ -33,7 +77,7 @@ def clone(output_dir, project_json) -> str:
 			logging.error("Executed command: {}".format(process.args))
 			logging.error("Command error output: {}".format(cloneErr.decode("utf-8")))
 			if os.path.exists(project_dir):
-				shutil.rmtree(project_dir)
+				shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 			return None
 
 	os.chdir(project_dir)
@@ -42,7 +86,7 @@ def clone(output_dir, project_json) -> str:
 	if process.returncode != 0:
 		logging.error("Failed to clone checkout commit {}".format(commit_id))
 		logging.error("Command error output: {}".format(checkoutErr.decode("utf-8")))
-		shutil.rmtree(project_dir)
+		shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 		return None
 
 	return project_dir
@@ -81,30 +125,44 @@ def build(project_json, project_dir, apply_patch):
 	logging.info("Detected build system: {}".format(build_system))
 
 	if build_system == 'maven':
-		process = subprocess.Popen(['mvn', 'clean', 'package', '-DskipTests'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		try:
+			process = subprocess.Popen([MVN_CMD, 'clean', 'package', '-DskipTests'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		except FileNotFoundError:
+			logging.error("Failed to find Maven executable at location '{}'. Check your Maven PATH variable.".format(MVN_CMD))
+			shutil.rmtree(project_dir, onerror=handle_remove_readonly)
+			raise
 		output, err = process.communicate()
 		if process.returncode != 0:
 			logging.error("Failed to build maven project {}".format(project_dir))
 			logging.error("Build command: {}".format(process.args))
 			logging.error("Build error output: {}".format(err.decode("utf-8")))
-			shutil.rmtree(project_dir)
+			if err == b"":
+				logging.error("Build process output: {}".format(output.decode("utf-8")))
+			shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 			return None
 
-		process = subprocess.Popen(['mvn', 'dependency:copy-dependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		process = subprocess.Popen([MVN_CMD, 'dependency:copy-dependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		_, _ = process.communicate()
 		if process.returncode != 0:
 			logging.error("Failed to copy maven dependencies {}".format(project_dir))
-			shutil.rmtree(project_dir)
+			shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 			return None
 
 	elif build_system == 'gradle-kotlin' or build_system == 'gradle-groovy':
-		process = subprocess.Popen(['./gradlew', 'build', '-x', 'test'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		try:
+			process = subprocess.Popen([GRADLEW_CMD, 'build', '-x', 'test'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		except FileNotFoundError:
+			logging.error("Failed to find Gradlew executable at location '{}'.".format(GRADLEW_CMD))
+			shutil.rmtree(project_dir, onerror=handle_remove_readonly)
+			raise
 		output, err = process.communicate()
 		if process.returncode != 0:
 			logging.error("Failed to build kotlin gradle project {}".format(project_dir))
 			logging.error("Build command: {}".format(process.args))
-			logging.error("Build error output: {}".format(err.decode("utf-8")))
-			shutil.rmtree(project_dir)
+			logging.error("Build error output: {}".format(err.decode("utf-8", errors="replace")))
+			if err == b"":
+				logging.error("Build process output: {}".format(output.decode("utf-8")))
+			shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 			return None
 
 		if build_system == 'gradle-kotlin':
@@ -123,20 +181,20 @@ task copyDependencies(type: Copy) {
 }
 	"""
 
-		process = subprocess.Popen(['./gradlew', 'copyDependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		process = subprocess.Popen([GRADLEW_CMD, 'copyDependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		output, err = process.communicate()
 		if process.returncode != 0:
 			build_file = open(build_file_path, "a")
 			build_file.write(build_file_patch)
 			build_file.close()
 
-			process = subprocess.Popen(['./gradlew', 'copyDependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			process = subprocess.Popen([GRADLEW_CMD, 'copyDependencies'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			output, err = process.communicate()
 			if process.returncode != 0:
 				logging.error("Failed to copy gradle dependencies {}".format(project_dir))
 				logging.error("Build command: {}".format(process.args))
 				logging.error("Build error output: {}".format(err.decode("utf-8")))
-				shutil.rmtree(project_dir)
+				shutil.rmtree(project_dir, onerror=handle_remove_readonly)
 				return None
 
 	return project_dir
@@ -168,7 +226,7 @@ def produce_benchmarks(downloaded_projects):
 		benchmark = {}
 		benchmark['name'] = project_json['repository'].split('/')[1]
 		benchmark['root'] = project_dir
-		benchmark['build_id'] = project_dir.split('/')[-1]
+		benchmark['build_id'] = project_dir.split(os.path.sep)[-1]
 
 		src_path = project_dir
 		bin_path = ''
@@ -250,6 +308,8 @@ def main():
 	output_dir = sys.argv[2]
 	apply_patch = (sys.argv[3] == 'True')
 
+	logging.info("Detected operating system: {}, therefore will use {} and {} to execute gradle and maven tasks when building projects."
+				 .format(sys.platform, GRADLEW_CMD, MVN_CMD))
 	downloaded_projects = download_projects(gitbug_data_dir, output_dir, apply_patch)
 	benchmarks = produce_benchmarks(downloaded_projects)
 
