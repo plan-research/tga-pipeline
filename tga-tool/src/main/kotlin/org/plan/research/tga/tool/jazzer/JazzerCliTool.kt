@@ -155,7 +155,10 @@ class JazzerCliTool : TestGenerationTool {
         .filter { it.isPublic && !(it.isAbstract || it.isNative || it.isStaticInitializer) }
         .map {
             val argTypes = it.argTypes.joinToString(separator = ",", prefix = "(", postfix = ")") { type ->
-                type.toString().javaString
+                when (val str = type.toString().javaString) {
+                    "bool" -> "boolean"
+                    else -> str
+                }
             }
             when {
                 it.isConstructor -> "${klass.fullName.javaString}::new$argTypes"

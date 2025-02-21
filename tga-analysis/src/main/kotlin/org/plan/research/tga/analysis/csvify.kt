@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
 
     val fullHeader = header + "," + valueTypes.joinToString(separator = ",") { it.first }
 
-    val newCsv = Paths.get("EvoSuite-metrics-default.csv").bufferedWriter().use { writer ->
+    val newCsv = Paths.get("Jazzer-metrics-full-default.csv").bufferedWriter().use { writer ->
         writer.write(fullHeader)
         writer.write("\n")
 
