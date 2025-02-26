@@ -9,6 +9,7 @@ import org.plan.research.tga.core.tool.protocol.Tool2TgaConnection
 import org.vorpal.research.kthelper.logging.log
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 import kotlin.time.measureTime
 
 
@@ -35,7 +36,7 @@ class ToolController(
                 is BenchmarkRequest -> {
                     tool.init(request.benchmark.root, request.benchmark.classPath)
 
-                    val hardTimeout = request.timeLimit * 2
+                    val hardTimeout = maxOf(request.timeLimit * 2, Duration.parse("40s"))
                     val generationTime = measureTime {
                         val execution = executorService.submit {
                             tool.run(

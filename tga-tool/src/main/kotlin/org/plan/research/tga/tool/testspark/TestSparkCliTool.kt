@@ -147,6 +147,7 @@ $POLYMORPHISM"""
             outputDirectory.resolve(TEST_SPARK_LOG).bufferedWriter().use { writer ->
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
                 while (true) {
+                    if (Thread.currentThread().isInterrupted) throw InterruptedException()
                     val line = reader.readLine() ?: break
                     writer.write(line)
                     writer.write("\n")
