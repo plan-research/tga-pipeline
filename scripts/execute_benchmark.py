@@ -9,6 +9,7 @@ from generate_compose import EvoSuiteArgs
 from generate_compose import KexArgs
 from generate_compose import TestSparkArgs
 from generate_compose import JazzerArgs
+from generate_compose import ManualArgs
 from generate_compose import Tool
 from generate_compose import generate_compose
 
@@ -75,6 +76,8 @@ def main():
         )
     elif args.tool == Tool.Jazzer:
         tool_args = JazzerArgs()
+    elif args.tool == Tool.Jazzer:
+        tool_args = ManualArgs()
     else:
         print(f'Unknown tool {args.tool}', file=sys.stderr)
 

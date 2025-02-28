@@ -8,6 +8,7 @@ class Tool(Enum):
     EvoSuite = 'EvoSuite'
     TestSpark = 'TestSpark'
     Jazzer = 'Jazzer'
+    Manual = 'Manual'
 
 
 class ToolArgs:
@@ -49,6 +50,13 @@ class TestSparkArgs(ToolArgs):
         return cmd
 
 class JazzerArgs(ToolArgs):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return ''
+
+class ManualArgs(ToolArgs):
     def __init__(self):
         pass
 

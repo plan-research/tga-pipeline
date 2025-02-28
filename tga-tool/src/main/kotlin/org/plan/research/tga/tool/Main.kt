@@ -5,6 +5,7 @@ import org.plan.research.tga.tool.config.TgaToolConfig
 import org.plan.research.tga.tool.evosuite.EvoSuiteCliTool
 import org.plan.research.tga.tool.jazzer.JazzerCliTool
 import org.plan.research.tga.tool.kex.KexCliTool
+import org.plan.research.tga.tool.manual.ManualTests
 import org.plan.research.tga.tool.protocol.tcp.TcpTool2TgaConnection
 import org.plan.research.tga.tool.stub.StubTool
 import org.plan.research.tga.tool.testspark.TestSparkCliTool
@@ -36,6 +37,7 @@ fun main(args: Array<String>) {
         "TestSpark" -> TestSparkCliTool(toolArgs)
         "EvoSuite" -> EvoSuiteCliTool()
         "Jazzer" -> JazzerCliTool()
+        "Manual" -> ManualTests()
         "stub" -> StubTool()
         else -> unreachable { log.error("Unknown tool name: $name") }
     }
