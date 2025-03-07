@@ -14,7 +14,7 @@ USER root
 WORKDIR /var/tools
 RUN mkdir kex
 WORKDIR /var/tools/kex
-RUN wget https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip \
+RUN wget --progress=dot:giga https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip \
     && unzip kex-$KEX_VERSION.zip
 ENV KEX_HOME=/var/tools/kex
 
