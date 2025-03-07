@@ -1,5 +1,5 @@
 FROM abdullin/tga-pipeline:benchmarks-latest
-MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+LABEL org.opencontainers.image.authors="Azat Abdullin <azat.aam@gmail.com>"
 
 ARG PIPELINE_VERSION=0.0.46
 
