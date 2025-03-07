@@ -14,7 +14,7 @@ RUN apt-get -y update \
     && git clone https://github.com/gitbugactions/gitbug-java.git /root/gitbug-java
 
 # add scripts to container
-ADD ./scripts /var/scripts
+COPY ./scripts /var/scripts
 
 # run scripts and build benchmarks
 RUN python3 /var/scripts/gitbug_setup.py /root/gitbug-java /var/benchmarks/gitbug False \
