@@ -11,7 +11,7 @@ RUN apt-get -y update \
 	python3 \
 	git \
 	&& rm -rf /var/lib/apt/lists/* \
-    && git clone https://github.com/gitbugactions/gitbug-java.git /root/gitbug-java
+	&& git clone https://github.com/gitbugactions/gitbug-java.git /root/gitbug-java
 
 # add scripts to container
 COPY ./scripts /var/scripts
