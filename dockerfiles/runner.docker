@@ -1,13 +1,10 @@
 FROM abdullin/tga-pipeline:base-latest
-MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+LABEL org.opencontainers.image.authors="Azat Abdullin <azat.aam@gmail.com>"
 
 # run pipeline
 USER root
 WORKDIR /tga-pipeline
-RUN ./gradlew :tga-runner:build
-
-# give access to all users
-RUN chmod a+r -R /tga-pipeline
-RUN chmod a+w -R /tga-pipeline
+RUN ./gradlew :tga-runner:build \
+  && chmod a+rw -R /tga-pipeline
 
 ENTRYPOINT ["java", "-jar", "/tga-pipeline/tga-runner/build/libs/tga-runner.jar"]

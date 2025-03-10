@@ -1,5 +1,5 @@
 FROM abdullin/tga-pipeline:base-latest
-MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+LABEL org.opencontainers.image.authors="Azat Abdullin <azat.aam@gmail.com>"
 
 ARG KEX_VERSION=0.0.8
 ARG TEST_SPARK_COMMIT=aec399f79d0fc98daa21c214733e707db00f9048
@@ -14,8 +14,8 @@ USER root
 WORKDIR /var/tools
 RUN mkdir kex
 WORKDIR /var/tools/kex
-RUN wget https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip
-RUN unzip kex-$KEX_VERSION.zip
+RUN wget --progress=dot:giga https://github.com/vorpal-research/kex/releases/download/$KEX_VERSION/kex-$KEX_VERSION.zip \
+    && unzip kex-$KEX_VERSION.zip
 ENV KEX_HOME=/var/tools/kex
 
 # install TestSpark
@@ -32,14 +32,14 @@ ENV TEST_SPARK_HOME=/var/tools/TestSpark
 # install Jazzer
 USER root
 WORKDIR /var
-RUN chmod a+w -R /var/tools
-RUN useradd -ms /bin/bash test
+RUN chmod a+w -R /var/tools \
+    && useradd -ms /bin/bash test
 USER test
 WORKDIR /var/tools
 RUN git clone https://github.com/AbdullinAM/jazzer.git
 WORKDIR /var/tools/jazzer
-RUN git checkout $JAZZER_COMMIT
-RUN bazel-7.3.0 build //:jazzer
+RUN git checkout $JAZZER_COMMIT \
+    && bazel-7.3.0 build //:jazzer
 ENV JAZZER_HOME=/var/tools/jazzer/bazel-bin/launcher/
 # RUN mkdir Jazzer
 # WORKDIR /var/tools/Jazzer
@@ -50,12 +50,8 @@ ENV JAZZER_HOME=/var/tools/jazzer/bazel-bin/launcher/
 # run tool
 USER root
 WORKDIR /tga-pipeline
-RUN ./gradlew :tga-tool:build
-
-# give access to all users
-RUN chmod a+r -R /tga-pipeline
-RUN chmod a+w -R /tga-pipeline
-RUN chmod a+r -R /var/tools
-RUN chmod a+w -R /var/tools
+RUN ./gradlew :tga-tool:build \
+    && chmod a+rw -R /tga-pipeline \
+    && chmod a+rw -R /var/tools
 
 ENTRYPOINT ["java", "-jar", "/tga-pipeline/tga-tool/build/libs/tga-tool.jar"]

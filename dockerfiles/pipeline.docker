@@ -1,5 +1,5 @@
 FROM abdullin/tga-pipeline:benchmarks-latest
-MAINTAINER Azat Abdullin <azat.aam@gmail.com>
+LABEL org.opencontainers.image.authors="Azat Abdullin <azat.aam@gmail.com>"
 
 ARG PIPELINE_VERSION=0.0.46
 
@@ -7,20 +7,19 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
 # install additional packages
 USER root
-RUN apt-get update
-RUN apt-get -y install \
+RUN apt-get update \
+	&& apt-get --no-install-recommends -y install \
 	wget \
 	unzip \
 	curl \
 	gnupg \
-	apt-transport-https
-
-# installing bazel
-RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
-RUN mv bazel-archive-keyring.gpg /usr/share/keyrings
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-RUN apt-get update
-RUN apt-get -y install bazel-7.3.0
+	apt-transport-https \
+	&& curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg \
+	&& mv bazel-archive-keyring.gpg /usr/share/keyrings \
+	&& echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+	&& apt-get update \
+	&& apt-get --no-install-recommends -y install bazel-7.3.0 \
+	&& rm -rf /var/lib/apt/lists/*
 
 # install pipeline
 USER root
